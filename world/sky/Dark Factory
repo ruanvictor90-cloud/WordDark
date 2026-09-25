@@ -1,0 +1,16 @@
+# Dark Factory
+
+A Dark Factory é uma unidade de execução do Céu dentro do WordDark.
+
+Sua função é receber necessidades autorizadas, transformar essas necessidades em tarefas executáveis, realizar o processamento necessário e devolver o resultado de forma rastreável.
+
+## Posição no WordDark
+
+```text
+WORDDARK
+│
+├── CÉU
+│   │
+│   └── DARK FACTORY
+│
+└── TERRA

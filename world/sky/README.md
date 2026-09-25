@@ -20,3 +20,9 @@ O Céu pode conter:
 O Céu não gera a necessidade principal do mundo.
 
 Ele existe para responder às necessidades geradas pela Terra.
+
+## Princípio
+
+A Terra gera necessidades.
+
+O Céu encontra, cria ou fornece as soluções para essas necessidades.

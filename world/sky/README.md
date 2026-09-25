@@ -1,5 +1,22 @@
 # Céu
 
-Área superior do WordDark.
+O Céu é a área do WordDark responsável por gerenciar e suprir as necessidades do mundo.
 
-Esta área será moldada posteriormente.
+Sua função é identificar problemas, necessidades e demandas e fornecer meios para resolvê-los.
+
+O Céu pode conter:
+
+- Serviços
+- Recursos
+- Soluções
+- Sistemas
+- Infraestrutura
+- Operações
+- Gestão
+- Fábricas
+- Tecnologias
+- Outros mecanismos necessários para manter e expandir o mundo
+
+O Céu não gera a necessidade principal do mundo.
+
+Ele existe para responder às necessidades geradas pela Terra.

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#10131b">
 
-  <title>Dark Factory — DF-0.1</title>
+  <title>Dark Factory — DF-0.2</title>
 
   <style>
     * {
@@ -127,7 +127,7 @@
   <h1>Dark Factory</h1>
 
   <div class="subtitle">
-    WordDark · Céu · Núcleo DF-0.1
+    WordDark · Céu · Núcleo DF-0.2
   </div>
 
 
@@ -138,7 +138,7 @@
     <h2>Central de solicitações</h2>
 
     <p>
-      Registre uma tarefa e envie para o núcleo da Dark Factory.
+      Registre uma tarefa e envie pela comunicação da Dark Factory.
     </p>
 
 
@@ -233,8 +233,9 @@
     </p>
 
     <p class="small">
-      DF-0.1 é um protótipo local. A autorização atual é
-      demonstrativa e ainda não representa controle de acesso real.
+      DF-0.2 adiciona a camada de comunicação interna.
+      A autorização atual continua sendo demonstrativa e ainda
+      não representa controle de acesso real.
     </p>
 
   </section>
@@ -279,6 +280,23 @@ Nenhuma solicitação processada.
   </section>
 
 
+  <!-- COMUNICAÇÃO -->
+
+  <section class="panel">
+
+    <h2>Comunicação DF-0.2</h2>
+
+    <p id="communicationStatus" class="status">
+      Inicializando comunicação...
+    </p>
+
+    <pre id="lastMessage">
+Nenhuma mensagem enviada.
+    </pre>
+
+  </section>
+
+
   <!-- LOGS -->
 
   <section class="panel">
@@ -311,10 +329,18 @@ Nenhum log registrado.
 <script>
 
   /*
-   * Inicialização da Dark Factory
+   * Inicialização do núcleo
    */
 
   const factory = new DarkFactory();
+
+
+  /*
+   * Inicialização da comunicação DF-0.2
+   */
+
+  const communication =
+    new DarkFactoryCommunication(factory);
 
 
   /*
@@ -333,11 +359,17 @@ Nenhum log registrado.
   const systemStatus =
     document.getElementById("systemStatus");
 
+  const communicationStatus =
+    document.getElementById("communicationStatus");
+
   const clearButton =
     document.getElementById("clearButton");
 
   const lastResult =
     document.getElementById("lastResult");
+
+  const lastMessage =
+    document.getElementById("lastMessage");
 
   const logViewer =
     document.getElementById("logViewer");
@@ -351,7 +383,7 @@ Nenhum log registrado.
 
 
   /*
-   * Estado inicial
+   * Estado inicial do núcleo
    */
 
   const initialStatus =
@@ -363,6 +395,21 @@ Nenhum log registrado.
     initialStatus.version +
     " — " +
     initialStatus.status;
+
+
+  /*
+   * Estado inicial da comunicação
+   */
+
+  const initialCommunicationStatus =
+    communication.getStatus();
+
+  communicationStatus.textContent =
+    initialCommunicationStatus.name +
+    " " +
+    initialCommunicationStatus.version +
+    " — " +
+    initialCommunicationStatus.status;
 
 
   /*
@@ -414,11 +461,11 @@ Nenhum log registrado.
 
 
     /*
-     * Processamento pelo núcleo
+     * Envio pela camada de comunicação DF-0.2
      */
 
     const result =
-      factory.process(request);
+      communication.send(request);
 
 
     /*
@@ -446,6 +493,8 @@ Nenhum log registrado.
 
     renderResult(result);
 
+    renderMessage(result);
+
 
     /*
      * Limpa formulário
@@ -461,19 +510,36 @@ Nenhum log registrado.
     if (result.success) {
 
       systemStatus.textContent =
-        "Solicitação processada pelo núcleo DF-0.1.";
+        "Solicitação processada pelo núcleo DF-0.1 através da comunicação DF-0.2.";
 
       systemStatus.className =
+        "status success";
+
+      communicationStatus.textContent =
+        "Mensagem DF-0.2 enviada com sucesso.";
+
+      communicationStatus.className =
         "status success";
 
     } else {
 
       systemStatus.textContent =
         "Solicitação não executada: " +
-        (result.reason || result.message || "verifique os registros.");
+        (
+          result.reason ||
+          result.message ||
+          "verifique os registros."
+        );
 
       systemStatus.className =
         "status error";
+
+      communicationStatus.textContent =
+        "Comunicação concluída, mas a solicitação foi rejeitada.";
+
+      communicationStatus.className =
+        "status error";
+
     }
 
   });
@@ -488,6 +554,29 @@ Nenhum log registrado.
     lastResult.textContent =
       JSON.stringify(
         result,
+        null,
+        2
+      );
+
+  }
+
+
+  /*
+   * RENDERIZA MENSAGEM
+   */
+
+  function renderMessage(result) {
+
+    lastMessage.textContent =
+      JSON.stringify(
+        {
+          protocol: "DF-0.2",
+          messageId: result.messageId || null,
+          requestId: result.requestId || null,
+          origin: result.origin || null,
+          destination: result.destination || null,
+          status: result.status || null
+        },
         null,
         2
       );
@@ -658,10 +747,19 @@ Nenhum log registrado.
       lastResult.textContent =
         "Nenhuma solicitação processada.";
 
+      lastMessage.textContent =
+        "Nenhuma mensagem enviada.";
+
       systemStatus.textContent =
         "Registros da sessão limpos.";
 
       systemStatus.className =
+        "status";
+
+      communicationStatus.textContent =
+        "Comunicação DF-0.2 online.";
+
+      communicationStatus.className =
         "status";
 
     }

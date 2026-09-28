@@ -19,11 +19,18 @@ class DarkFactoryCommunication {
         status: "REJEITADO",
         stage: "ENVIO",
         reason: "Solicitação ausente.",
-        envelope: envelope
+        requestMessageId: envelope.messageId,
+        requestEnvelope: envelope
       };
     }
 
-    return this.receive(envelope);
+    const response = this.receive(envelope);
+
+    return {
+      ...response,
+      requestMessageId: envelope.messageId,
+      requestEnvelope: envelope
+    };
   }
 
   // =========================================================
@@ -34,17 +41,11 @@ class DarkFactoryCommunication {
     return {
       protocol: "DF-0.2.1",
       messageId: this.generateId("MSG"),
-
-      // O ID original da solicitação é preservado.
       requestId: request ? request.id : null,
-
       origin: request ? request.origin : null,
       destination: request ? request.destination : null,
-
       type: "REQUEST",
-
       createdAt: new Date().toISOString(),
-
       payload: request ? request.toJSON() : null
     };
   }
@@ -99,16 +100,9 @@ class DarkFactoryCommunication {
         permission: data.permission
       });
 
-    /*
-     * A solicitação reconstruída recebe
-     * o mesmo ID da solicitação original.
-     */
     request.id =
       originalRequestId || data.id || request.id;
 
-    /*
-     * Preserva também os dados originais.
-     */
     request.status =
       data.status || request.status;
 
@@ -147,31 +141,15 @@ class DarkFactoryCommunication {
   ) {
     return {
       success: result.success,
-
       status: result.status,
-
       protocol: "DF-0.2.1",
-
-      messageId:
-        this.generateId("MSG"),
-
-      responseTo:
-        envelope.messageId,
-
-      requestId:
-        request.id,
-
-      origin:
-        request.destination,
-
-      destination:
-        request.origin,
-
+      messageId: this.generateId("MSG"),
+      responseTo: envelope.messageId,
+      requestId: request.id,
+      origin: request.destination,
+      destination: request.origin,
       type: "RESPONSE",
-
-      createdAt:
-        new Date().toISOString(),
-
+      createdAt: new Date().toISOString(),
       result: result
     };
   }

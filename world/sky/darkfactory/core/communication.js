@@ -2,13 +2,37 @@ class DarkFactoryCommunication {
   constructor(factory) {
     this.factory = factory;
     this.name = "DF-Communication";
-    this.version = "DF-0.2";
+    this.version = "DF-0.2.1";
     this.status = "ONLINE";
   }
 
-  createEnvelope(request) {
+  // =========================================================
+  // ENVIO
+  // =========================================================
+
+  send(request) {
+    const envelope = this.createRequestEnvelope(request);
+
+    if (!request) {
+      return {
+        success: false,
+        status: "REJEITADO",
+        stage: "ENVIO",
+        reason: "Solicitação ausente.",
+        envelope: envelope
+      };
+    }
+
+    return this.receive(envelope);
+  }
+
+  // =========================================================
+  // CRIAÇÃO DA MENSAGEM
+  // =========================================================
+
+  createRequestEnvelope(request) {
     return {
-      protocol: "DF-0.2",
+      protocol: "DF-0.2.1",
       messageId: this.generateId("MSG"),
       requestId: request ? request.id : null,
       origin: request ? request.origin : null,
@@ -19,31 +43,106 @@ class DarkFactoryCommunication {
     };
   }
 
-  send(request) {
-    const envelope = this.createEnvelope(request);
+  // =========================================================
+  // RECEBIMENTO
+  // =========================================================
 
-    if (!request) {
+  receive(envelope) {
+    if (!envelope) {
       return {
         success: false,
         status: "REJEITADO",
-        stage: "COMUNICAÇÃO",
-        reason: "Solicitação ausente.",
-        envelope: envelope
+        stage: "RECEBIMENTO",
+        reason: "Mensagem ausente."
       };
     }
 
+    if (!envelope.payload) {
+      return {
+        success: false,
+        status: "REJEITADO",
+        stage: "RECEBIMENTO",
+        reason: "Mensagem sem payload.",
+        messageId: envelope.messageId || null,
+        requestId: envelope.requestId || null
+      };
+    }
+
+    const request = this.rebuildRequest(envelope.payload);
+
+    return this.processReceivedRequest(envelope, request);
+  }
+
+  // =========================================================
+  // RECONSTRUÇÃO DA SOLICITAÇÃO
+  // =========================================================
+
+  rebuildRequest(data) {
+    return new DarkFactoryRequest({
+      requester: data.requester,
+      origin: data.origin,
+      destination: data.destination,
+      task: data.task,
+      permission: data.permission
+    });
+  }
+
+  // =========================================================
+  // PROCESSAMENTO DA MENSAGEM RECEBIDA
+  // =========================================================
+
+  processReceivedRequest(envelope, request) {
     const result = this.factory.process(request);
 
+    return this.createResponseEnvelope(
+      envelope,
+      request,
+      result
+    );
+  }
+
+  // =========================================================
+  // RESPOSTA
+  // =========================================================
+
+  createResponseEnvelope(envelope, request, result) {
     return {
       success: result.success,
       status: result.status,
-      messageId: envelope.messageId,
+
+      protocol: "DF-0.2.1",
+
+      messageId: this.generateId("MSG"),
+      responseTo: envelope.messageId,
+
       requestId: request.id,
-      origin: request.origin,
-      destination: request.destination,
+
+      origin: request.destination,
+      destination: request.origin,
+
+      type: "RESPONSE",
+
+      createdAt: new Date().toISOString(),
+
       result: result
     };
   }
+
+  // =========================================================
+  // STATUS
+  // =========================================================
+
+  getStatus() {
+    return {
+      name: this.name,
+      version: this.version,
+      status: this.status
+    };
+  }
+
+  // =========================================================
+  // GERADOR DE ID
+  // =========================================================
 
   generateId(prefix) {
     const time = Date.now().toString(36).toUpperCase();
@@ -54,18 +153,8 @@ class DarkFactoryCommunication {
 
     return prefix + "-" + time + "-" + random;
   }
-
-  getStatus() {
-    return {
-      name: this.name,
-      version: this.version,
-      status: this.status
-    };
-  }
 }
 
-
 if (typeof window !== "undefined") {
-  window.DarkFactoryCommunication =
-    DarkFactoryCommunication;
+  window.DarkFactoryCommunication = DarkFactoryCommunication;
 }

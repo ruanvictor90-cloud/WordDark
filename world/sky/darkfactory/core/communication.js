@@ -34,11 +34,17 @@ class DarkFactoryCommunication {
     return {
       protocol: "DF-0.2.1",
       messageId: this.generateId("MSG"),
+
+      // O ID original da solicitação é preservado.
       requestId: request ? request.id : null,
+
       origin: request ? request.origin : null,
       destination: request ? request.destination : null,
+
       type: "REQUEST",
+
       createdAt: new Date().toISOString(),
+
       payload: request ? request.toJSON() : null
     };
   }
@@ -68,31 +74,60 @@ class DarkFactoryCommunication {
       };
     }
 
-    const request = this.rebuildRequest(envelope.payload);
+    const request = this.rebuildRequest(
+      envelope.payload,
+      envelope.requestId
+    );
 
-    return this.processReceivedRequest(envelope, request);
+    return this.processReceivedRequest(
+      envelope,
+      request
+    );
   }
 
   // =========================================================
   // RECONSTRUÇÃO DA SOLICITAÇÃO
   // =========================================================
 
-  rebuildRequest(data) {
-    return new DarkFactoryRequest({
-      requester: data.requester,
-      origin: data.origin,
-      destination: data.destination,
-      task: data.task,
-      permission: data.permission
-    });
+  rebuildRequest(data, originalRequestId) {
+    const request =
+      new DarkFactoryRequest({
+        requester: data.requester,
+        origin: data.origin,
+        destination: data.destination,
+        task: data.task,
+        permission: data.permission
+      });
+
+    /*
+     * A solicitação reconstruída recebe
+     * o mesmo ID da solicitação original.
+     */
+    request.id =
+      originalRequestId || data.id || request.id;
+
+    /*
+     * Preserva também os dados originais.
+     */
+    request.status =
+      data.status || request.status;
+
+    request.rejectionReason =
+      data.rejectionReason || null;
+
+    request.createdAt =
+      data.createdAt || request.createdAt;
+
+    return request;
   }
 
   // =========================================================
-  // PROCESSAMENTO DA MENSAGEM RECEBIDA
+  // PROCESSAMENTO
   // =========================================================
 
   processReceivedRequest(envelope, request) {
-    const result = this.factory.process(request);
+    const result =
+      this.factory.process(request);
 
     return this.createResponseEnvelope(
       envelope,
@@ -105,24 +140,37 @@ class DarkFactoryCommunication {
   // RESPOSTA
   // =========================================================
 
-  createResponseEnvelope(envelope, request, result) {
+  createResponseEnvelope(
+    envelope,
+    request,
+    result
+  ) {
     return {
       success: result.success,
+
       status: result.status,
 
       protocol: "DF-0.2.1",
 
-      messageId: this.generateId("MSG"),
-      responseTo: envelope.messageId,
+      messageId:
+        this.generateId("MSG"),
 
-      requestId: request.id,
+      responseTo:
+        envelope.messageId,
 
-      origin: request.destination,
-      destination: request.origin,
+      requestId:
+        request.id,
+
+      origin:
+        request.destination,
+
+      destination:
+        request.origin,
 
       type: "RESPONSE",
 
-      createdAt: new Date().toISOString(),
+      createdAt:
+        new Date().toISOString(),
 
       result: result
     };
@@ -145,16 +193,28 @@ class DarkFactoryCommunication {
   // =========================================================
 
   generateId(prefix) {
-    const time = Date.now().toString(36).toUpperCase();
-    const random = Math.random()
-      .toString(36)
-      .substring(2, 6)
-      .toUpperCase();
+    const time =
+      Date.now()
+        .toString(36)
+        .toUpperCase();
 
-    return prefix + "-" + time + "-" + random;
+    const random =
+      Math.random()
+        .toString(36)
+        .substring(2, 6)
+        .toUpperCase();
+
+    return (
+      prefix +
+      "-" +
+      time +
+      "-" +
+      random
+    );
   }
 }
 
 if (typeof window !== "undefined") {
-  window.DarkFactoryCommunication = DarkFactoryCommunication;
+  window.DarkFactoryCommunication =
+    DarkFactoryCommunication;
 }

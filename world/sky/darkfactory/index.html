@@ -1,13 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#10131b">
 
-  <title>Dark Factory — DF-0.2</title>
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="theme-color"
+    content="#10131b"
+  >
+
+  <title>Dark Factory — DF-0.2.1</title>
 
   <style>
+
     * {
       box-sizing: border-box;
     }
@@ -27,6 +38,10 @@
 
     h1 {
       margin-bottom: 5px;
+    }
+
+    h2 {
+      margin-top: 0;
     }
 
     .subtitle {
@@ -107,6 +122,15 @@
       font-size: 13px;
     }
 
+    .tag {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: #30394d;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
     pre {
       white-space: pre-wrap;
       overflow-wrap: anywhere;
@@ -117,21 +141,31 @@
       color: #dce4f5;
       font-size: 13px;
     }
+
   </style>
+
 </head>
+
 
 <body>
 
 <main>
 
+
+  <!-- ===================================================== -->
+  <!-- CABEÇALHO -->
+  <!-- ===================================================== -->
+
   <h1>Dark Factory</h1>
 
   <div class="subtitle">
-    WordDark · Céu · Núcleo DF-0.2
+    WordDark · Céu · Núcleo DF-0.2.1
   </div>
 
 
+  <!-- ===================================================== -->
   <!-- CENTRAL DE SOLICITAÇÕES -->
+  <!-- ===================================================== -->
 
   <section class="panel">
 
@@ -143,6 +177,7 @@
 
 
     <form id="requestForm">
+
 
       <label for="requester">
         Identificação do solicitante
@@ -164,7 +199,7 @@
         id="origin"
         required
         maxlength="100"
-        placeholder="Ex.: Terra / SucoCast"
+        placeholder="Ex.: world/earth"
       >
 
 
@@ -176,7 +211,7 @@
         id="destination"
         required
         maxlength="100"
-        placeholder="Ex.: Céu / Dark Factory"
+        placeholder="Ex.: darkfactory"
       >
 
 
@@ -222,26 +257,42 @@
   </section>
 
 
+  <!-- ===================================================== -->
   <!-- ESTADO DO NÚCLEO -->
+  <!-- ===================================================== -->
 
   <section class="panel">
 
     <h2>Estado do núcleo</h2>
 
-    <p id="systemStatus" class="status">
+    <p
+      id="systemStatus"
+      class="status"
+    >
       Inicializando...
     </p>
 
     <p class="small">
-      DF-0.2 adiciona a camada de comunicação interna.
-      A autorização atual continua sendo demonstrativa e ainda
-      não representa controle de acesso real.
+
+      DF-0.2.1 separa o fluxo de comunicação em:
+
+      <br><br>
+
+      Envio → Recebimento → Execução → Resposta
+
+      <br><br>
+
+      A autorização atual continua sendo demonstrativa
+      e ainda não representa controle de acesso real.
+
     </p>
 
   </section>
 
 
-  <!-- RESULTADO -->
+  <!-- ===================================================== -->
+  <!-- ÚLTIMO RESULTADO -->
+  <!-- ===================================================== -->
 
   <section class="panel">
 
@@ -254,7 +305,9 @@ Nenhuma solicitação processada.
   </section>
 
 
+  <!-- ===================================================== -->
   <!-- REGISTROS -->
+  <!-- ===================================================== -->
 
   <section class="panel">
 
@@ -280,24 +333,49 @@ Nenhuma solicitação processada.
   </section>
 
 
+  <!-- ===================================================== -->
   <!-- COMUNICAÇÃO -->
+  <!-- ===================================================== -->
 
   <section class="panel">
 
-    <h2>Comunicação DF-0.2</h2>
+    <h2>Comunicação DF-0.2.1</h2>
 
-    <p id="communicationStatus" class="status">
+    <p
+      id="communicationStatus"
+      class="status"
+    >
       Inicializando comunicação...
     </p>
 
-    <pre id="lastMessage">
+
+    <h3>Mensagem enviada</h3>
+
+    <span class="tag">
+      REQUEST
+    </span>
+
+    <pre id="requestMessage">
 Nenhuma mensagem enviada.
+    </pre>
+
+
+    <h3>Resposta recebida</h3>
+
+    <span class="tag">
+      RESPONSE
+    </span>
+
+    <pre id="responseMessage">
+Nenhuma resposta recebida.
     </pre>
 
   </section>
 
 
+  <!-- ===================================================== -->
   <!-- LOGS -->
+  <!-- ===================================================== -->
 
   <section class="panel">
 
@@ -309,85 +387,95 @@ Nenhum log registrado.
 
   </section>
 
+
 </main>
 
 
-<!--
-  CARREGAMENTO DO NÚCLEO
+<!-- ======================================================= -->
+<!-- CARREGAMENTO DO NÚCLEO -->
+<!-- ======================================================= -->
 
-  A ordem é importante.
--->
-
-<script src="core/request.js"></script>
-<script src="core/validator.js"></script>
-<script src="core/logger.js"></script>
-<script src="core/executor.js"></script>
-<script src="core/factory.js"></script>
-<script src="core/communication.js"></script>
+<script src="core/request.js?v=0.2.1"></script>
+<script src="core/validator.js?v=0.2.1"></script>
+<script src="core/logger.js?v=0.2.1"></script>
+<script src="core/executor.js?v=0.2.1"></script>
+<script src="core/factory.js?v=0.2.1"></script>
+<script src="core/communication.js?v=0.2.1"></script>
 
 
 <script>
 
-  /*
-   * Inicialização do núcleo
-   */
 
-  const factory = new DarkFactory();
+  // =======================================================
+  // INICIALIZAÇÃO
+  // =======================================================
 
+  const factory =
+    new DarkFactory();
 
-  /*
-   * Inicialização da comunicação DF-0.2
-   */
 
   const communication =
     new DarkFactoryCommunication(factory);
 
 
-  /*
-   * Elementos da interface
-   */
+  // =======================================================
+  // ELEMENTOS DA INTERFACE
+  // =======================================================
 
   const form =
     document.getElementById("requestForm");
 
+
   const list =
     document.getElementById("requestList");
+
 
   const counter =
     document.getElementById("counter");
 
+
   const systemStatus =
     document.getElementById("systemStatus");
+
 
   const communicationStatus =
     document.getElementById("communicationStatus");
 
+
   const clearButton =
     document.getElementById("clearButton");
+
 
   const lastResult =
     document.getElementById("lastResult");
 
-  const lastMessage =
-    document.getElementById("lastMessage");
+
+  const requestMessage =
+    document.getElementById("requestMessage");
+
+
+  const responseMessage =
+    document.getElementById("responseMessage");
+
 
   const logViewer =
     document.getElementById("logViewer");
 
 
-  /*
-   * Memória da interface
-   */
+  // =======================================================
+  // MEMÓRIA DA INTERFACE
+  // =======================================================
 
   let requests = [];
 
 
-  /*
-   * Estado inicial do núcleo
-   */
+  // =======================================================
+  // ESTADO INICIAL
+  // =======================================================
 
   const initialStatus =
     factory.getStatus();
+
 
   systemStatus.textContent =
     initialStatus.name +
@@ -397,12 +485,9 @@ Nenhum log registrado.
     initialStatus.status;
 
 
-  /*
-   * Estado inicial da comunicação
-   */
-
   const initialCommunicationStatus =
     communication.getStatus();
+
 
   communicationStatus.textContent =
     initialCommunicationStatus.name +
@@ -412,142 +497,179 @@ Nenhum log registrado.
     initialCommunicationStatus.status;
 
 
-  /*
-   * FORMULÁRIO
-   */
+  // =======================================================
+  // FORMULÁRIO
+  // =======================================================
 
-  form.addEventListener("submit", function(event) {
+  form.addEventListener(
+    "submit",
+    function(event) {
 
-    event.preventDefault();
+      event.preventDefault();
 
 
-    /*
-     * Criação da solicitação
-     */
+      // ---------------------------------------------------
+      // CRIAÇÃO DA SOLICITAÇÃO ORIGINAL
+      // ---------------------------------------------------
 
-    const request =
-      new DarkFactoryRequest({
+      const request =
+        new DarkFactoryRequest({
 
-        requester:
-          document
-            .getElementById("requester")
-            .value
-            .trim(),
+          requester:
+            document
+              .getElementById("requester")
+              .value
+              .trim(),
 
-        origin:
-          document
-            .getElementById("origin")
-            .value
-            .trim(),
+          origin:
+            document
+              .getElementById("origin")
+              .value
+              .trim(),
 
-        destination:
-          document
-            .getElementById("destination")
-            .value
-            .trim(),
+          destination:
+            document
+              .getElementById("destination")
+              .value
+              .trim(),
 
-        task:
-          document
-            .getElementById("task")
-            .value
-            .trim(),
+          task:
+            document
+              .getElementById("task")
+              .value
+              .trim(),
 
-        permission:
-          document
-            .getElementById("permission")
-            .value
+          permission:
+            document
+              .getElementById("permission")
+              .value
+
+        });
+
+
+      // ---------------------------------------------------
+      // GUARDA O ID ORIGINAL
+      // ---------------------------------------------------
+
+      const originalRequestId =
+        request.id;
+
+
+      // ---------------------------------------------------
+      // ENVIO PELA RODOVIA
+      // ---------------------------------------------------
+
+      const result =
+        communication.send(request);
+
+
+      // ---------------------------------------------------
+      // REGISTRO DA SESSÃO
+      // ---------------------------------------------------
+
+      requests.unshift({
+
+        request:
+          request.toJSON(),
+
+        result:
+          result
 
       });
 
 
-    /*
-     * Envio pela camada de comunicação DF-0.2
-     */
+      // ---------------------------------------------------
+      // ATUALIZA INTERFACE
+      // ---------------------------------------------------
 
-    const result =
-      communication.send(request);
+      renderRequests();
 
+      renderLogs();
 
-    /*
-     * Guarda a solicitação na memória da interface
-     */
+      renderResult(result);
 
-    requests.unshift({
-
-      request:
-        request.toJSON(),
-
-      result:
+      renderCommunication(
+        request,
         result
-
-    });
-
-
-    /*
-     * Atualiza a interface
-     */
-
-    renderRequests();
-
-    renderLogs();
-
-    renderResult(result);
-
-    renderMessage(result);
+      );
 
 
-    /*
-     * Limpa formulário
-     */
+      // ---------------------------------------------------
+      // LIMPA FORMULÁRIO
+      // ---------------------------------------------------
 
-    form.reset();
+      form.reset();
 
 
-    /*
-     * Estado visual
-     */
+      // ---------------------------------------------------
+      // ESTADO VISUAL
+      // ---------------------------------------------------
 
-    if (result.success) {
+      if (result.success) {
 
-      systemStatus.textContent =
-        "Solicitação processada pelo núcleo DF-0.1 através da comunicação DF-0.2.";
+        systemStatus.textContent =
+          "Solicitação processada pelo núcleo DF-0.1 através da comunicação DF-0.2.1.";
 
-      systemStatus.className =
-        "status success";
 
-      communicationStatus.textContent =
-        "Mensagem DF-0.2 enviada com sucesso.";
+        systemStatus.className =
+          "status success";
 
-      communicationStatus.className =
-        "status success";
 
-    } else {
+        communicationStatus.textContent =
+          "Mensagem DF-0.2.1 enviada, recebida e respondida com sucesso.";
 
-      systemStatus.textContent =
-        "Solicitação não executada: " +
-        (
-          result.reason ||
-          result.message ||
-          "verifique os registros."
-        );
 
-      systemStatus.className =
-        "status error";
+        communicationStatus.className =
+          "status success";
 
-      communicationStatus.textContent =
-        "Comunicação concluída, mas a solicitação foi rejeitada.";
 
-      communicationStatus.className =
-        "status error";
+      } else {
+
+        systemStatus.textContent =
+          "Solicitação não executada: " +
+          (
+            result.reason ||
+            result.message ||
+            "verifique os registros."
+          );
+
+
+        systemStatus.className =
+          "status error";
+
+
+        communicationStatus.textContent =
+          "Comunicação concluída, mas a solicitação foi rejeitada.";
+
+
+        communicationStatus.className =
+          "status error";
+
+      }
+
+
+      // ---------------------------------------------------
+      // VERIFICAÇÃO VISUAL DO REQUEST ID
+      // ---------------------------------------------------
+
+      console.log(
+        "DF-0.2.1 — Request ID original:",
+        originalRequestId
+      );
+
+
+      console.log(
+        "DF-0.2.1 — Request ID da resposta:",
+        result.requestId
+      );
 
     }
+  );
 
-  });
 
-
-  /*
-   * RENDERIZA RESULTADO
-   */
+  // =======================================================
+  // RESULTADO
+  // =======================================================
 
   function renderResult(result) {
 
@@ -561,22 +683,90 @@ Nenhum log registrado.
   }
 
 
-  /*
-   * RENDERIZA MENSAGEM
-   */
+  // =======================================================
+  // COMUNICAÇÃO
+  // =======================================================
 
-  function renderMessage(result) {
+  function renderCommunication(
+    request,
+    result
+  ) {
 
-    lastMessage.textContent =
+
+    // -----------------------------------------------------
+    // REQUEST
+    // -----------------------------------------------------
+
+    const requestEnvelope = {
+
+      protocol:
+        "DF-0.2.1",
+
+      messageId:
+        "Mensagem enviada pela camada de comunicação",
+
+      requestId:
+        request.id,
+
+      origin:
+        request.origin,
+
+      destination:
+        request.destination,
+
+      type:
+        "REQUEST",
+
+      payload:
+        request.toJSON()
+
+    };
+
+
+    requestMessage.textContent =
       JSON.stringify(
-        {
-          protocol: "DF-0.2",
-          messageId: result.messageId || null,
-          requestId: result.requestId || null,
-          origin: result.origin || null,
-          destination: result.destination || null,
-          status: result.status || null
-        },
+        requestEnvelope,
+        null,
+        2
+      );
+
+
+    // -----------------------------------------------------
+    // RESPONSE
+    // -----------------------------------------------------
+
+    const responseEnvelope = {
+
+      protocol:
+        result.protocol || "DF-0.2.1",
+
+      messageId:
+        result.messageId || null,
+
+      responseTo:
+        result.responseTo || null,
+
+      requestId:
+        result.requestId || null,
+
+      origin:
+        result.origin || null,
+
+      destination:
+        result.destination || null,
+
+      type:
+        result.type || "RESPONSE",
+
+      status:
+        result.status || null
+
+    };
+
+
+    responseMessage.textContent =
+      JSON.stringify(
+        responseEnvelope,
         null,
         2
       );
@@ -584,9 +774,9 @@ Nenhum log registrado.
   }
 
 
-  /*
-   * RENDERIZA SOLICITAÇÕES
-   */
+  // =======================================================
+  // REGISTRO DE SOLICITAÇÕES
+  // =======================================================
 
   function renderRequests() {
 
@@ -604,83 +794,89 @@ Nenhum log registrado.
         "Nenhuma solicitação registrada.";
 
       return;
+
     }
 
 
-    requests.forEach(function(item) {
+    requests.forEach(
+      function(item) {
 
-      const entry =
-        document.createElement("article");
-
-      entry.className =
-        "entry";
-
-
-      addTextElement(
-        entry,
-        "h3",
-        item.request.id
-      );
+        const entry =
+          document.createElement(
+            "article"
+          );
 
 
-      addTextElement(
-        entry,
-        "p",
-        "Solicitante: " +
-        item.request.requester
-      );
+        entry.className =
+          "entry";
 
 
-      addTextElement(
-        entry,
-        "p",
-        "Origem: " +
-        item.request.origin
-      );
+        addTextElement(
+          entry,
+          "h3",
+          item.request.id
+        );
 
 
-      addTextElement(
-        entry,
-        "p",
-        "Destino: " +
-        item.request.destination
-      );
+        addTextElement(
+          entry,
+          "p",
+          "Solicitante: " +
+          item.request.requester
+        );
 
 
-      addTextElement(
-        entry,
-        "p",
-        "Tarefa: " +
-        item.request.task
-      );
+        addTextElement(
+          entry,
+          "p",
+          "Origem: " +
+          item.request.origin
+        );
 
 
-      addTextElement(
-        entry,
-        "p",
-        "Permissão: " +
-        item.request.permission
-      );
+        addTextElement(
+          entry,
+          "p",
+          "Destino: " +
+          item.request.destination
+        );
 
 
-      addTextElement(
-        entry,
-        "p",
-        "Resultado: " +
-        item.result.status
-      );
+        addTextElement(
+          entry,
+          "p",
+          "Tarefa: " +
+          item.request.task
+        );
 
 
-      list.appendChild(entry);
+        addTextElement(
+          entry,
+          "p",
+          "Permissão: " +
+          item.request.permission
+        );
 
-    });
+
+        addTextElement(
+          entry,
+          "p",
+          "Resultado: " +
+          item.result.status
+        );
+
+
+        list.appendChild(entry);
+
+      }
+    );
 
   }
 
 
-  /*
-   * RENDERIZA LOGS
-   */
+  // =======================================================
+  // LOGS
+  // =======================================================
 
   function renderLogs() {
 
@@ -694,6 +890,7 @@ Nenhum log registrado.
         "Nenhum log registrado.";
 
       return;
+
     }
 
 
@@ -707,9 +904,9 @@ Nenhum log registrado.
   }
 
 
-  /*
-   * ELEMENTO DE TEXTO SEGURO
-   */
+  // =======================================================
+  // ELEMENTO DE TEXTO
+  // =======================================================
 
   function addTextElement(
     parent,
@@ -720,17 +917,19 @@ Nenhum log registrado.
     const element =
       document.createElement(tag);
 
+
     element.textContent =
       text;
+
 
     parent.appendChild(element);
 
   }
 
 
-  /*
-   * LIMPAR REGISTROS
-   */
+  // =======================================================
+  // LIMPAR REGISTROS
+  // =======================================================
 
   clearButton.addEventListener(
     "click",
@@ -738,26 +937,39 @@ Nenhum log registrado.
 
       requests = [];
 
+
       factory.clearLogs();
+
 
       renderRequests();
 
+
       renderLogs();
+
 
       lastResult.textContent =
         "Nenhuma solicitação processada.";
 
-      lastMessage.textContent =
+
+      requestMessage.textContent =
         "Nenhuma mensagem enviada.";
+
+
+      responseMessage.textContent =
+        "Nenhuma resposta recebida.";
+
 
       systemStatus.textContent =
         "Registros da sessão limpos.";
 
+
       systemStatus.className =
         "status";
 
+
       communicationStatus.textContent =
-        "Comunicação DF-0.2 online.";
+        "Comunicação DF-0.2.1 online.";
+
 
       communicationStatus.className =
         "status";
@@ -766,15 +978,17 @@ Nenhum log registrado.
   );
 
 
-  /*
-   * Estado inicial da interface
-   */
+  // =======================================================
+  // ESTADO INICIAL
+  // =======================================================
 
   renderRequests();
 
   renderLogs();
 
+
 </script>
 
 </body>
+
 </html>

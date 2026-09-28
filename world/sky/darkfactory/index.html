@@ -131,6 +131,16 @@
       margin-bottom: 8px;
     }
 
+    .flow {
+      padding: 12px;
+      background: #101622;
+      border: 1px solid #30394d;
+      border-radius: 8px;
+      text-align: center;
+      line-height: 1.8;
+      font-weight: bold;
+    }
+
     pre {
       white-space: pre-wrap;
       overflow-wrap: anywhere;
@@ -272,13 +282,24 @@
       Inicializando...
     </p>
 
+    <div class="flow">
+
+      Entrada
+      →
+      Envio
+      →
+      Recebimento
+      →
+      Execução
+      →
+      Resposta
+
+    </div>
+
     <p class="small">
 
-      DF-0.2.1 separa o fluxo de comunicação em:
-
-      <br><br>
-
-      Envio → Recebimento → Execução → Resposta
+      DF-0.2.1 separa o fluxo de comunicação e preserva
+      a identidade da solicitação.
 
       <br><br>
 
@@ -327,7 +348,9 @@ Nenhuma solicitação processada.
       class="secondary"
       type="button"
     >
+
       Limpar registros desta sessão
+
     </button>
 
   </section>
@@ -345,14 +368,16 @@ Nenhuma solicitação processada.
       id="communicationStatus"
       class="status"
     >
+
       Inicializando comunicação...
+
     </p>
 
 
     <h3>Mensagem enviada</h3>
 
     <span class="tag">
-      REQUEST
+      REQUEST REAL
     </span>
 
     <pre id="requestMessage">
@@ -363,7 +388,7 @@ Nenhuma mensagem enviada.
     <h3>Resposta recebida</h3>
 
     <span class="tag">
-      RESPONSE
+      RESPONSE REAL
     </span>
 
     <pre id="responseMessage">
@@ -396,10 +421,15 @@ Nenhum log registrado.
 <!-- ======================================================= -->
 
 <script src="core/request.js?v=0.2.1"></script>
+
 <script src="core/validator.js?v=0.2.1"></script>
+
 <script src="core/logger.js?v=0.2.1"></script>
+
 <script src="core/executor.js?v=0.2.1"></script>
+
 <script src="core/factory.js?v=0.2.1"></script>
+
 <script src="core/communication.js?v=0.2.1"></script>
 
 
@@ -509,7 +539,7 @@ Nenhum log registrado.
 
 
       // ---------------------------------------------------
-      // CRIAÇÃO DA SOLICITAÇÃO ORIGINAL
+      // CRIAÇÃO DA SOLICITAÇÃO
       // ---------------------------------------------------
 
       const request =
@@ -556,7 +586,7 @@ Nenhum log registrado.
 
 
       // ---------------------------------------------------
-      // ENVIO PELA RODOVIA
+      // ENVIO PELA COMUNICAÇÃO
       // ---------------------------------------------------
 
       const result =
@@ -588,10 +618,7 @@ Nenhum log registrado.
 
       renderResult(result);
 
-      renderCommunication(
-        request,
-        result
-      );
+      renderCommunication(result);
 
 
       // ---------------------------------------------------
@@ -616,7 +643,7 @@ Nenhum log registrado.
 
 
         communicationStatus.textContent =
-          "Mensagem DF-0.2.1 enviada, recebida e respondida com sucesso.";
+          "REQUEST enviado, recebido e RESPONSE retornado com IDs reais.";
 
 
         communicationStatus.className =
@@ -649,7 +676,7 @@ Nenhum log registrado.
 
 
       // ---------------------------------------------------
-      // VERIFICAÇÃO VISUAL DO REQUEST ID
+      // DEBUG
       // ---------------------------------------------------
 
       console.log(
@@ -661,6 +688,18 @@ Nenhum log registrado.
       console.log(
         "DF-0.2.1 — Request ID da resposta:",
         result.requestId
+      );
+
+
+      console.log(
+        "DF-0.2.1 — Request Message ID:",
+        result.requestMessageId
+      );
+
+
+      console.log(
+        "DF-0.2.1 — Response To:",
+        result.responseTo
       );
 
     }
@@ -687,52 +726,36 @@ Nenhum log registrado.
   // COMUNICAÇÃO
   // =======================================================
 
-  function renderCommunication(
-    request,
-    result
-  ) {
+  function renderCommunication(result) {
 
 
     // -----------------------------------------------------
-    // REQUEST
+    // REQUEST REAL
     // -----------------------------------------------------
 
-    const requestEnvelope = {
-
-      protocol:
-        "DF-0.2.1",
-
-      messageId:
-        "Mensagem enviada pela camada de comunicação",
-
-      requestId:
-        request.id,
-
-      origin:
-        request.origin,
-
-      destination:
-        request.destination,
-
-      type:
-        "REQUEST",
-
-      payload:
-        request.toJSON()
-
-    };
+    const requestEnvelope =
+      result.requestEnvelope || null;
 
 
-    requestMessage.textContent =
-      JSON.stringify(
-        requestEnvelope,
-        null,
-        2
-      );
+    if (requestEnvelope) {
+
+      requestMessage.textContent =
+        JSON.stringify(
+          requestEnvelope,
+          null,
+          2
+        );
+
+    } else {
+
+      requestMessage.textContent =
+        "Nenhum REQUEST disponível.";
+
+    }
 
 
     // -----------------------------------------------------
-    // RESPONSE
+    // RESPONSE REAL
     // -----------------------------------------------------
 
     const responseEnvelope = {
@@ -864,6 +887,38 @@ Nenhum log registrado.
           "Resultado: " +
           item.result.status
         );
+
+
+        // -------------------------------------------------
+        // MESSAGE ID REAL
+        // -------------------------------------------------
+
+        if (item.result.requestMessageId) {
+
+          addTextElement(
+            entry,
+            "p",
+            "Message ID: " +
+            item.result.requestMessageId
+          );
+
+        }
+
+
+        // -------------------------------------------------
+        // RESPONSE TO REAL
+        // -------------------------------------------------
+
+        if (item.result.responseTo) {
+
+          addTextElement(
+            entry,
+            "p",
+            "Response To: " +
+            item.result.responseTo
+          );
+
+        }
 
 
         list.appendChild(entry);

@@ -21,6 +21,7 @@ class WordDarkOperationEngine {
     this.route = options.route || (() => ({ success: false, reason: "Roteamento não configurado." }));
     this.execute = options.execute || (() => ({ success: false, reason: "Executor não configurado." }));
     this.registry = options.registry || null;
+    this.environmentGuard = options.environmentGuard || null;
     this.record = options.record || (() => {});
     this.idPrefix = options.idPrefix || "OP";
   }
@@ -63,6 +64,18 @@ class WordDarkOperationEngine {
 
     operation.transition("IDENTIFIED");
     this.recordStage(operation);
+
+    if (this.environmentGuard && typeof this.environmentGuard.canRun === "function") {
+      const environment = this.environmentGuard.canRun(operation);
+      if (!environment || environment.allowed !== true) {
+        operation.transition("BLOCKED", {
+          stage:"ENVIRONMENT",
+          reason:(environment && environment.reason) || "Ambiente bloqueado."
+        });
+        this.recordStage(operation);
+        return operation;
+      }
+    }
 
     const authorization = this.authorize(operation);
     if (!authorization || authorization.allowed !== true) {

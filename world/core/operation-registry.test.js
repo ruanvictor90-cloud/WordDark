@@ -1,5 +1,5 @@
 const assert = require("assert");
-const { WordDarkOperation } = require("../contracts/operation");
+const WordDarkOperation = require("../contracts/operation");
 const { WordDarkOperationRegistry } = require("./operation-registry");
 const { WordDarkLocalLibrary } = require("../library/local-library");
 const { WordDarkCentralLibrary } = require("../library/central-library");

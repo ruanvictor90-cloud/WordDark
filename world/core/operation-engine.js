@@ -24,6 +24,7 @@ class WordDarkOperationEngine {
     this.record = options.record || (() => {});
     this.idPrefix = options.idPrefix || "OP";
     this.completedOperations = new Set();
+    this.emergencyStop = options.emergencyStop || null;
   }
 
   generateId() {
@@ -45,6 +46,20 @@ class WordDarkOperationEngine {
   run(operation) {
     if (!(operation instanceof WordDarkOperation)) throw new Error("O engine exige uma instância de WordDarkOperation.");
 
+    const emergencyCheck=()=>{
+      if(!this.emergencyStop || typeof this.emergencyStop.assertRunning!=="function") return {allowed:true};
+      return this.emergencyStop.assertRunning(operation.operationId);
+    };
+    const cancelIfStopped=(stage)=>{
+      const check=emergencyCheck();
+      if(check.allowed) return false;
+      if(!WordDarkOperation.TERMINAL_STATUSES.includes(operation.status)){
+        operation.transition("CANCELLED",{stage,reason:"EMERGENCY_STOP_ACTIVE",stopId:check.stopId||null,sectorId:check.sectorId||null});
+        this.recordStage(operation,{stage,reason:"EMERGENCY_STOP_ACTIVE",stopId:check.stopId||null,sectorId:check.sectorId||null});
+      }
+      return true;
+    };
+
     if(this.completedOperations.has(operation.operationId)){
       operation.replayBlocked=true;
       this.recordStage(operation,{stage:"SECURITY",reason:"OPERATION_ALREADY_COMPLETED"});
@@ -58,8 +73,12 @@ class WordDarkOperationEngine {
       return operation;
     }
 
+    if(cancelIfStopped("PRE_EXECUTION")) return operation;
+
     operation.transition("IDENTIFIED");
     this.recordStage(operation);
+
+    if(cancelIfStopped("IDENTIFIED")) return operation;
 
     if(this.environmentGuard&&typeof this.environmentGuard.canRun==="function"){
       const environment=this.environmentGuard.canRun(operation);
@@ -70,6 +89,8 @@ class WordDarkOperationEngine {
       }
     }
 
+    if(cancelIfStopped("ENVIRONMENT")) return operation;
+
     const authorization=this.authorize(operation);
     if(!authorization||authorization.allowed!==true){
       operation.transition("REJECTED",{stage:"AUTHORIZATION",reason:(authorization&&authorization.reason)||"Operação não autorizada."});
@@ -77,8 +98,12 @@ class WordDarkOperationEngine {
       return operation;
     }
 
+    if(cancelIfStopped("AUTHORIZATION")) return operation;
+
     operation.transition("AUTHORIZED",{authorization:authorization.reference||null});
     this.recordStage(operation);
+
+    if(cancelIfStopped("AUTHORIZED")) return operation;
 
     const routing=this.route(operation);
     if(!routing||routing.success!==true){
@@ -87,13 +112,19 @@ class WordDarkOperationEngine {
       return operation;
     }
 
+    if(cancelIfStopped("ROUTING")) return operation;
+
     operation.transition("ROUTED",{routeId:routing.routeId||null});
     this.recordStage(operation);
+
+    if(cancelIfStopped("ROUTED")) return operation;
 
     operation.transition("EXECUTING");
     this.recordStage(operation);
 
-    const execution=this.execute(operation);
+    const execution=this.execute(operation,{emergencyStop:this.emergencyStop});
+    if(cancelIfStopped("EXECUTION")) return operation;
+
     if(!execution||execution.success!==true){
       operation.transition("FAILED",{stage:"EXECUTION",reason:(execution&&execution.reason)||"Execução falhou."});
       this.recordStage(operation);
@@ -101,6 +132,7 @@ class WordDarkOperationEngine {
     }
 
     operation.transition("VALIDATING",{execution:execution.result||execution});
+    if(cancelIfStopped("VALIDATING")) return operation;
     this.recordStage(operation);
 
     const validation=execution.validated===false

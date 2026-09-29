@@ -1,38 +1,57 @@
 # Dark Factory
 
-A Dark Factory é uma unidade de execução do Céu dentro do WordDark.
+A Dark Factory é uma unidade de execução do **Céu** dentro do WordDark.
 
-Sua função é receber necessidades autorizadas, transformar essas necessidades em tarefas executáveis, realizar o processamento necessário e devolver o resultado de forma rastreável.
+Ela existe como infraestrutura compartilhada para atender unidades da **Terra**. Sua função, no domínio de conteúdo, é equivalente a uma ferramenta de criação e edição: recebe um requerimento autorizado, produz/processa/valida o material e devolve o resultado.
 
 ## Posição no WordDark
 
+```
 WORDDARK
 │
 ├── CÉU
-│   │
 │   └── DARK FACTORY
+│       └── Serviço compartilhado de produção
 │
 └── TERRA
+    └── Países / Estados / Marcas / Canais
+```
 
-## Preparação para escala
+## Regra fundamental de responsabilidade
 
-A fábrica foi preparada para atender muitas unidades da Terra sem transformar o núcleo em um bloco único.
+**A Dark Factory não administra marcas, canais ou redes sociais.**
 
-Áreas estruturais preparadas:
+Ela **não escolhe onde publicar**, **não decide o destino do conteúdo** e **não define a necessidade da Terra**.
 
-- Contracts — contratos entre componentes
-- Routing — Rodovia e encaminhamento
-- Registry — catálogo de unidades e capacidades
-- Security — identidade e autorização
-- Storage — armazenamento persistente
-- Core — núcleo de execução
+Quem gera a necessidade é responsável por definir o requerimento e o destino.
 
-A ideia é simples: novas cidades, marcas, projetos, estados e canais podem entrar no mundo sem exigir reconstrução do núcleo.
+```
+🌎 PAÍS / ESTADO
+   │
+   │ requerimento de conteúdo
+   ▼
+🚧 RODOVIA
+   ▼
+🏭 DARK FACTORY · CÉU
+   ├── criação
+   ├── edição
+   ├── processamento
+   └── validação
+   │
+   ▼
+🚧 RODOVIA
+   ▼
+🌎 PAÍS / ESTADO
+   ├── recebe o material
+   ├── decide o destino
+   └── distribui/publica
+```
+
+Exemplo: o SucoCast pode pedir **"produza um vídeo sobre X, formato Y, duração Z"**. A Dark Factory não recebe uma lista de YouTube/Instagram/TikTok para decidir distribuição.
 
 ## Função principal
 
-A Dark Factory transforma solicitações em execução.
-
+```
 SOLICITAÇÃO
      ↓
 IDENTIFICAÇÃO
@@ -41,13 +60,16 @@ AUTORIZAÇÃO
      ↓
 PLANEJAMENTO
      ↓
-EXECUÇÃO
+CRIAÇÃO / EDIÇÃO
+     ↓
+PROCESSAMENTO
      ↓
 VALIDAÇÃO
      ↓
 REGISTRO
      ↓
 RESULTADO
+```
 
 ## Estrutura inicial
 
@@ -57,7 +79,9 @@ DARK FACTORY
 ├── Identidade
 ├── Permissões
 ├── Planejamento
-├── Execução
+├── Produção
+├── Edição
+├── Processamento
 ├── Validação
 ├── Segurança
 ├── Logs
@@ -74,25 +98,29 @@ DARK FACTORY
 - Registro
 - Retorno de resultados
 - Evolução por versões
+- Separação entre produção e distribuição
 
 ## Solicitações
 
-Toda solicitação recebida pela Dark Factory deverá possuir uma identificação própria.
+Toda solicitação recebida pela Dark Factory deverá possuir identificação própria.
 
 Uma solicitação deve permitir determinar:
 
 - Quem solicitou
 - Qual é a origem
-- Qual é o destino
-- O que precisa ser executado
+- Qual é o destino do serviço
+- O que precisa ser produzido/editado
+- Quais especificações foram fornecidas
 - Quais permissões possui
 - Qual executor será utilizado
 - Qual foi o resultado
 - O que aconteceu durante a execução
 
+O **destino de publicação** não faz parte da responsabilidade da fábrica.
+
 ## Execução
 
-A Dark Factory não deve executar uma solicitação diretamente sem antes verificar sua identidade e autorização.
+A Dark Factory não deve executar uma solicitação diretamente sem verificar identidade e autorização.
 
 O fluxo mínimo é:
 
@@ -102,9 +130,11 @@ IDENTIDADE
   ↓
 PERMISSÃO
   ↓
-TAREFA
+REQUERIMENTO
   ↓
 EXECUTOR
+  ↓
+PRODUÇÃO / PROCESSAMENTO
   ↓
 VALIDAÇÃO
   ↓
@@ -112,55 +142,17 @@ LOG
   ↓
 RETORNO
 
-## Segurança
+## Escala
 
-A segurança faz parte da estrutura da fábrica desde o início.
+A Dark Factory fica no Céu para ser reutilizada por diferentes unidades da Terra.
 
-A fábrica deverá possuir mecanismos para:
+Novos Estados, marcas, cidades, canais e projetos podem solicitar serviços sem precisar criar sua própria fábrica.
 
-- Identificar solicitações
-- Verificar permissões
-- Restringir ações
-- Registrar eventos
-- Detectar falhas
-- Interromper execuções quando necessário
-- Manter rastreabilidade
-
-## Logs
-
-Toda execução importante deverá produzir registros.
-
-Os registros poderão armazenar:
-
-- ID da solicitação
-- Origem
-- Destino
-- Data e hora
-- Executor
-- Ação realizada
-- Resultado
-- Falhas
-- Motivo de rejeição
-- Alterações realizadas
-
-## Resultado
-
-Após a execução, a Dark Factory deverá devolver um resultado para a origem da solicitação.
-
-O resultado poderá representar:
-
-SUCESSO
-FALHA
-REJEITADO
-INTERROMPIDO
-PENDENTE
+Isso permite que cada unidade da Terra mantenha suas próprias raízes, identidade, estratégia e distribuição.
 
 ## Evolução
 
-A Dark Factory será desenvolvida de forma incremental.
-
 ### DF-0.1
-
 - Entrada de solicitação
 - Identificação
 - Permissão básica
@@ -169,15 +161,12 @@ A Dark Factory será desenvolvida de forma incremental.
 - Registro básico
 
 ### DF-0.2
-
 Comunicação entre componentes.
 
 ### DF-0.3
-
 Sistema de executores.
 
-### DF-0.4 — Preparação de escala
-
+### DF-0.4
 - Contratos
 - Rodovia / Routing
 - Registry
@@ -186,17 +175,13 @@ Sistema de executores.
 - Preparação para múltiplas unidades da Terra
 
 ### DF-0.5
-
 Automação e processamento de fluxos.
 
 ### DF-0.6
+Separação explícita entre **produção de conteúdo no Céu** e **distribuição/publicação na Terra**.
 
-Integração com outras estruturas do WordDark.
+## Regra de arquitetura
 
-## Regra fundamental
+> **A Fábrica produz. O País/Estado decide o que precisa e para onde vai.**
 
-A Dark Factory deve poder crescer sem exigir a reconstrução do seu núcleo.
-
-Novos executores, serviços, ferramentas e sistemas deverão ser adicionados como módulos sempre que possível.
-
-A fábrica deve evoluir por expansão, não por reconstrução constante.
+A fábrica deve evoluir por expansão, não por assumir responsabilidades que pertencem às unidades da Terra.

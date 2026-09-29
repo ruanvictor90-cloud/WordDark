@@ -1,3 +1,5 @@
+const WordDarkEmergencyStop = require("../contracts/emergency-stop");
+
 /* WordDark — Emergency Stop Manager
  * Mantém a parada de emergência fora do executor.
  * Um stop disparado por qualquer setor bloqueia a operação inteira.

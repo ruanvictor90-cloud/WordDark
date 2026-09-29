@@ -14,6 +14,21 @@ WORDDARK
 │
 └── TERRA
 
+## Preparação para escala
+
+A fábrica foi preparada para atender muitas unidades da Terra sem transformar o núcleo em um bloco único.
+
+Áreas estruturais preparadas:
+
+- Contracts — contratos entre componentes
+- Routing — Rodovia e encaminhamento
+- Registry — catálogo de unidades e capacidades
+- Security — identidade e autorização
+- Storage — armazenamento persistente
+- Core — núcleo de execução
+
+A ideia é simples: novas cidades, marcas, projetos, estados e canais podem entrar no mundo sem exigir reconstrução do núcleo.
+
 ## Função principal
 
 A Dark Factory transforma solicitações em execução.
@@ -161,9 +176,14 @@ Comunicação entre componentes.
 
 Sistema de executores.
 
-### DF-0.4
+### DF-0.4 — Preparação de escala
 
-Segurança, permissões e logs avançados.
+- Contratos
+- Rodovia / Routing
+- Registry
+- Base de segurança
+- Base de armazenamento
+- Preparação para múltiplas unidades da Terra
 
 ### DF-0.5
 

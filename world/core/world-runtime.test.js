@@ -94,3 +94,27 @@ if (completeRuntime.getHealth().status !== "HEALTHY" || completeRuntime.isReady(
 }
 
 console.log("world-runtime.test: OK");
+
+const composed=WordDarkWorldRuntime.compose({
+  accountManager:{accounts:new Map(),get:()=>({})},
+  security:{identities:new Map(),registerIdentity:()=>{},authorize:()=>({allowed:true})},
+  environmentGuard:{canRun:()=>({allowed:true})},
+  road:{routes:new Map(),registerRoute:()=>({success:true}),findRoute:()=>null,send:()=>({success:true})},
+  registry:{list:()=>[],events:[],record:()=>{},recordEvent:()=>{}},
+  operationEngine:engine
+});
+if (!composed.assertReady() || composed.version !== "0.2") {
+  throw new Error("Runtime compose não montou um núcleo pronto.");
+}
+
+let composeFailed=false;
+try {
+  WordDarkWorldRuntime.compose({operationEngine:engine});
+} catch (error) {
+  composeFailed=true;
+}
+if (!composeFailed) {
+  throw new Error("Runtime compose aceitou núcleo incompleto.");
+}
+
+console.log("world-runtime.compose: OK");

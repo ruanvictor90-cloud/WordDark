@@ -95,3 +95,48 @@ Exemplos de conhecimento que pode ser promovido:
 - procedimento que pode beneficiar outras unidades.
 
 A Central não deve virar um espelho bruto das bibliotecas locais.
+
+
+## Conhecimento arquitetural
+
+Conhecimento histórico não é o mesmo que evento de operação.
+
+O contrato `WordDarkKnowledgeRecord` representa uma descoberta, solução, correção, decisão arquitetural, procedimento ou aprendizado que pode ser validado independentemente do fluxo de uma operação.
+
+Fluxo:
+
+```
+IDEIA / TESTE / ERRO
+        ↓
+BIBLIOTECA LOCAL
+        ↓
+VALIDAÇÃO
+        ↓
+KNOWLEDGE CONTRACT
+        ↓
+REGISTRY / INGESTÃO
+        ↓
+BIBLIOTECA CENTRAL
+```
+
+Somente conhecimento com status `VALIDATED` pode ser arquivado como conhecimento na Central.
+
+Isso mantém a Central como memória histórica confiável, sem transformar qualquer hipótese ou teste inconclusivo em regra do mundo.
+
+### Tipos de conhecimento
+
+- `DISCOVERY`
+- `SOLUTION`
+- `ERROR_CORRECTION`
+- `ARCHITECTURE_DECISION`
+- `PROCEDURE`
+- `LEARNING`
+
+### Status
+
+- `PROPOSED` — ainda em avaliação.
+- `VALIDATED` — validado e elegível para preservação.
+- `REJECTED` — não validado.
+- `ARCHIVED` — reservado para evolução futura do ciclo histórico.
+
+O armazenamento central de conhecimento é append-only: conhecimento arquivado não é sobrescrito nem removido.

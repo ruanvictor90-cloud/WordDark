@@ -1,6 +1,6 @@
 /*
  * Dark Factory — Factory Core
- * DF-0.3
+ * DF-0.4.2
  *
  * O núcleo agora utiliza um gerenciador de executores.
  * O fluxo principal permanece estável enquanto novos
@@ -11,7 +11,7 @@ class DarkFactory {
 
   constructor() {
     this.name = "Dark Factory";
-    this.version = "DF-0.3";
+    this.version = "DF-0.4.2";
     this.status = "ONLINE";
 
     this.logger = new DarkFactoryLogger();

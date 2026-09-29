@@ -3,7 +3,7 @@ class DarkFactoryCommunication {
     this.factory = factory;
     this.router = router;
     this.name = "DF-Communication";
-    this.version = "DF-0.2.1";
+    this.version = "DF-0.4.0";
     this.status = "ONLINE";
   }
 
@@ -57,7 +57,7 @@ class DarkFactoryCommunication {
 
   createRequestEnvelope(request) {
     return {
-      protocol: "DF-0.2.1",
+      protocol: "DF-0.4.0",
       messageId: this.generateId("MSG"),
       requestId: request ? request.id : null,
       origin: request ? request.origin : null,
@@ -158,10 +158,10 @@ class DarkFactoryCommunication {
     request,
     result
   ) {
-    return {
+    const responseEnvelope = {
       success: result.success,
       status: result.status,
-      protocol: "DF-0.2.1",
+      protocol: "DF-0.4.0",
       messageId: this.generateId("MSG"),
       responseTo: envelope.messageId,
       requestId: request.id,
@@ -171,6 +171,19 @@ class DarkFactoryCommunication {
       createdAt: new Date().toISOString(),
       result: result
     };
+
+    if (this.router) {
+      const returnRouting = this.router.send({
+        envelope: responseEnvelope,
+        origin: responseEnvelope.origin,
+        destination: responseEnvelope.destination,
+        service: request.taskType || "test"
+      });
+
+      responseEnvelope.route = returnRouting;
+    }
+
+    return responseEnvelope;
   }
 
   // =========================================================

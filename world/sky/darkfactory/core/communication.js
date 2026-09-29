@@ -1,6 +1,7 @@
 class DarkFactoryCommunication {
-  constructor(factory) {
+  constructor(factory, router = null) {
     this.factory = factory;
+    this.router = router;
     this.name = "DF-Communication";
     this.version = "DF-0.2.1";
     this.status = "ONLINE";
@@ -22,6 +23,23 @@ class DarkFactoryCommunication {
         requestMessageId: envelope.messageId,
         requestEnvelope: envelope
       };
+    }
+
+    if (this.router) {
+      const routing = this.router.send({
+        envelope,
+        origin: request.origin,
+        destination: request.destination,
+        service: request.taskType || "test"
+      });
+
+      if (!routing.success) {
+        return {
+          ...routing,
+          requestMessageId: envelope.messageId,
+          requestEnvelope: envelope
+        };
+      }
     }
 
     const response = this.receive(envelope);

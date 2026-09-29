@@ -60,13 +60,11 @@ function runSecurityMVPTests(){
   });
   assert.strictEqual(expiredDecision.allowed,false);
 
-  assert.throws(
-    () => new WordDarkAccessRule({
-      identityId:"CITY-TEST",capability:"content.read",action:"request",
-      environment:"TEST",scope:"world/earth",expiresAt:"invalid-date"
-    }).validate().valid || (()=>{throw new Error("invalid date not rejected");})(),
-    /invalid date not rejected/
-  );
+  const invalidDateRule = new WordDarkAccessRule({
+    identityId:"CITY-TEST",capability:"content.read",action:"request",
+    environment:"TEST",scope:"world/earth",expiresAt:"invalid-date"
+  });
+  assert.strictEqual(invalidDateRule.validate().valid,false);
 
   return {passed:true,auditCount:security.getAudit().length};
 }

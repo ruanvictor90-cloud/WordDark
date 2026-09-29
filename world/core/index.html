@@ -20,8 +20,16 @@ button{padding:12px 16px;border:0;border-radius:8px;cursor:pointer}pre{white-spa
 <script src="../contracts/identity.js"></script>
 <script src="../contracts/access.js"></script>
 <script src="../security/security-manager.js"></script>
+<script src="../security/account-manager.js"></script>
 <script src="../contracts/operation.js"></script>
+<script src="../contracts/message.js"></script>
+<script src="../contracts/route.js"></script>
+<script src="../contracts/environment.js"></script>
+<script src="../contracts/account.js"></script>
 <script src="operation-engine.js"></script>
+<script src="environment-guard.js"></script>
+<script src="road.js"></script>
+<script src="world-runtime.js"></script>
 <script src="../library/local-library.js"></script>
 <script src="../library/central-library.js"></script>
 <script src="operation-registry.js"></script>
@@ -53,13 +61,18 @@ draw("CREATED");
 run.addEventListener("click",()=>{
  try{
   const router=new WordDarkRouter();
-  router.registerRoute(new WordDarkRoute({
+  const road=new WordDarkRoad();
+  const route=new WordDarkRoute({
    routeId:"ROUTE-TERRA-DF-PRODUCE",
    origin:"world/earth/demo-city",
    destination:"world/sky/darkfactory",
    service:"content.produce"
-  }));
+  });
+  router.registerRoute(route);
+  road.registerRoute(route);
   const security=new WordDarkSecurityManager();
+  const accountManager=new WordDarkAccountManager();
+  accountManager.register(new WordDarkAccount({accountId:"ACC-CITY-DEMO",identityId:"CITY-DEMO",type:"PERSONAL"}));
   security.registerIdentity(new WordDarkIdentity({identityId:"CITY-DEMO",type:"UNIT"}));
   security.grant(new WordDarkAccessRule({
    identityId:"CITY-DEMO",
@@ -74,14 +87,17 @@ run.addEventListener("click",()=>{
   const localLibrary=new WordDarkLocalLibrary({libraryId:"LIB-DEMO-LOCAL",ownerId:"world/earth/demo-city"});
   const centralLibrary=new WordDarkCentralLibrary();
   const registry=new WordDarkOperationRegistry({localLibrary,centralLibrary});
+  const environmentGuard=new WordDarkEnvironmentGuard({environments:{TEST:new WordDarkEnvironment({name:"TEST"}),PROD:new WordDarkEnvironment({name:"PROD"})}});
   const engine=new WordDarkOperationEngine({
    security,
    route:op=>bridge.route(op),
    execute:op=>bridge.execute(op),
    registry,
+   environmentGuard,
    record:op=>{events.push({status:op.status,at:op.updatedAt});draw(op.status)}
   });
-  const operation=engine.create({
+  const runtime=new WordDarkWorldRuntime({accountManager,security,environmentGuard,road,registry,operationEngine:engine});
+  const operation=runtime.createOperation({
    requesterId:"CITY-DEMO",
    originId:"world/earth/demo-city",
    destinationId:"world/sky/darkfactory",
@@ -100,12 +116,15 @@ run.addEventListener("click",()=>{
     metadata:{source:"operation-mvp"}
    }
   });
-  const result=engine.run(operation);
+  const result=runtime.runOperation(operation);
   output.textContent=JSON.stringify({
    operation:result.toJSON(),
    factoryStatus:factory.getStatus(),
    factoryLogs:factory.getRequestLogs(result.payload && result.payload.requestId),
+   runtime:runtime.getStatus(),
    routes:router.listRoutes(),
+   road:road.getStatus(),
+   accounts:accountManager.list(),
    securityAudit:security.getAudit(),
    events,
    localLibrary:localLibrary.toJSON(),

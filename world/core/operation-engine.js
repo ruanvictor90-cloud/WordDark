@@ -20,6 +20,7 @@ class WordDarkOperationEngine {
     });
     this.route = options.route || (() => ({ success: false, reason: "Roteamento não configurado." }));
     this.execute = options.execute || (() => ({ success: false, reason: "Executor não configurado." }));
+    this.registry = options.registry || null;
     this.record = options.record || (() => {});
     this.idPrefix = options.idPrefix || "OP";
   }
@@ -41,6 +42,13 @@ class WordDarkOperationEngine {
     return operation;
   }
 
+  recordStage(operation, data = {}) {
+    this.recordStage(operation);
+    if (this.registry && typeof this.registry.recordEvent === "function") {
+      this.registry.recordEvent(operation, operation.status, data);
+    }
+  }
+
   run(operation) {
     if (!(operation instanceof WordDarkOperation)) {
       throw new Error("O engine exige uma instância de WordDarkOperation.");
@@ -49,12 +57,12 @@ class WordDarkOperationEngine {
     const initial = operation.validate();
     if (!initial.valid) {
       if (operation.status === "CREATED") operation.transition("REJECTED", { stage:"VALIDATION", errors:initial.errors });
-      this.record(operation);
+      this.recordStage(operation);
       return operation;
     }
 
     operation.transition("IDENTIFIED");
-    this.record(operation);
+    this.recordStage(operation);
 
     const authorization = this.authorize(operation);
     if (!authorization || authorization.allowed !== true) {
@@ -62,12 +70,12 @@ class WordDarkOperationEngine {
         stage:"AUTHORIZATION",
         reason:(authorization && authorization.reason) || "Operação não autorizada."
       });
-      this.record(operation);
+      this.recordStage(operation);
       return operation;
     }
 
     operation.transition("AUTHORIZED", { authorization: authorization.reference || null });
-    this.record(operation);
+    this.recordStage(operation);
 
     const routing = this.route(operation);
     if (!routing || routing.success !== true) {
@@ -75,15 +83,15 @@ class WordDarkOperationEngine {
         stage:"ROUTING",
         reason:(routing && routing.reason) || "Rota indisponível."
       });
-      this.record(operation);
+      this.recordStage(operation);
       return operation;
     }
 
     operation.transition("ROUTED", { routeId:routing.routeId || null });
-    this.record(operation);
+    this.recordStage(operation);
 
     operation.transition("EXECUTING");
-    this.record(operation);
+    this.recordStage(operation);
 
     const execution = this.execute(operation);
     if (!execution || execution.success !== true) {
@@ -91,12 +99,12 @@ class WordDarkOperationEngine {
         stage:"EXECUTION",
         reason:(execution && execution.reason) || "Execução falhou."
       });
-      this.record(operation);
+      this.recordStage(operation);
       return operation;
     }
 
     operation.transition("VALIDATING", { execution:execution.result || execution });
-    this.record(operation);
+    this.recordStage(operation);
 
     const validation = execution.validated === false ? {
       success:false,
@@ -105,7 +113,7 @@ class WordDarkOperationEngine {
 
     if (!validation.success) {
       operation.transition("FAILED", { stage:"VALIDATION", reason:validation.reason });
-      this.record(operation);
+      this.recordStage(operation);
       return operation;
     }
 
@@ -113,7 +121,7 @@ class WordDarkOperationEngine {
       routeId:routing.routeId || null,
       execution:execution.result || execution
     });
-    this.record(operation);
+    this.recordStage(operation);
     return operation;
   }
 }

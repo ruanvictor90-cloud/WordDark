@@ -1,239 +1,50 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>SucoCast — Estado WordDark</title>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>SucoCast — Estado WordDark</title>
 <style>
-body{margin:0;background:#0b0f15;color:#edf2f7;font-family:system-ui,-apple-system,sans-serif;padding:24px}
-main{max-width:920px;margin:auto}.back{color:#f2a93b;text-decoration:none}
-header{margin-top:24px}.code{color:#7f8da3;font-size:13px;letter-spacing:.08em}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:20px}
-.card{background:#121925;border:1px solid #293548;border-radius:16px;padding:18px}
-.card h2{margin-top:0}.ok{color:#7ee787}.warn{color:#f2cc60}
-button,select{border:0;border-radius:12px;padding:13px 16px;font-weight:700}
-button{background:#f2a93b;color:#111;cursor:pointer}select{background:#090d13;color:#edf2f7;border:1px solid #293548;width:100%;box-sizing:border-box}
-pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:12px;padding:14px;overflow:auto;color:#c9d1d9}
-.small{color:#9aa7b8;font-size:14px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-</style>
-</head>
-<body>
-<main>
-<a class="back" href="../">← Juice Country</a>
-<header>
-<div class="code">ESTADO · SUCOCAST · SC-001</div>
-<h1>SucoCast</h1>
-<p class="small">Estado operacional. O Estado define a operação; as plataformas entram como integrações/adaptadores.</p>
-</header>
-
-<div class="grid">
-<section class="card"><h2>Identidade</h2><p id="identity">Carregando...</p></section>
-<section class="card"><h2>Rodovia</h2><p id="road" class="small">Carregando...</p></section>
-<section class="card"><h2>Dark Factory</h2><p id="factory" class="small">Carregando...</p></section>
-</div>
-
-<section class="card" style="margin-top:20px">
-<h2>Estrutura do Estado</h2>
-<p id="stateStatus" class="small">Carregando estrutura...</p>
-<div id="sectors" class="grid" style="margin-top:14px"></div>
-</section>
-
-<section class="card" style="margin-top:20px">
-<h2>Catálogo de operações</h2>
-<p class="small">A operação é única. A integração define onde ela será executada.</p>
-<div id="operationCatalog"></div>
-</section>
-
-<section class="card" style="margin-top:20px">
-<h2>PUBLICAR_CONTEUDO</h2>
-<p class="small">Um único requerimento pode selecionar vários destinos. O sistema cria uma única operação de distribuição e entrega o mesmo conteúdo aos adaptadores escolhidos.</p>
-<div id="platforms" class="grid" style="margin-top:14px"></div>
-<div class="row" style="margin-top:14px"><button id="genericTest" type="button">Executar publicação nos selecionados</button></div>
-<p id="genericStatus" aria-live="polite" class="small"></p>
-<pre id="genericResult">Aguardando teste.</pre>
-</section>
-
-<section class="card" style="margin-top:20px">
-<h2>Teste operacional</h2>
-<p class="small">Envia uma solicitação de teste com autorização aprovada pela Rodovia até a Dark Factory e retorna os IDs do circuito.</p>
-<button id="run" type="button">Enviar teste pela Rodovia</button>
-<p id="status" aria-live="polite" class="small"></p>
-<pre id="result">Aguardando teste.</pre>
-</section>
-
-<script src="../../../sky/darkfactory/contracts/identity.js"></script>
-<script src="../../../sky/darkfactory/contracts/route.js"></script>
-<script src="../../../sky/darkfactory/core/logger.js"></script>
-<script src="../../../sky/darkfactory/core/validator.js"></script>
-<script src="../../../sky/darkfactory/core/request.js"></script>
-<script src="../../../sky/darkfactory/core/executor.js"></script>
-<script src="../../../sky/darkfactory/core/executor-manager.js"></script>
-<script src="../../../sky/darkfactory/core/content-publication-executor.js"></script>
-<script src="../../../sky/darkfactory/core/factory.js"></script>
-<script src="../../../sky/darkfactory/routing/router.js"></script>
-<script src="../../../sky/darkfactory/core/communication.js"></script>
-<script src="core/state-core.js"></script>
-<script src="core/operation-registry.js"></script>
-<script src="core/permission-manager.js"></script>
-<script src="core/event-log.js"></script>
-<script src="core/integration-manager.js"></script>
-<script src="core/operation-runner.js"></script>
-<script src="core/content.js"></script>
-<script src="core/publication.js"></script>
-<script src="integrations/youtube/youtube-adapter.js"></script>
-<script src="integrations/instagram/instagram-adapter.js"></script>
-<script src="integrations/tiktok/tiktok-adapter.js"></script>
-<script src="integrations/website/website-adapter.js"></script>
-<script src="integrations/external/external-app-adapter.js"></script>
-<script src="state.js"></script>
+body{margin:0;background:#0b0f15;color:#edf2f7;font-family:system-ui,-apple-system,sans-serif;padding:24px}main{max-width:920px;margin:auto}.back{color:#f2a93b;text-decoration:none}.code{color:#7f8da3;font-size:13px;letter-spacing:.08em}header{margin-top:24px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:20px}.card{background:#121925;border:1px solid #293548;border-radius:16px;padding:18px}.card h2{margin-top:0}.ok{color:#7ee787}.warn{color:#f2cc60}button{border:0;border-radius:12px;padding:13px 16px;font-weight:700;background:#f2a93b;color:#111;cursor:pointer}pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:12px;padding:14px;overflow:auto;color:#c9d1d9}.small{color:#9aa7b8;font-size:14px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+</style></head><body><main>
+<a class="back" href="../">← Juice Country</a><header><div class="code">ESTADO · SUCOCAST · SC-001</div><h1>SucoCast</h1><p class="small">Raízes na Terra: o Estado define a necessidade, recebe a produção e gerencia a distribuição da marca.</p></header>
+<div class="grid"><section class="card"><h2>Identidade</h2><p id="identity">Carregando...</p></section><section class="card"><h2>Rodovia</h2><p id="road" class="small">Carregando...</p></section><section class="card"><h2>Dark Factory</h2><p id="factory" class="small">Carregando...</p></section></div>
+<section class="card" style="margin-top:20px"><h2>Estrutura do Estado</h2><p id="stateStatus" class="small">Carregando...</p><div id="sectors" class="grid" style="margin-top:14px"></div></section>
+<section class="card" style="margin-top:20px"><h2>Requerimento de produção</h2><p class="small">O SucoCast decide o que precisa e envia apenas as especificações de produção. A Dark Factory não recebe destinos de publicação.</p>
+<label>Título<br><input id="prodTitle" style="width:100%;padding:12px;margin-top:6px;box-sizing:border-box;background:#090d13;color:#fff;border:1px solid #293548;border-radius:10px" value="Teste SucoCast"></label>
+<label style="display:block;margin-top:12px">Especificações<br><textarea id="prodReq" style="width:100%;min-height:100px;padding:12px;margin-top:6px;box-sizing:border-box;background:#090d13;color:#fff;border:1px solid #293548;border-radius:10px">Vídeo curto, formato vertical, com edição simples e legenda.</textarea></label>
+<div class="row" style="margin-top:14px"><button id="requestProduction" type="button">Enviar para a Dark Factory</button></div><p id="productionStatus" class="small"></p><pre id="productionResult">Aguardando solicitação.</pre></section>
+<section class="card" style="margin-top:20px"><h2>Distribuição da marca</h2><p class="small">Depois de receber o material, o próprio SucoCast decide os destinos e executa a publicação. Esta etapa é independente da Dark Factory.</p><div id="platforms" class="grid" style="margin-top:14px"></div><button id="publish" type="button" style="margin-top:14px">Publicar nos selecionados</button><p id="publishStatus" class="small"></p><pre id="publishResult">Aguardando publicação.</pre></section>
+<section class="card" style="margin-top:20px"><h2>Teste de Rodovia</h2><button id="run" type="button">Enviar teste pela Rodovia</button><p id="status" class="small"></p><pre id="result">Aguardando teste.</pre></section>
+<script src="../../../sky/darkfactory/contracts/identity.js"></script><script src="../../../sky/darkfactory/contracts/route.js"></script><script src="../../../sky/darkfactory/core/logger.js"></script><script src="../../../sky/darkfactory/core/validator.js"></script><script src="../../../sky/darkfactory/core/request.js"></script><script src="../../../sky/darkfactory/core/executor.js"></script><script src="../../../sky/darkfactory/core/executor-manager.js"></script><script src="../../../sky/darkfactory/core/content-publication-executor.js"></script><script src="../../../sky/darkfactory/core/factory.js"></script><script src="../../../sky/darkfactory/routing/router.js"></script><script src="../../../sky/darkfactory/core/communication.js"></script>
+<script src="core/state-core.js"></script><script src="core/operation-registry.js"></script><script src="core/permission-manager.js"></script><script src="core/event-log.js"></script><script src="core/integration-manager.js"></script><script src="core/operation-runner.js"></script><script src="core/content.js"></script><script src="core/publication.js"></script><script src="integrations/youtube/youtube-adapter.js"></script><script src="integrations/instagram/instagram-adapter.js"></script><script src="integrations/tiktok/tiktok-adapter.js"></script><script src="integrations/website/website-adapter.js"></script><script src="integrations/external/external-app-adapter.js"></script><script src="state.js"></script>
 <script>
 (function(){
-  const identity = new WordDarkIdentity({
-    identityId:"SC-001",
-    type:"STATE",
-    name:"SucoCast",
-    parentId:"world/earth/juice-country"
-  });
-
-  const router = new WordDarkRouter();
-  router.registerRoute(new WordDarkRoute({
-    routeId:"ROUTE-SUCOCAST-DARKFACTORY",
-    origin:"state/sucocast",
-    destination:"darkfactory",
-    service:"test"
-  }));
-  router.registerRoute(new WordDarkRoute({
-    routeId:"ROUTE-DARKFACTORY-SUCOCAST",
-    origin:"darkfactory",
-    destination:"state/sucocast",
-    service:"test"
-  }));
-  router.registerRoute(new WordDarkRoute({
-    routeId:"ROUTE-SUCOCAST-DF-CONTENT",
-    origin:"state/sucocast",
-    destination:"darkfactory",
-    service:"content.publish"
-  }));
-  router.registerRoute(new WordDarkRoute({
-    routeId:"ROUTE-DF-SUCOCAST-CONTENT",
-    origin:"darkfactory",
-    destination:"state/sucocast",
-    service:"content.publish"
-  }));
-
-  const factory = new DarkFactory();
-  const communication = new DarkFactoryCommunication(factory,router);
-  const state = new SucoCastState(identity);
-  const runner = new SucoCastOperationRunner(state.core,state.permissionManager);
-
-  document.getElementById("identity").innerHTML =
-    identity.name+" <span class='ok'>● ATIVO</span><br><span class='small'>"+identity.identityId+"</span>";
-  document.getElementById("road").textContent =
-    router.getStatus().name+" "+router.getStatus().version+" — "+router.listRoutes().length+" rotas ativas";
-  document.getElementById("factory").textContent =
-    factory.getStatus().name+" "+factory.getStatus().version+" — "+factory.getStatus().status;
-
-  const stateStatus = state.getStatus();
-  document.getElementById("stateStatus").textContent =
-    "Estado "+stateStatus.version+" — "+stateStatus.status+" · "+stateStatus.sectorCount+" setores · "+stateStatus.operationCount+" operações";
-
-  document.getElementById("sectors").innerHTML = state.sectors.map(function(sector){
-    return "<section class='card'><h3>"+sector.name+"</h3><p class='small'>"+sector.sectorId+" · "+sector.status+"</p><ul class='small'>"+
-      sector.operations.map(function(operation){ return "<li>"+operation.name+" · "+operation.status+"</li>"; }).join("")+
-      "</ul></section>";
-  }).join("");
-
-  const operations = state.core.listOperations();
-  const publicationOperation = state.core.getOperation("SC-OP-DIS-003");
-  document.getElementById("operationCatalog").innerHTML = operations.map(function(operation){
-    const integrations = operation.compatibleIntegrations && operation.compatibleIntegrations.length
-      ? operation.compatibleIntegrations.join(", ")
-      : "núcleo / sem integração externa";
-    return "<div style='padding:12px 0;border-bottom:1px solid #293548'><strong>"+operation.name+"</strong>"+
-      "<div class='small'>"+operation.operationId+" · "+operation.capability+" · "+operation.status+"</div>"+
-      "<div class='small'>Compatível: "+integrations+"</div></div>";
-  }).join("");
-
-  const platformContainer = document.getElementById("platforms");
-  const integrationMap = {
-    "SC-INTEGRATION-YOUTUBE":"YouTube",
-    "SC-INTEGRATION-INSTAGRAM":"Instagram",
-    "SC-INTEGRATION-TIKTOK":"TikTok",
-    "SC-INTEGRATION-WEBSITE":"Site próprio",
-    "SC-INTEGRATION-EXTERNAL":"Outra aplicação"
-  };
-
-  publicationOperation.compatibleIntegrations.forEach(function(integrationId, index){
-    const label=document.createElement("label");
-    label.className="card";
-    label.style.cursor="pointer";
-    label.innerHTML="<input type='checkbox' class='platform-check' value='"+integrationId+"' "+(index === 0 ? "checked" : "")+"> "+
-      "<strong>"+(integrationMap[integrationId] || integrationId)+"</strong>"+
-      "<div class='small'>"+integrationId+"</div>";
-    platformContainer.appendChild(label);
-  });
-
-  const coreStatus = state.core.getStatus();
-  document.getElementById("operationCatalog").insertAdjacentHTML("beforeend",
-    "<p class='small'><strong>Núcleo:</strong> "+coreStatus.version+" · "+
-    coreStatus.integrationCount+" integrações registradas · "+coreStatus.operationCount+" operações registradas.</p>");
-
-  document.getElementById("genericTest").addEventListener("click",function(){
-    const selectedIntegrations = Array.from(document.querySelectorAll(".platform-check:checked"))
-      .map(function(input){ return input.value; });
-    const actor = identity.identityId;
-    state.permissionManager.grant(actor,"content.publish");
-
-    if (selectedIntegrations.length === 0) {
-      document.getElementById("genericStatus").textContent = "Selecione pelo menos uma plataforma.";
-      document.getElementById("genericStatus").className = "small warn";
-      return;
-    }
-
-    const content = new SucoCastContent({
-      contentId:"SC-CONTENT-TEST",
-      type:"VIDEO",
-      title:"Teste SucoCast",
-      body:"Conteúdo de teste do circuito SucoCast → Rodovia → Dark Factory.",
-      asset:"simulated-video"
-    });
-
-    const result = state.requestPublicationThroughFactory(
-      communication,
-      runner,
-      content,
-      selectedIntegrations,
-      actor
-    );
-
-    document.getElementById("genericStatus").textContent =
-      result.success
-        ? "Circuito completo: 1 requerimento → Dark Factory → "+result.confirmedCount+" plataforma(s)."
-        : "Circuito rejeitado: "+(result.reason || result.status);
-    document.getElementById("genericStatus").className =
-      "small "+(result.success ? "ok" : "warn");
-    document.getElementById("genericResult").textContent = JSON.stringify(result,null,2);
-  });
-
-  document.getElementById("run").addEventListener("click",function(){
-    const request = state.createTestRequest();
-    const response = communication.send(request);
-    document.getElementById("status").textContent =
-      response.success ? "Circuito processado." : "Circuito rejeitado.";
-    document.getElementById("status").className =
-      "small "+(response.success ? "ok" : "warn");
-    document.getElementById("result").textContent = JSON.stringify({
-      requestId:request.id,
-      requestMessageId:response.requestMessageId,
-      responseMessageId:response.messageId,
-      responseTo:response.responseTo,
-      status:response.status,
-      protocol:response.protocol,
-      returnRoute:response.route || null
-    },null,2);
-  });
+const identity=new WordDarkIdentity({identityId:"SC-001",type:"STATE",name:"SucoCast",parentId:"world/earth/juice-country"});
+const router=new WordDarkRouter();
+router.registerRoute(new WordDarkRoute({routeId:"ROUTE-SUCOCAST-DARKFACTORY",origin:"state/sucocast",destination:"darkfactory",service:"content.produce"}));
+router.registerRoute(new WordDarkRoute({routeId:"ROUTE-DARKFACTORY-SUCOCAST",origin:"darkfactory",destination:"state/sucocast",service:"content.produce"}));
+router.registerRoute(new WordDarkRoute({routeId:"ROUTE-SUCOCAST-DARKFACTORY-TEST",origin:"state/sucocast",destination:"darkfactory",service:"test"}));
+router.registerRoute(new WordDarkRoute({routeId:"ROUTE-DARKFACTORY-SUCOCAST-TEST",origin:"darkfactory",destination:"state/sucocast",service:"test"}));
+const factory=new DarkFactory(), communication=new DarkFactoryCommunication(factory,router), state=new SucoCastState(identity), runner=new SucoCastOperationRunner(state.core,state.permissionManager);
+document.getElementById("identity").innerHTML=identity.name+" <span class='ok'>● ATIVO</span><br><span class='small'>"+identity.identityId+"</span>";
+document.getElementById("road").textContent="WordDarkRouter · "+router.listRoutes().length+" rotas";
+document.getElementById("factory").textContent="Dark Factory · "+factory.getStatus().version+" · CÉU · produção compartilhada";
+const ss=state.getStatus();document.getElementById("stateStatus").textContent="Estado "+ss.version+" — "+ss.status+" · "+ss.sectorCount+" setores · "+ss.operationCount+" operações";
+document.getElementById("sectors").innerHTML=state.sectors.map(s=>"<section class='card'><h3>"+s.name+"</h3><p class='small'>"+s.sectorId+" · "+s.status+"</p><ul class='small'>"+s.operations.map(o=>"<li>"+o.name+" · "+o.status+"</li>").join("")+"</ul></section>").join("");
+const names={"SC-INTEGRATION-YOUTUBE":"YouTube","SC-INTEGRATION-INSTAGRAM":"Instagram","SC-INTEGRATION-TIKTOK":"TikTok","SC-INTEGRATION-WEBSITE":"Site próprio","SC-INTEGRATION-EXTERNAL":"Outra aplicação"};
+const pc=document.getElementById("platforms");
+state.core.listCompatibleIntegrations("SC-OP-DIS-003").forEach((id,i)=>{const label=document.createElement("label");label.className="card";label.innerHTML="<input type='checkbox' class='platform-check' value='"+id+"' "+(i===0?"checked":"")+"> <strong>"+names[id]+"</strong><div class='small'>"+id+"</div>";pc.appendChild(label);});
+document.getElementById("requestProduction").addEventListener("click",function(){
+const content=new SucoCastContent({contentId:"SC-CONTENT-"+Date.now().toString(36).toUpperCase(),type:"VIDEO",title:document.getElementById("prodTitle").value.trim(),body:"Requerimento criado pelo SucoCast.",asset:"requested-video"});
+const result=state.requestProductionThroughFactory(communication,content,identity.identityId,{description:document.getElementById("prodReq").value.trim(),requestedBy:"SC-001"});
+document.getElementById("productionStatus").textContent=result.success?"Produção solicitada e circuito concluído.":"Solicitação rejeitada: "+(result.reason||result.status);
+document.getElementById("productionStatus").className="small "+(result.success?"ok":"warn");document.getElementById("productionResult").textContent=JSON.stringify(result,null,2);
+});
+document.getElementById("publish").addEventListener("click",function(){
+const selected=Array.from(document.querySelectorAll(".platform-check:checked")).map(i=>i.value);
+state.permissionManager.grant(identity.identityId,"content.publish");
+const content=new SucoCastContent({contentId:"SC-CONTENT-TEST",type:"VIDEO",title:"Teste SucoCast",body:"Material produzido e recebido pelo Estado.",asset:"simulated-video"});
+const result=new SucoCastOperationRunner(state.core,state.permissionManager).run("SC-OP-DIS-003",{actor:identity.identityId,integrationIds:selected,payload:content.toJSON()});
+document.getElementById("publishStatus").textContent=result.success?"Publicação executada pelo SucoCast (simulação).":"Publicação rejeitada: "+result.reason;
+document.getElementById("publishStatus").className="small "+(result.success?"ok":"warn");document.getElementById("publishResult").textContent=JSON.stringify(result,null,2);
+});
+document.getElementById("run").addEventListener("click",function(){const req=state.createTestRequest(),response=communication.send(req);document.getElementById("status").textContent=response.success?"Circuito processado.":"Circuito rejeitado.";document.getElementById("status").className="small "+(response.success?"ok":"warn");document.getElementById("result").textContent=JSON.stringify({requestId:req.id,requestMessageId:response.requestMessageId,responseMessageId:response.messageId,responseTo:response.responseTo,status:response.status,protocol:response.protocol,returnRoute:response.route||null},null,2);});
 })();
-</script>
-</main>
-</body>
-</html>
+</script></main></body></html>

@@ -52,7 +52,19 @@ Ainda não implementamos como produção:
 
 Esses pontos dependem de decisões de infraestrutura e não devem ser simulados como se já fossem seguros.
 
-## 5. Próxima sequência de concretagem
+## 5. Blocos 18–22 — fechamento estrutural MVP
+
+Os cinco blocos abaixo foram implementados:
+
+18. **Registro formal da validação** — `world/architecture/VALIDATION-001.md` registra o primeiro circuito integrado validado.
+19. **Consolidação dos testes** — workflow do GitHub Actions inclui os testes estruturais e os novos contratos de persistência, ACK e erro.
+20. **Persistência substituível** — `world/core/persistence.js` fornece armazenamento em memória com contrato simples, preparado para futura implementação persistente.
+21. **ACK explícito** — `world/contracts/ack.js` separa confirmação de recebimento de conclusão da operação.
+22. **Erro padronizado** — `world/contracts/error.js` define código, estágio, mensagem, possibilidade de retry e detalhes.
+
+Esses componentes ainda são MVP/TEST. Não representam banco de produção, mensageria assíncrona ou observabilidade de produção.
+
+## 6. Próxima sequência de concretagem
 1. integrar a Rodovia global ao Operation Engine;
 2. consolidar Registry + Biblioteca Local/Central;
 3. transformar promoção de conhecimento em fluxo controlado;

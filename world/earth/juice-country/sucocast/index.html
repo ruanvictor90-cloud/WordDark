@@ -1,50 +1,247 @@
 <!DOCTYPE html>
-<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>SucoCast — Estado WordDark</title>
-<style>
-body{margin:0;background:#0b0f15;color:#edf2f7;font-family:system-ui,-apple-system,sans-serif;padding:24px}main{max-width:920px;margin:auto}.back{color:#f2a93b;text-decoration:none}.code{color:#7f8da3;font-size:13px;letter-spacing:.08em}header{margin-top:24px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:20px}.card{background:#121925;border:1px solid #293548;border-radius:16px;padding:18px}.card h2{margin-top:0}.ok{color:#7ee787}.warn{color:#f2cc60}button{border:0;border-radius:12px;padding:13px 16px;font-weight:700;background:#f2a93b;color:#111;cursor:pointer}pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:12px;padding:14px;overflow:auto;color:#c9d1d9}.small{color:#9aa7b8;font-size:14px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-</style></head><body><main>
-<a class="back" href="../">← Juice Country</a><header><div class="code">ESTADO · SUCOCAST · SC-001</div><h1>SucoCast</h1><p class="small">Raízes na Terra: o Estado define a necessidade, recebe a produção e gerencia a distribuição da marca.</p></header>
-<div class="grid"><section class="card"><h2>Identidade</h2><p id="identity">Carregando...</p></section><section class="card"><h2>Rodovia</h2><p id="road" class="small">Carregando...</p></section><section class="card"><h2>Dark Factory</h2><p id="factory" class="small">Carregando...</p></section></div>
-<section class="card" style="margin-top:20px"><h2>Estrutura do Estado</h2><p id="stateStatus" class="small">Carregando...</p><div id="sectors" class="grid" style="margin-top:14px"></div></section>
-<section class="card" style="margin-top:20px"><h2>Requerimento de produção</h2><p class="small">O SucoCast decide o que precisa e envia apenas as especificações de produção. A Dark Factory não recebe destinos de publicação.</p>
-<label>Título<br><input id="prodTitle" style="width:100%;padding:12px;margin-top:6px;box-sizing:border-box;background:#090d13;color:#fff;border:1px solid #293548;border-radius:10px" value="Teste SucoCast"></label>
-<label style="display:block;margin-top:12px">Especificações<br><textarea id="prodReq" style="width:100%;min-height:100px;padding:12px;margin-top:6px;box-sizing:border-box;background:#090d13;color:#fff;border:1px solid #293548;border-radius:10px">Vídeo curto, formato vertical, com edição simples e legenda.</textarea></label>
-<div class="row" style="margin-top:14px"><button id="requestProduction" type="button">Enviar para a Dark Factory</button></div><p id="productionStatus" class="small"></p><pre id="productionResult">Aguardando solicitação.</pre></section>
-<section class="card" style="margin-top:20px"><h2>Meios de comunicação com o público</h2><p class="small">Esta é a nova fronteira de integração. Os conectores estão preparados, mas nenhuma plataforma externa é considerada conectada até existir autenticação e transporte reais.</p><div id="connections" class="grid" style="margin-top:14px"></div><pre id="connectionResult">Nenhuma conexão externa ativada.</pre></section><section class="card" style="margin-top:20px"><h2>Distribuição da marca</h2><p class="small">Depois de receber o material, o próprio SucoCast decide os destinos e executa a publicação. Esta etapa é independente da Dark Factory.</p><div id="platforms" class="grid" style="margin-top:14px"></div><button id="publish" type="button" style="margin-top:14px">Publicar nos selecionados</button><p id="publishStatus" class="small"></p><pre id="publishResult">Aguardando publicação.</pre></section>
-<section class="card" style="margin-top:20px"><h2>Teste de Rodovia</h2><button id="run" type="button">Enviar teste pela Rodovia</button><p id="status" class="small"></p><pre id="result">Aguardando teste.</pre></section>
-<script src="../../../sky/darkfactory/contracts/identity.js"></script><script src="../../../sky/darkfactory/contracts/route.js"></script><script src="../../../sky/darkfactory/core/logger.js"></script><script src="../../../sky/darkfactory/core/validator.js"></script><script src="../../../sky/darkfactory/core/request.js"></script><script src="../../../sky/darkfactory/core/executor.js"></script><script src="../../../sky/darkfactory/core/executor-manager.js"></script><script src="../../../sky/darkfactory/core/content-publication-executor.js"></script><script src="../../../sky/darkfactory/core/factory.js"></script><script src="../../../sky/darkfactory/routing/router.js"></script><script src="../../../sky/darkfactory/core/communication.js"></script>
-<script src="integrations/platform-adapter.js"></script><script src="integrations/connection-manager.js"></script><script src="core/state-core.js"></script><script src="core/operation-registry.js"></script><script src="core/permission-manager.js"></script><script src="core/event-log.js"></script><script src="core/integration-manager.js"></script><script src="core/operation-runner.js"></script><script src="core/content.js"></script><script src="core/publication.js"></script><script src="integrations/youtube/youtube-adapter.js"></script><script src="integrations/instagram/instagram-adapter.js"></script><script src="integrations/tiktok/tiktok-adapter.js"></script><script src="integrations/website/website-adapter.js"></script><script src="integrations/external/external-app-adapter.js"></script><script src="state.js"></script>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SucoCast — WordDark</title>
+<link rel="stylesheet" href="../../../../ui/worddark-ui.css">
+</head>
+<body class="wd-body">
+<div class="wd-shell">
+<aside class="wd-sidebar">
+  <div class="wd-brand"><div class="wd-mark">◈</div><div><strong>WORDDARK</strong><small>Terra · SucoCast</small></div></div>
+  <nav class="wd-nav" aria-label="Navegação">
+    <a href="../../../../">◈ WordDark</a>
+    <a href="../../../">◉ Terra</a>
+    <a href="../">🧃 Juice Country</a>
+    <a class="active" href="./">🧃 SucoCast</a>
+    <a href="../../../../sky/darkfactory/">⚙ Dark Factory</a>
+    <a href="../../../../core/">◎ Operações</a>
+  </nav>
+  <div class="wd-footer">TERRA · ESTADO SC-001<br>UI v0.1 · produção/distribuição separadas</div>
+</aside>
+
+<main class="wd-main">
+<div class="wd-top">
+  <div>
+    <div class="wd-eyebrow">Terra · Estado</div>
+    <h1 class="wd-title">SucoCast</h1>
+    <p class="wd-sub">O Estado define a necessidade, recebe a produção e decide o destino. A Dark Factory produz; o SucoCast distribui.</p>
+  </div>
+  <div class="wd-actions">
+    <button class="wd-btn" data-wd-theme type="button">Modo claro</button>
+    <button class="wd-btn danger" id="globalEmergency" type="button">🚨 Socorro Deus</button>
+  </div>
+</div>
+
+<section class="wd-grid">
+  <article class="wd-card">
+    <div class="wd-eyebrow">Identidade</div><h2 id="identityName">SucoCast</h2>
+    <span class="wd-badge ok">● ATIVO</span>
+    <p id="identityMeta" class="wd-muted">SC-001</p>
+  </article>
+  <article class="wd-card">
+    <div class="wd-eyebrow">Rodovia</div><h2 id="roadStatus">ONLINE</h2>
+    <p id="roadMeta" class="wd-muted">Rotas carregando...</p>
+  </article>
+  <article class="wd-card">
+    <div class="wd-eyebrow">Dark Factory</div><h2 id="factoryStatus">ONLINE</h2>
+    <p id="factoryMeta" class="wd-muted">Serviço compartilhado do Céu.</p>
+  </article>
+</section>
+
+<section class="wd-card full" style="margin-top:22px">
+  <div class="wd-sector"><div><div class="wd-eyebrow">Setores</div><h2>Operação do Estado</h2></div><span class="wd-badge">cada setor possui parada de emergência</span></div>
+  <p class="wd-muted">A mesma identidade visual será reutilizada quando conectarmos cada setor ao núcleo operacional.</p>
+  <div id="sectors" class="wd-grid"></div>
+</section>
+
+<section class="wd-grid">
+<article class="wd-card wide">
+  <div class="wd-eyebrow">Produção · Terra → Céu → Terra</div>
+  <h2>Requerimento de produção</h2>
+  <p class="wd-muted">Defina o que precisa ser produzido. Não informe destino de publicação à fábrica.</p>
+  <div class="wd-form-grid">
+    <label class="wd-field">Título<input class="wd-input" id="prodTitle" value="Teste SucoCast"></label>
+    <label class="wd-field">Tipo<select class="wd-select" id="prodType"><option>VIDEO</option><option>IMAGE</option><option>TEXT</option></select></label>
+  </div>
+  <label class="wd-field" style="margin-top:12px">Especificações<textarea class="wd-textarea" id="prodReq">Vídeo curto, formato vertical, com edição simples e legenda.</textarea></label>
+  <button class="wd-btn primary" id="requestProduction" type="button" style="margin-top:14px">Enviar para a Dark Factory</button>
+  <p id="productionStatus" class="wd-muted"></p><pre id="productionResult">Aguardando solicitação.</pre>
+</article>
+
+<article class="wd-card">
+  <div class="wd-eyebrow">Operação ativa</div>
+  <h2 id="activeOperation">Nenhuma</h2>
+  <span id="activeStatus" class="wd-badge">AGUARDANDO</span>
+  <p class="wd-muted">O ID aparece quando uma operação de teste é criada.</p>
+  <button class="wd-btn danger" id="activeEmergency" type="button">🚨 Parar esta operação</button>
+  <pre id="emergencyResult">Nenhuma parada solicitada.</pre>
+</article>
+</section>
+
+<section class="wd-card full">
+  <div class="wd-eyebrow">Meios de comunicação</div>
+  <h2>Integrações externas</h2>
+  <p class="wd-muted">Conectores preparados. Nenhum token ou credencial é mantido nesta interface pública.</p>
+  <div id="connections" class="wd-grid"></div>
+  <pre id="connectionResult">Nenhuma conexão preparada.</pre>
+</section>
+
+<section class="wd-card full">
+  <div class="wd-eyebrow">Distribuição · responsabilidade da Terra</div>
+  <h2>Destinos de publicação</h2>
+  <p class="wd-muted">Aqui o SucoCast escolhe onde o material recebido será distribuído.</p>
+  <div id="platforms" class="wd-grid"></div>
+  <button class="wd-btn primary" id="publish" type="button" style="margin-top:14px">Publicar nos selecionados</button>
+  <p id="publishStatus" class="wd-muted"></p><pre id="publishResult">Aguardando publicação.</pre>
+</section>
+
+<section class="wd-card full">
+  <div class="wd-eyebrow">Rodovia</div>
+  <h2>Teste de comunicação</h2>
+  <button class="wd-btn" id="run" type="button">Enviar teste pela Rodovia</button>
+  <p id="status" class="wd-muted"></p><pre id="result">Aguardando teste.</pre>
+</section>
+</main>
+</div>
+
+<script src="../../../../ui/worddark-ui.js"></script>
+<script src="../../../../contracts/identity.js"></script>
+<script src="../../../../contracts/emergency-stop.js"></script>
+<script src="../../../../core/emergency-stop-manager.js"></script>
+<script src="../../../sky/darkfactory/contracts/route.js"></script>
+<script src="../../../sky/darkfactory/core/logger.js"></script>
+<script src="../../../sky/darkfactory/core/validator.js"></script>
+<script src="../../../sky/darkfactory/core/request.js"></script>
+<script src="../../../sky/darkfactory/core/executor.js"></script>
+<script src="../../../sky/darkfactory/core/executor-manager.js"></script>
+<script src="../../../sky/darkfactory/core/content-publication-executor.js"></script>
+<script src="../../../sky/darkfactory/core/factory.js"></script>
+<script src="../../../sky/darkfactory/routing/router.js"></script>
+<script src="../../../sky/darkfactory/core/communication.js"></script>
+<script src="integrations/platform-adapter.js"></script><script src="integrations/connection-manager.js"></script>
+<script src="core/state-core.js"></script><script src="core/operation-registry.js"></script><script src="core/permission-manager.js"></script><script src="core/event-log.js"></script><script src="core/integration-manager.js"></script><script src="core/operation-runner.js"></script><script src="core/content.js"></script><script src="core/publication.js"></script>
+<script src="integrations/youtube/youtube-adapter.js"></script><script src="integrations/instagram/instagram-adapter.js"></script><script src="integrations/tiktok/tiktok-adapter.js"></script><script src="integrations/website/website-adapter.js"></script><script src="integrations/external/external-app-adapter.js"></script><script src="state.js"></script>
 <script>
-(function(){
-const identity=new WordDarkIdentity({identityId:"SC-001",type:"STATE",name:"SucoCast",parentId:"world/earth/juice-country"});
-const router=new WordDarkRouter();
-router.registerRoute(new WordDarkRoute({routeId:"ROUTE-SUCOCAST-DARKFACTORY",origin:"state/sucocast",destination:"darkfactory",service:"content.produce"}));
-router.registerRoute(new WordDarkRoute({routeId:"ROUTE-DARKFACTORY-SUCOCAST",origin:"darkfactory",destination:"state/sucocast",service:"content.produce"}));
-router.registerRoute(new WordDarkRoute({routeId:"ROUTE-SUCOCAST-DARKFACTORY-TEST",origin:"state/sucocast",destination:"darkfactory",service:"test"}));
-router.registerRoute(new WordDarkRoute({routeId:"ROUTE-DARKFACTORY-SUCOCAST-TEST",origin:"darkfactory",destination:"state/sucocast",service:"test"}));
-const factory=new DarkFactory(), communication=new DarkFactoryCommunication(factory,router), state=new SucoCastState(identity), runner=new SucoCastOperationRunner(state.core,state.permissionManager), connectionManager=new SucoCastConnectionManager();\n[state.youtubeAdapter,state.instagramAdapter,state.tiktokAdapter,state.websiteAdapter,state.externalAppAdapter].forEach((adapter)=>connectionManager.register(adapter));
-document.getElementById("identity").innerHTML=identity.name+" <span class='ok'>● ATIVO</span><br><span class='small'>"+identity.identityId+"</span>";
-document.getElementById("road").textContent="WordDarkRouter · "+router.listRoutes().length+" rotas";
-document.getElementById("factory").textContent="Dark Factory · "+factory.getStatus().version+" · CÉU · produção compartilhada";
-const ss=state.getStatus();document.getElementById("stateStatus").textContent="Estado "+ss.version+" — "+ss.status+" · "+ss.sectorCount+" setores · "+ss.operationCount+" operações";
-document.getElementById("sectors").innerHTML=state.sectors.map(s=>"<section class='card'><h3>"+s.name+"</h3><p class='small'>"+s.sectorId+" · "+s.status+"</p><ul class='small'>"+s.operations.map(o=>"<li>"+o.name+" · "+o.status+"</li>").join("")+"</ul></section>").join("");
-const names={"SC-INTEGRATION-YOUTUBE":"YouTube","SC-INTEGRATION-INSTAGRAM":"Instagram","SC-INTEGRATION-TIKTOK":"TikTok","SC-INTEGRATION-WEBSITE":"Site próprio","SC-INTEGRATION-EXTERNAL":"Outra aplicação"};\nconst connections=document.getElementById("connections");\nconnectionManager.list().forEach((item)=>{const card=document.createElement("section");card.className="card";card.innerHTML="<h3>"+(names[item.integrationId]||item.platform||item.integrationId)+"</h3><p class=\"small\">"+item.integrationId+"</p><p><span class=\"warn\">● "+(item.status||"TEST")+"</span></p><button type=\"button\" data-connect=\""+item.integrationId+"\">Preparar conexão</button>";connections.appendChild(card);});\nconnections.addEventListener("click",(event)=>{const id=event.target.getAttribute("data-connect");if(!id)return;const result=connectionManager.connect(id);document.getElementById("connectionResult").textContent=JSON.stringify(result,null,2);});
-const pc=document.getElementById("platforms");
-(state.core.getOperation("SC-OP-DIS-003").compatibleIntegrations || []).forEach((id,i)=>{const label=document.createElement("label");label.className="card";label.innerHTML="<input type='checkbox' class='platform-check' value='"+id+"' "+(i===0?"checked":"")+"> <strong>"+names[id]+"</strong><div class='small'>"+id+"</div>";pc.appendChild(label);});
-document.getElementById("requestProduction").addEventListener("click",function(){
-const content=new SucoCastContent({contentId:"SC-CONTENT-"+Date.now().toString(36).toUpperCase(),type:"VIDEO",title:document.getElementById("prodTitle").value.trim(),body:"Requerimento criado pelo SucoCast.",asset:"requested-video"});
-const result=state.requestProductionThroughFactory(communication,content,identity.identityId,{description:document.getElementById("prodReq").value.trim(),requestedBy:"SC-001"});
-document.getElementById("productionStatus").textContent=result.success?"Produção solicitada e circuito concluído.":"Solicitação rejeitada: "+(result.reason||result.status);
-document.getElementById("productionStatus").className="small "+(result.success?"ok":"warn");document.getElementById("productionResult").textContent=JSON.stringify(result,null,2);
-});
-document.getElementById("publish").addEventListener("click",function(){
-const selected=Array.from(document.querySelectorAll(".platform-check:checked")).map(i=>i.value);
-state.permissionManager.grant(identity.identityId,"content.publish");
-const content=new SucoCastContent({contentId:"SC-CONTENT-TEST",type:"VIDEO",title:"Teste SucoCast",body:"Material produzido e recebido pelo Estado.",asset:"simulated-video"});
-const result=new SucoCastOperationRunner(state.core,state.permissionManager).run("SC-OP-DIS-003",{actor:identity.identityId,integrationIds:selected,payload:content.toJSON()});
-document.getElementById("publishStatus").textContent=result.success?"Publicação executada pelo SucoCast (simulação).":"Publicação rejeitada: "+result.reason;
-document.getElementById("publishStatus").className="small "+(result.success?"ok":"warn");document.getElementById("publishResult").textContent=JSON.stringify(result,null,2);
-});
-document.getElementById("run").addEventListener("click",function(){const req=state.createTestRequest(),response=communication.send(req);document.getElementById("status").textContent=response.success?"Circuito processado.":"Circuito rejeitado.";document.getElementById("status").className="small "+(response.success?"ok":"warn");document.getElementById("result").textContent=JSON.stringify({requestId:req.id,requestMessageId:response.requestMessageId,responseMessageId:response.messageId,responseTo:response.responseTo,status:response.status,protocol:response.protocol,returnRoute:response.route||null},null,2);});
+(() => {
+  const identity = new WordDarkIdentity({identityId:"SC-001",type:"UNIT",parentId:"world/earth/juice-country",metadata:{name:"SucoCast",role:"STATE"}});
+  const stopManager = new WordDarkEmergencyStopManager();
+  const router = new WordDarkRouter();
+  [
+    ["ROUTE-SUCOCAST-DARKFACTORY","state/sucocast","darkfactory","content.produce"],
+    ["ROUTE-DARKFACTORY-SUCOCAST","darkfactory","state/sucocast","content.produce"],
+    ["ROUTE-SUCOCAST-DARKFACTORY-TEST","state/sucocast","darkfactory","test"],
+    ["ROUTE-DARKFACTORY-SUCOCAST-TEST","darkfactory","state/sucocast","test"]
+  ].forEach(([routeId,origin,destination,service]) => router.registerRoute(new WordDarkRoute({routeId,origin,destination,service})));
+
+  const factory = new DarkFactory();
+  const communication = new DarkFactoryCommunication(factory,router);
+  const state = new SucoCastState(identity);
+  const connectionManager = new SucoCastConnectionManager();
+  [state.youtubeAdapter,state.instagramAdapter,state.tiktokAdapter,state.websiteAdapter,state.externalAppAdapter].forEach(adapter => connectionManager.register(adapter));
+
+  document.getElementById("identityName").textContent = identity.metadata.name;
+  document.getElementById("identityMeta").textContent = identity.identityId+" · parent: "+identity.parentId;
+  document.getElementById("roadMeta").textContent = router.listRoutes().length+" rotas ativas · entrada/saída";
+  document.getElementById("factoryMeta").textContent = factory.getStatus().version+" · produção compartilhada · Céu";
+
+  let activeOperationId = null;
+  const setActive = (id,status="EM EXECUÇÃO") => {
+    activeOperationId=id;
+    document.getElementById("activeOperation").textContent=id||"Nenhuma";
+    document.getElementById("activeStatus").textContent=status;
+    document.getElementById("activeStatus").className="wd-badge "+(status==="CANCELLED"?"danger":status==="COMPLETED"?"ok":"warn");
+  };
+
+  const triggerStop = (sectorId) => {
+    if(!activeOperationId){
+      document.getElementById("emergencyResult").textContent=JSON.stringify({success:false,status:"NO_ACTIVE_OPERATION",sectorId,reason:"Nenhuma operação ativa para parar."},null,2);
+      return;
+    }
+    const result=stopManager.trigger({sectorId,operationId:activeOperationId,requesterId:identity.identityId,reason:"Parada de emergência solicitada pelo setor "+sectorId});
+    document.getElementById("emergencyResult").textContent=JSON.stringify(result,null,2);
+    if(result.success) setActive(activeOperationId,"CANCELLED");
+  };
+
+  const ss=state.getStatus();
+  document.getElementById("sectors").innerHTML=state.sectors.map(sector => {
+    const operations=sector.operations.map(op => "<div class='wd-item'><span>"+op.name+"</span><span class='wd-badge'>"+op.status+"</span></div>").join("");
+    return "<article class='wd-card'><div class='wd-sector'><div><h3>"+sector.name+"</h3><small>"+sector.sectorId+" · "+sector.status+"</small></div><span class='wd-badge ok'>● ONLINE</span></div><div class='wd-list' style='margin-top:12px'>"+operations+"</div><button class='wd-btn danger sector-stop' data-sector='"+sector.sectorId+"' type='button' style='margin-top:12px'>🚨 Socorro Deus</button></article>";
+  }).join("");
+
+  document.querySelectorAll(".sector-stop").forEach(button => button.addEventListener("click",()=>triggerStop(button.dataset.sector)));
+
+  document.getElementById("globalEmergency").addEventListener("click",()=>triggerStop("SC-GLOBAL"));
+  document.getElementById("activeEmergency").addEventListener("click",()=>triggerStop("SC-SEC-PRO"));
+
+  document.getElementById("requestProduction").addEventListener("click",() => {
+    const operationId="OP-SC-"+Date.now().toString(36).toUpperCase();
+    setActive(operationId,"PREPARANDO");
+    if(stopManager.isStopped(operationId)){
+      setActive(operationId,"CANCELLED");
+      return;
+    }
+    const content=new SucoCastContent({
+      contentId:"SC-CONTENT-"+Date.now().toString(36).toUpperCase(),
+      type:document.getElementById("prodType").value,
+      title:document.getElementById("prodTitle").value.trim(),
+      body:"Requerimento criado pelo SucoCast.",
+      asset:"requested-asset"
+    });
+    const result=state.requestProductionThroughFactory(
+      communication,content,identity.identityId,
+      {description:document.getElementById("prodReq").value.trim(),requestedBy:"SC-001",operationId}
+    );
+    if(stopManager.isStopped(operationId)){
+      setActive(operationId,"CANCELLED");
+    } else {
+      setActive(operationId,result.success?"COMPLETED":"FAILED");
+    }
+    document.getElementById("productionStatus").textContent=result.success?"Produção recebida de volta da Dark Factory.":"Solicitação rejeitada: "+(result.reason||result.status);
+    document.getElementById("productionStatus").className="wd-muted "+(result.success?"":"warn");
+    document.getElementById("productionResult").textContent=JSON.stringify(result,null,2);
+  });
+
+  const names={"SC-INTEGRATION-YOUTUBE":"YouTube","SC-INTEGRATION-INSTAGRAM":"Instagram","SC-INTEGRATION-TIKTOK":"TikTok","SC-INTEGRATION-WEBSITE":"Site próprio","SC-INTEGRATION-EXTERNAL":"Outra aplicação"};
+  const connections=document.getElementById("connections");
+  connectionManager.list().forEach(item=>{
+    const card=document.createElement("article");card.className="wd-card";
+    card.innerHTML="<h3>"+(names[item.integrationId]||item.platform||item.integrationId)+"</h3><p class='wd-muted'>"+item.integrationId+"</p><span class='wd-badge warn'>● "+(item.status||"TEST")+"</span><br><button class='wd-btn' type='button' data-connect='"+item.integrationId+"' style='margin-top:12px'>Preparar conexão</button>";
+    connections.appendChild(card);
+  });
+  connections.addEventListener("click",event=>{
+    const id=event.target.getAttribute("data-connect");if(!id)return;
+    document.getElementById("connectionResult").textContent=JSON.stringify(connectionManager.connect(id),null,2);
+  });
+
+  const pc=document.getElementById("platforms");
+  (state.core.getOperation("SC-OP-DIS-003").compatibleIntegrations||[]).forEach((id,i)=>{
+    const card=document.createElement("label");card.className="wd-card";card.style.cursor="pointer";
+    card.innerHTML="<input class='wd-check platform-check' type='checkbox' value='"+id+"' "+(i===0?"checked":"")+"> <strong>"+names[id]+"</strong><div class='wd-muted'>"+id+"</div>";
+    pc.appendChild(card);
+  });
+
+  document.getElementById("publish").addEventListener("click",()=>{
+    const selected=Array.from(document.querySelectorAll(".platform-check:checked")).map(input=>input.value);
+    state.permissionManager.grant(identity.identityId,"content.publish");
+    const content=new SucoCastContent({contentId:"SC-CONTENT-TEST",type:"VIDEO",title:"Teste SucoCast",body:"Material recebido pelo Estado.",asset:"simulated-video"});
+    const result=new SucoCastOperationRunner(state.core,state.permissionManager).run("SC-OP-DIS-003",{actor:identity.identityId,integrationIds:selected,payload:content.toJSON()});
+    document.getElementById("publishStatus").textContent=result.success?"Publicação executada pelo SucoCast (simulação).":"Publicação rejeitada: "+result.reason;
+    document.getElementById("publishStatus").className="wd-muted "+(result.success?"":"warn");
+    document.getElementById("publishResult").textContent=JSON.stringify(result,null,2);
+  });
+
+  document.getElementById("run").addEventListener("click",()=>{
+    const request=state.createTestRequest();
+    const operationId="OP-SC-ROAD-"+Date.now().toString(36).toUpperCase();
+    setActive(operationId,"EM EXECUÇÃO");
+    const response=communication.send(request);
+    setActive(operationId,response.success?"COMPLETED":"FAILED");
+    document.getElementById("status").textContent=response.success?"Circuito processado.":"Circuito rejeitado.";
+    document.getElementById("status").className="wd-muted "+(response.success?"":"warn");
+    document.getElementById("result").textContent=JSON.stringify({operationId,requestId:request.id,requestMessageId:response.requestMessageId,responseMessageId:response.messageId,responseTo:response.responseTo,status:response.status,protocol:response.protocol,returnRoute:response.route||null},null,2);
+  });
 })();
-</script></main></body></html>
+</script>
+</body>
+</html>

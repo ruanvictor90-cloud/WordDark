@@ -2,42 +2,50 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Juice Country — WordDark</title>
-<style>
-body{margin:0;background:#0b0f15;color:#edf2f7;font-family:system-ui,-apple-system,sans-serif;padding:28px}
-main{max-width:900px;margin:auto}.back{color:#f2a93b;text-decoration:none}
-.hero{margin-top:28px}.hero h1{margin-bottom:6px}.muted{color:#9aa7b8}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:24px}
-.card{background:#121925;border:1px solid #293548;border-radius:16px;padding:20px}
-.card a{color:#edf2f7;text-decoration:none;display:block}
-.card h2{margin:0 0 8px}.status{font-size:13px;color:#9aa7b8}.live{color:#7ee787}
-</style>
+<link rel="stylesheet" href="../../../ui/worddark-ui.css">
 </head>
-<body>
-<main>
-<a class="back" href="../../">← Terra</a>
-<section class="hero">
-<h1>Juice Country</h1>
-<p class="muted">Primeiro país operacional de teste da arquitetura territorial do WordDark.</p>
-</section>
-<div class="grid">
-<article class="card">
-<a href="sucocast/">
-<h2>SucoCast</h2>
-<p>Primeiro Estado operacional.</p>
-<span class="status live">● Estrutura inicial em operação</span>
-</a>
-</article>
-<article class="card"><h2>SucoGeek</h2><p class="muted">Estrutura reservada.</p><span class="status">Em preparação</span></article>
-<article class="card"><h2>SucoComed</h2><p class="muted">Estrutura reservada.</p><span class="status">Em preparação</span></article>
-<article class="card"><h2>SucoFactor</h2><p class="muted">Estrutura reservada.</p><span class="status">Em preparação</span></article>
+<body class="wd-body">
+<div class="wd-shell">
+<aside class="wd-sidebar">
+<div class="wd-brand"><div class="wd-mark">◈</div><div><strong>WORDDARK</strong><small>Terra · Juice Country</small></div></div>
+<nav class="wd-nav" aria-label="Navegação">
+<a href="../../../">◈ WordDark</a>
+<a href="../../">◉ Terra</a>
+<a class="active" href="./">🧃 Juice Country</a>
+<a href="sucocast/">🧃 SucoCast</a>
+<a href="../../../sky/darkfactory/">⚙ Dark Factory</a>
+<a href="../../../core/">◎ Núcleo</a>
+</nav>
+<div class="wd-footer">JC-001 · País<br>Estados e setores em construção</div>
+</aside>
+<main class="wd-main">
+<div class="wd-top">
+<div><div class="wd-eyebrow">Terra · País</div><h1 class="wd-title">Juice Country</h1><p class="wd-sub">Primeiro país operacional do WordDark. Aqui ficam os Estados que geram necessidades, operações e expansão territorial.</p></div>
+<button class="wd-btn" data-wd-theme type="button">Modo claro</button>
 </div>
-<section class="card" style="margin-top:20px">
-<h2>Modelo territorial</h2>
-<p class="muted">Terra → País → Estado → Setor → Operação</p>
-<p class="muted">O SucoCast será usado para validar a comunicação entre um Estado, a Rodovia e a Dark Factory.</p>
+<section class="wd-grid">
+<article class="wd-card"><div class="wd-eyebrow">Identidade</div><h2>JC-001</h2><span class="wd-badge ok">● ONLINE</span><p class="wd-muted">País pertencente à camada Terra.</p></article>
+<article class="wd-card"><div class="wd-eyebrow">Estado ativo</div><h2>SucoCast</h2><span class="wd-badge ok">OPERACIONAL</span><p class="wd-muted">Primeiro Estado usado para validar o circuito territorial.</p></article>
+<article class="wd-card"><div class="wd-eyebrow">Estrutura</div><h2>4 Estados</h2><p class="wd-muted">Um operacional e três estruturas reservadas.</p></article>
 </section>
+<section class="wd-card full" style="margin-top:22px">
+<div class="wd-sector"><div><div class="wd-eyebrow">Estados</div><h2>Território operacional</h2></div><span class="wd-badge">JC-001</span></div>
+<div class="wd-grid">
+<a class="wd-card" href="sucocast/" style="text-decoration:none;color:inherit"><h2>🧃 SucoCast</h2><p class="wd-muted">Conteúdo · Produção · Distribuição</p><span class="wd-badge ok">ONLINE</span></a>
+<article class="wd-card"><h2>🎮 SucoGeek</h2><p class="wd-muted">Estrutura reservada para conteúdo geek, anime e jogos.</p><span class="wd-badge">PREPARAÇÃO</span></article>
+<article class="wd-card"><h2>😂 SucoComed</h2><p class="wd-muted">Estrutura reservada para humor e entretenimento.</p><span class="wd-badge">PREPARAÇÃO</span></article>
+<article class="wd-card"><h2>🏭 SucoFactor</h2><p class="wd-muted">Estrutura reservada para indústria e produção.</p><span class="wd-badge">PREPARAÇÃO</span></article>
+</div>
+</section>
+<section class="wd-grid">
+<article class="wd-card wide"><div class="wd-eyebrow">Modelo territorial</div><h2>Terra → País → Estado → Setor → Operação</h2><div class="wd-flow"><span>Terra</span><i class="wd-arrow">→</i><span>Juice Country</span><i class="wd-arrow">→</i><span>SucoCast</span><i class="wd-arrow">→</i><span>Setor</span><i class="wd-arrow">→</i><span>Operação</span></div></article>
+<article class="wd-card"><div class="wd-eyebrow">Circuito atual</div><h2>Rodovia</h2><p class="wd-muted">O país participa do circuito de comunicação entre Terra e Céu.</p><span class="wd-badge ok">PREPARADO</span></article>
+</section>
+<footer class="wd-footer">A identidade visual é compartilhada com as demais áreas. Funcionalidades ainda não integradas permanecem identificadas como preparação/MVP.</footer>
 </main>
+</div>
+<script src="../../../ui/worddark-ui.js"></script>
 </body>
 </html>

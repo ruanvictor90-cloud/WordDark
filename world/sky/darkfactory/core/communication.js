@@ -140,7 +140,7 @@ class DarkFactoryCommunication {
     const responseEnvelope = {
       success: result.success,
       status: result.status,
-      protocol: "DF-0.4.1",
+      protocol: "DF-0.4.2",
       messageId: this.generateId("MSG"),
       responseTo: envelope.messageId,
       requestId: request.id,

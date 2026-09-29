@@ -1,19 +1,38 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WordDark</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WordDark — Mundo das Sombras</title>
+<style>
+:root{color-scheme:dark;--bg:#070a10;--panel:#111722;--line:#263142;--text:#edf2f7;--muted:#9ca8b8;--accent:#f2a93b}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at 50% -10%,#1d2638 0,#0b0f17 45%,#05070b 100%);color:var(--text)}
+main{max-width:980px;margin:auto;padding:48px 20px 56px}header{text-align:center;margin-bottom:42px}h1{font-size:clamp(2.4rem,8vw,5rem);letter-spacing:.08em;margin:0 0 10px}header p{color:var(--muted);font-size:1.05rem;margin:0}
+.world{display:grid;grid-template-columns:1fr 1fr;gap:20px}.realm{display:block;text-decoration:none;color:inherit;background:linear-gradient(145deg,#121a27,#0d131d);border:1px solid var(--line);border-radius:22px;padding:28px;min-height:230px;transition:transform .2s,border-color .2s,background .2s}.realm:hover,.realm:focus-visible{transform:translateY(-3px);border-color:#526174;background:linear-gradient(145deg,#172233,#101722);outline:none}.symbol{font-size:2.5rem;margin-bottom:22px}.realm h2{margin:0 0 9px;font-size:1.7rem}.realm p{margin:0;color:var(--muted);line-height:1.6}.enter{display:inline-block;margin-top:24px;color:var(--accent);font-weight:700}
+footer{text-align:center;color:#687588;font-size:.85rem;margin-top:42px}
+@media(max-width:680px){main{padding-top:32px}.world{grid-template-columns:1fr}.realm{min-height:auto}}
+</style>
 </head>
-
 <body>
-
-    <main>
-        <h1>WordDark</h1>
-
-        <a href="world/sky/">Céu</a>
-        <a href="world/earth/">Terra</a>
-    </main>
-
+<main>
+<header>
+<div class="symbol">◈</div>
+<h1>WORDDARK</h1>
+<p>Um mundo em construção. Cada área possui sua própria função, identidade e espaço para crescer.</p>
+</header>
+<section class="world" aria-label="Áreas do mundo">
+<a class="realm" href="world/sky/">
+<div class="symbol">☁</div><h2>Céu</h2>
+<p>Gestão, serviços, infraestrutura e mecanismos que atendem às necessidades do mundo.</p>
+<span class="enter">Entrar no Céu →</span>
+</a>
+<a class="realm" href="world/earth/">
+<div class="symbol">◉</div><h2>Terra</h2>
+<p>Onde surgem empresas, marcas, projetos, países e operações que movimentam o mundo.</p>
+<span class="enter">Entrar na Terra →</span>
+</a>
+</section>
+<footer>Marco Zero · Estrutura modular · Expansão por etapas</footer>
+</main>
 </body>
 </html>

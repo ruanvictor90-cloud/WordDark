@@ -46,14 +46,9 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
 
 <section class="card" style="margin-top:20px">
 <h2>PUBLICAR_CONTEUDO</h2>
-<p class="small">Mesma operação, cinco destinos compatíveis. Todos os adaptadores abaixo estão em modo TESTE e não usam credenciais reais.</p>
-<div class="row">
-<div style="flex:1;min-width:220px">
-<label for="platform">Plataforma / integração</label>
-<select id="platform"></select>
-</div>
-<button id="genericTest" type="button">Executar publicação</button>
-</div>
+<p class="small">Um único requerimento pode selecionar vários destinos. O sistema cria uma única operação de distribuição e entrega o mesmo conteúdo aos adaptadores escolhidos.</p>
+<div id="platforms" class="grid" style="margin-top:14px"></div>
+<div class="row" style="margin-top:14px"><button id="genericTest" type="button">Executar publicação nos selecionados</button></div>
 <p id="genericStatus" aria-live="polite" class="small"></p>
 <pre id="genericResult">Aguardando teste.</pre>
 </section>
@@ -146,7 +141,7 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
       "<div class='small'>Compatível: "+integrations+"</div></div>";
   }).join("");
 
-  const platformSelect = document.getElementById("platform");
+  const platformContainer = document.getElementById("platforms");
   const integrationMap = {
     "SC-INTEGRATION-YOUTUBE":"YouTube",
     "SC-INTEGRATION-INSTAGRAM":"Instagram",
@@ -155,11 +150,14 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
     "SC-INTEGRATION-EXTERNAL":"Outra aplicação"
   };
 
-  publicationOperation.compatibleIntegrations.forEach(function(integrationId){
-    const option=document.createElement("option");
-    option.value=integrationId;
-    option.textContent=integrationMap[integrationId] || integrationId;
-    platformSelect.appendChild(option);
+  publicationOperation.compatibleIntegrations.forEach(function(integrationId, index){
+    const label=document.createElement("label");
+    label.className="card";
+    label.style.cursor="pointer";
+    label.innerHTML="<input type='checkbox' class='platform-check' value='"+integrationId+"' "+(index === 0 ? "checked" : "")+"> "+
+      "<strong>"+(integrationMap[integrationId] || integrationId)+"</strong>"+
+      "<div class='small'>"+integrationId+"</div>";
+    platformContainer.appendChild(label);
   });
 
   const coreStatus = state.core.getStatus();
@@ -168,9 +166,16 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
     coreStatus.integrationCount+" integrações registradas · "+coreStatus.operationCount+" operações registradas.</p>");
 
   document.getElementById("genericTest").addEventListener("click",function(){
-    const integrationId = platformSelect.value;
+    const selectedIntegrations = Array.from(document.querySelectorAll(".platform-check:checked"))
+      .map(function(input){ return input.value; });
     const actor = identity.identityId;
     state.permissionManager.grant(actor,"content.publish");
+
+    if (selectedIntegrations.length === 0) {
+      document.getElementById("genericStatus").textContent = "Selecione pelo menos uma plataforma.";
+      document.getElementById("genericStatus").className = "small warn";
+      return;
+    }
 
     const content = new SucoCastContent({
       contentId:"SC-CONTENT-TEST",
@@ -182,13 +187,13 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
 
     const result = runner.run("SC-OP-DIS-003",{
       actor:actor,
-      integrationId:integrationId,
+      integrationIds:selectedIntegrations,
       payload:content.toJSON()
     });
 
     document.getElementById("genericStatus").textContent =
       result.success
-        ? "PUBLICAR_CONTEUDO confirmado em modo de simulação para "+(integrationMap[integrationId] || integrationId)+"."
+        ? "Um único requerimento foi distribuído para "+result.confirmedCount+" plataforma(s) em modo de simulação."
         : "Operação rejeitada: "+result.reason;
     document.getElementById("genericStatus").className =
       "small "+(result.success ? "ok" : "warn");

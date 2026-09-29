@@ -15,7 +15,7 @@
     content="#10131b"
   >
 
-  <title>Dark Factory — DF-0.2.1 · UI2</title>
+  <title>Dark Factory — DF-0.3</title>
 
   <style>
 
@@ -169,7 +169,7 @@
   <h1>Dark Factory</h1>
 
   <div class="subtitle">
-    WordDark · Céu · Núcleo DF-0.2.1
+    WordDark · Céu · Sistema de Executores DF-0.3
   </div>
 
 
@@ -235,6 +235,18 @@
         maxlength="2000"
         placeholder="Descreva o que precisa ser feito"
       ></textarea>
+
+
+      <label for="taskType">
+        Tipo de executor
+      </label>
+
+      <select id="taskType">
+        <option value="test">Teste</option>
+        <option value="web">Web (futuro)</option>
+        <option value="file">Arquivo (futuro)</option>
+        <option value="data">Dados (futuro)</option>
+      </select>
 
 
       <label for="permission">
@@ -404,6 +416,15 @@ Nenhuma resposta recebida.
 
   <section class="panel">
 
+    <h2>Executores disponíveis</h2>
+
+    <pre id="executorList">Carregando executores...</pre>
+
+  </section>
+
+
+  <section class="panel">
+
     <h2>Logs do núcleo</h2>
 
     <pre id="logViewer">
@@ -420,13 +441,14 @@ Nenhum log registrado.
 <!-- CARREGAMENTO DO NÚCLEO -->
 <!-- ======================================================= -->
 
-<script src="core/request.js?v=0.2.1-ui2"></script>
+<script src="core/request.js?v=0.3.0"></script>
 
 <script src="core/validator.js?v=0.2.1-ui2"></script>
 
 <script src="core/logger.js?v=0.2.1-ui2"></script>
 
-<script src="core/executor.js?v=0.2.1-ui2"></script>
+<script src="core/executor.js?v=0.3.0"></script>
+<script src="core/executor-manager.js?v=0.3.0"></script>
 
 <script src="core/factory.js?v=0.2.1-ui2"></script>
 
@@ -476,6 +498,10 @@ Nenhum log registrado.
     document.getElementById("clearButton");
 
 
+  const executorList =
+    document.getElementById("executorList");
+
+
   const lastResult =
     document.getElementById("lastResult");
 
@@ -497,6 +523,23 @@ Nenhum log registrado.
   // =======================================================
 
   let requests = [];
+
+
+  // =======================================================
+  // EXECUTORES
+  // =======================================================
+
+  function renderExecutors() {
+    if (!executorList) return;
+
+    const executors = factory.getExecutors();
+
+    executorList.textContent = executors.length
+      ? executors.map(function(executor) {
+          return executor.type + " → " + executor.name + " (" + executor.status + ")";
+        }).join("\\n")
+      : "Nenhum executor registrado.";
+  }
 
 
   // =======================================================
@@ -568,6 +611,11 @@ Nenhum log registrado.
               .getElementById("task")
               .value
               .trim(),
+
+          taskType:
+            document
+              .getElementById("taskType")
+              .value,
 
           permission:
             document
@@ -1040,6 +1088,8 @@ Nenhum log registrado.
   renderRequests();
 
   renderLogs();
+
+  renderExecutors();
 
 
 </script>

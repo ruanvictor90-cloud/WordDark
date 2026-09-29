@@ -61,3 +61,41 @@ A implementação das operações deve acontecer individualmente, com autorizaç
 Primeiro consolidar o núcleo do Estado. Depois ativar as operações uma por uma.
 
 Não replicar esta estrutura para os demais Estados antes de validar o modelo no SucoCast.
+
+## Núcleo reutilizável
+
+A partir de **SC-0.3**, o Estado passa a separar:
+
+- **Núcleo** — identidade, configuração, operações, registros e integrações.
+- **Setores** — organização funcional do Estado.
+- **Integrações** — adaptadores para aplicações externas.
+- **Rodovia** — comunicação com serviços do WordDark, como a Dark Factory.
+
+O núcleo não depende de uma plataforma específica. Isso permite que o mesmo Estado seja usado dentro da estrutura WordDark e, futuramente, através de integrações externas autorizadas.
+
+## YouTube
+
+Foi criado o primeiro adaptador de contrato para YouTube.
+
+Fluxo previsto:
+
+```
+SucoCast
+→ autorização
+→ operação
+→ adaptador YouTube
+→ publicação
+→ confirmação
+→ registro
+```
+
+A implementação atual é **somente simulação**. Nenhuma chamada real ao YouTube é feita e nenhuma credencial fica no repositório público.
+
+Capacidades serão tratadas individualmente, por exemplo:
+
+- `youtube.read`
+- `youtube.upload`
+- `youtube.publish`
+
+A integração real dependerá posteriormente de uma camada segura para credenciais e execução externa.
+

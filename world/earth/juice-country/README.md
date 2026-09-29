@@ -11,7 +11,7 @@ JUICE COUNTRY
 ├── SucoComed
 └── SucoFactor
 
-Neste modelo inicial, cada item acima representa um Estado do Juice Country.
+Neste modelo, cada item acima representa um Estado do Juice Country. O SucoCast é o primeiro Estado implementado operacionalmente.
 
 ## Estados
 
@@ -31,7 +31,7 @@ Estado reservado para futura operação relacionada a humor e comédia.
 
 Estado reservado para futura operação relacionada a indústria, processos e conteúdo factual.
 
-Os quatro estados não serão implementados como sistemas completos neste momento.
+Os quatro Estados não serão implementados de uma vez. O SucoCast será o primeiro piloto operacional; os demais entram depois que o modelo for validado.
 
 ## Próxima camada
 
@@ -54,4 +54,4 @@ Ele existe para validar a arquitetura em um cenário real de crescimento, não p
 
 A estrutura é documental.
 
-Nenhuma operação real do Juice Country será executada antes da conclusão da estrutura-base da Terra, da Rodovia e da Dark Factory.
+A estrutura-base da Terra, da Rodovia e da Dark Factory foi iniciada e o SucoCast agora funciona como primeiro piloto operacional dessa integração.

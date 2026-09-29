@@ -53,6 +53,14 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
 </section>
 
 <section class="card" style="margin-top:20px">
+<h2>Operação genérica</h2>
+<p class="small">O Estado solicita uma operação; a plataforma é apenas o adaptador escolhido.</p>
+<button id="genericTest" type="button">Executar PUBLICAR_CONTEUDO</button>
+<p id="genericStatus" aria-live="polite" class="small"></p>
+<pre id="genericResult">Aguardando teste.</pre>
+</section>
+
+<section class="card" style="margin-top:20px">
 <h2>Integração externa — YouTube</h2>
 <p class="small">Teste de contrato. A publicação abaixo é simulada e não chama o YouTube nem usa credenciais reais.</p>
 <button id="youtubeTest" type="button">Simular publicação no YouTube</button>
@@ -83,6 +91,9 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
 <script src="core/permission-manager.js"></script>
 <script src="core/event-log.js"></script>
 <script src="core/integration-manager.js"></script>
+<script src="core/operation-runner.js"></script>
+<script src="core/content.js"></script>
+<script src="core/publication.js"></script>
 <script src="integrations/youtube/youtube-adapter.js"></script>
 <script src="state.js"></script>
 <script>

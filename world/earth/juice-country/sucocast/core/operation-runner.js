@@ -1,5 +1,5 @@
 /* WordDark — SucoCast Operation Runner
- * Orquestra uma operação registrada com um adaptador externo.
+ * Orquestra uma operação registrada com um ou vários adaptadores externos.
  */
 class SucoCastOperationRunner {
   constructor(core, permissions) {
@@ -32,55 +32,92 @@ class SucoCastOperationRunner {
       };
     }
 
-    const integrationId = context.integrationId;
-    if (!integrationId) {
+    const requestedIntegrations = Array.isArray(context.integrationIds)
+      ? context.integrationIds
+      : (context.integrationId ? [context.integrationId] : []);
+
+    const integrationIds = Array.from(new Set(requestedIntegrations));
+
+    if (integrationIds.length === 0) {
       return {
         success:false,
         status:"REJECTED",
-        reason:"Integração não selecionada.",
+        reason:"Nenhuma integração selecionada.",
         operationId:operationId
       };
     }
 
-    if (Array.isArray(operation.compatibleIntegrations) &&
-        operation.compatibleIntegrations.length > 0 &&
-        !operation.compatibleIntegrations.includes(integrationId)) {
+    const compatible = operation.compatibleIntegrations || [];
+    const incompatible = integrationIds.filter(function(id) {
+      return compatible.length > 0 && !compatible.includes(id);
+    });
+
+    if (incompatible.length > 0) {
       return {
         success:false,
         status:"REJECTED",
-        reason:"Integração incompatível com a operação.",
+        reason:"Uma ou mais integrações são incompatíveis com a operação.",
         operationId:operationId,
-        integrationId:integrationId
+        incompatibleIntegrations:incompatible
       };
     }
 
-    const integration = this.core.getIntegration(integrationId);
-    if (!integration) {
-      return {
-        success:false,
-        status:"FAILED",
-        reason:"Integração não encontrada.",
-        operationId:operationId,
+    const batchId = context.batchId || ("PUB-" + Math.random().toString(36).slice(2,10).toUpperCase());
+    const results = [];
+
+    integrationIds.forEach((integrationId) => {
+      const integration = this.core.getIntegration(integrationId);
+
+      if (!integration) {
+        const failed = {
+          success:false,
+          status:"FAILED",
+          reason:"Integração não encontrada.",
+          integrationId:integrationId
+        };
+        results.push(failed);
+        this.core.record({
+          type:"OPERATION_FAILED",
+          batchId:batchId,
+          operationId:operationId,
+          integrationId:integrationId,
+          result:failed
+        });
+        return;
+      }
+
+      const result = integration.execute(
+        operation.action || "publish",
+        context.payload || {}
+      );
+
+      results.push(Object.assign({
         integrationId:integrationId
-      };
-    }
+      }, result));
 
-    const result = integration.execute(
-      operation.action || "publish",
-      context.payload || {}
-    );
-
-    this.core.record({
-      type:result.success ? "OPERATION_CONFIRMED" : "OPERATION_FAILED",
-      operationId:operationId,
-      integrationId:integrationId,
-      result:result
+      this.core.record({
+        type:result.success ? "OPERATION_CONFIRMED" : "OPERATION_FAILED",
+        batchId:batchId,
+        operationId:operationId,
+        integrationId:integrationId,
+        result:result
+      });
     });
 
-    return Object.assign({
-      operationId:operationId,
-      integrationId:integrationId
-    }, result);
+    const confirmed = results.filter(function(result){ return result.success; }).length;
+    const failed = results.length - confirmed;
+    const status = failed === 0 ? "CONFIRMED" : (confirmed > 0 ? "PARTIAL" : "FAILED");
+
+    return {
+      success: confirmed > 0,
+      status: status,
+      operationId: operationId,
+      batchId: batchId,
+      requestedIntegrations: integrationIds,
+      confirmedCount: confirmed,
+      failedCount: failed,
+      results: results
+    };
   }
 }
 

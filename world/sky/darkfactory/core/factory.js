@@ -106,6 +106,7 @@ class DarkFactory {
       executedAt:result.executedAt,
       batchId:result.batchId || null,
       requestedIntegrations:result.requestedIntegrations || [],
+      acceptedCount:result.acceptedCount || 0,
       confirmedCount:result.confirmedCount || 0,
       failedCount:result.failedCount || 0
     };

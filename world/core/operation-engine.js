@@ -43,7 +43,7 @@ class WordDarkOperationEngine {
   }
 
   recordStage(operation, data = {}) {
-    this.recordStage(operation);
+    this.record(operation);
     if (this.registry && typeof this.registry.recordEvent === "function") {
       this.registry.recordEvent(operation, operation.status, data);
     }

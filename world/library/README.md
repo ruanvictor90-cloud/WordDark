@@ -65,3 +65,33 @@ A biblioteca **não decide operações**. Ela registra e preserva conhecimento.
 - Executor = execução.
 
 Nenhuma biblioteca deve assumir a responsabilidade de outro módulo.
+
+
+## Promoção de conhecimento
+
+A Biblioteca Local **não envia tudo automaticamente** para a Central.
+
+Um registro local pode ser promovido quando houver motivo para preservação histórica:
+
+```
+BIBLIOTECA LOCAL
+      │
+      │ seleção / validação
+      ▼
+REGISTRY
+      │
+      ▼
+BIBLIOTECA CENTRAL
+```
+
+A promoção é explícita e rastreável.
+
+Exemplos de conhecimento que pode ser promovido:
+- solução reutilizável;
+- erro importante e sua correção;
+- decisão arquitetural;
+- descoberta;
+- aprendizado validado;
+- procedimento que pode beneficiar outras unidades.
+
+A Central não deve virar um espelho bruto das bibliotecas locais.

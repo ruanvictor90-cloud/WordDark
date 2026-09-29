@@ -1,24 +1,15 @@
-/*
- * WordDark — SucoCast State
- * Estado SC-001
- *
- * Estrutura operacional:
- * Estado → Setores → Operações
- *
- * O Estado organiza sua própria estrutura.
- * A Dark Factory continua sendo um executor externo.
- */
+/* WordDark — SucoCast State · SC-001 */
 
 class SucoCastState {
   constructor(identity) {
     this.identity = identity;
     this.status = "ONLINE";
-    this.version = "SC-0.2";
+    this.version = "SC-0.3";
     this.parentId = "world/earth/juice-country";
 
     this.core = new SucoCastCore({
       identity: this.identity,
-      version: "SC-CORE-0.1",
+      version: "SC-CORE-0.2",
       configuration: {
         externalOperations: true,
         credentialProvider: "FUTURE_SECURE_BACKEND"
@@ -34,17 +25,17 @@ class SucoCastState {
     this.websiteAdapter = new SucoCastWebsiteAdapter();
     this.externalAppAdapter = new SucoCastExternalAppAdapter();
 
-    this.integrationManager.register(this.youtubeAdapter);
-    this.integrationManager.register(this.instagramAdapter);
-    this.integrationManager.register(this.tiktokAdapter);
-    this.integrationManager.register(this.websiteAdapter);
-    this.integrationManager.register(this.externalAppAdapter);
+    [
+      this.youtubeAdapter,
+      this.instagramAdapter,
+      this.tiktokAdapter,
+      this.websiteAdapter,
+      this.externalAppAdapter
+    ].forEach((adapter) => {
+      this.integrationManager.register(adapter);
+      this.core.registerIntegration(adapter);
+    });
 
-    this.core.registerIntegration(this.youtubeAdapter);
-    this.core.registerIntegration(this.instagramAdapter);
-    this.core.registerIntegration(this.tiktokAdapter);
-    this.core.registerIntegration(this.websiteAdapter);
-    this.core.registerIntegration(this.externalAppAdapter);
     this.registerCoreOperations();
 
     this.road = {
@@ -54,60 +45,48 @@ class SucoCastState {
 
     this.sectors = [
       {
-        sectorId: "SC-SEC-ADM",
-        name: "Administração",
-        status: "ONLINE",
-        operations: [
-          { operationId: "SC-OP-ADM-001", name: "Receber solicitação", status: "READY" },
-          { operationId: "SC-OP-ADM-002", name: "Autorizar operação", status: "READY" },
-          { operationId: "SC-OP-ADM-003", name: "Registrar resultado", status: "READY" }
+        sectorId:"SC-SEC-ADM", name:"Administração", status:"ONLINE",
+        operations:[
+          {operationId:"SC-OP-ADM-001",name:"Receber solicitação",status:"READY"},
+          {operationId:"SC-OP-ADM-002",name:"Autorizar operação",status:"READY"},
+          {operationId:"SC-OP-ADM-003",name:"Registrar resultado",status:"READY"}
         ]
       },
       {
-        sectorId: "SC-SEC-CON",
-        name: "Conteúdo",
-        status: "ONLINE",
-        operations: [
-          { operationId: "SC-OP-CON-001", name: "Definir pauta", status: "READY" },
-          { operationId: "SC-OP-CON-002", name: "Preparar conteúdo", status: "READY" }
+        sectorId:"SC-SEC-CON", name:"Conteúdo", status:"ONLINE",
+        operations:[
+          {operationId:"SC-OP-CON-001",name:"Definir pauta",status:"READY"},
+          {operationId:"SC-OP-CON-002",name:"Definir requerimento de produção",status:"READY"}
         ]
       },
       {
-        sectorId: "SC-SEC-PRO",
-        name: "Produção",
-        status: "ONLINE",
-        operations: [
-          { operationId: "SC-OP-PRO-001", name: "Solicitar produção", status: "READY" },
-          { operationId: "SC-OP-PRO-002", name: "Receber material", status: "READY" },
-          { operationId: "SC-OP-PRO-003", name: "Validar material", status: "READY" }
+        sectorId:"SC-SEC-PRO", name:"Produção", status:"ONLINE",
+        operations:[
+          {operationId:"SC-OP-PRO-001",name:"Solicitar produção",status:"READY"},
+          {operationId:"SC-OP-PRO-002",name:"Receber material",status:"READY"},
+          {operationId:"SC-OP-PRO-003",name:"Validar material",status:"READY"}
         ]
       },
       {
-        sectorId: "SC-SEC-DIS",
-        name: "Distribuição",
-        status: "ONLINE",
-        operations: [
-          { operationId: "SC-OP-DIS-001", name: "Preparar publicação", status: "READY" },
-          { operationId: "SC-OP-DIS-002", name: "Registrar publicação", status: "READY" },
-          { operationId: "SC-OP-DIS-003", name: "PUBLICAR_CONTEUDO", status: "READY" }
+        sectorId:"SC-SEC-DIS", name:"Distribuição", status:"ONLINE",
+        operations:[
+          {operationId:"SC-OP-DIS-001",name:"Preparar publicação",status:"READY"},
+          {operationId:"SC-OP-DIS-002",name:"Registrar publicação",status:"READY"},
+          {operationId:"SC-OP-DIS-003",name:"PUBLICAR_CONTEUDO",status:"READY"}
         ]
       },
       {
-        sectorId: "SC-SEC-INT",
-        name: "Inteligência",
-        status: "ONLINE",
-        operations: [
-          { operationId: "SC-OP-INT-001", name: "Registrar métricas", status: "READY" },
-          { operationId: "SC-OP-INT-002", name: "Gerar aprendizado", status: "READY" }
+        sectorId:"SC-SEC-INT", name:"Inteligência", status:"ONLINE",
+        operations:[
+          {operationId:"SC-OP-INT-001",name:"Registrar métricas",status:"READY"},
+          {operationId:"SC-OP-INT-002",name:"Gerar aprendizado",status:"READY"}
         ]
       },
       {
-        sectorId: "SC-SEC-SEG",
-        name: "Segurança",
-        status: "ONLINE",
-        operations: [
-          { operationId: "SC-OP-SEG-001", name: "Validar identidade", status: "READY" },
-          { operationId: "SC-OP-SEG-002", name: "Registrar auditoria", status: "READY" }
+        sectorId:"SC-SEC-SEG", name:"Segurança", status:"ONLINE",
+        operations:[
+          {operationId:"SC-OP-SEG-001",name:"Validar identidade",status:"READY"},
+          {operationId:"SC-OP-SEG-002",name:"Registrar auditoria",status:"READY"}
         ]
       }
     ];
@@ -123,231 +102,175 @@ class SucoCastState {
     ];
 
     this.core.registerOperation({
-      operationId: "SC-OP-DIS-003",
-      name: "PUBLICAR_CONTEUDO",
-      sectorId: "SC-SEC-DIS",
-      capability: "content.publish",
-      action: "publish",
-      compatibleIntegrations: publicationIntegrations,
-      status: "REGISTERED"
+      operationId:"SC-OP-PRO-004",
+      name:"SOLICITAR_PRODUCAO",
+      sectorId:"SC-SEC-PRO",
+      capability:"content.produce",
+      action:"request",
+      compatibleIntegrations:[],
+      status:"REGISTERED"
     });
 
     this.core.registerOperation({
-      operationId: "SC-OP-DIS-004",
-      name: "REGISTRAR_PUBLICACAO",
-      sectorId: "SC-SEC-DIS",
-      capability: "publication.record",
-      action: "record",
-      compatibleIntegrations: [],
-      status: "REGISTERED"
+      operationId:"SC-OP-DIS-003",
+      name:"PUBLICAR_CONTEUDO",
+      sectorId:"SC-SEC-DIS",
+      capability:"content.publish",
+      action:"publish",
+      compatibleIntegrations:publicationIntegrations,
+      status:"REGISTERED"
+    });
+
+    this.core.registerOperation({
+      operationId:"SC-OP-DIS-004",
+      name:"REGISTRAR_PUBLICACAO",
+      sectorId:"SC-SEC-DIS",
+      capability:"publication.record",
+      action:"record",
+      compatibleIntegrations:[],
+      status:"REGISTERED"
     });
   }
 
   publishContent(integrationId, content) {
-    const operationId = "SC-OP-DIS-003";
-    const actor = this.identity.identityId;
-    const integration = this.core.getIntegration(integrationId);
+    const operationId="SC-OP-DIS-003";
+    const actor=this.identity.identityId;
+    const integration=this.core.getIntegration(integrationId);
 
-    this.eventLog.add("CONTENT_PUBLICATION_REQUESTED", {
-      actor: actor,
-      operationId: operationId,
-      integrationId: integrationId
+    this.eventLog.add("CONTENT_PUBLICATION_REQUESTED",{
+      actor,operationId,integrationId
     });
 
     if (!integration) {
-      return {
-        success: false,
-        status: "FAILED",
-        reason: "Integração não encontrada.",
-        operationId: operationId,
-        integrationId: integrationId
-      };
+      return {success:false,status:"FAILED",reason:"Integração não encontrada.",operationId,integrationId};
     }
 
-    if (!this.permissionManager.can(actor, "content.publish")) {
-      this.eventLog.add("CONTENT_PUBLICATION_REJECTED", {
-        actor: actor,
-        capability: "content.publish",
-        integrationId: integrationId
-      });
-      return {
-        success: false,
-        status: "REJECTED",
-        reason: "Capacidade não autorizada: content.publish",
-        operationId: operationId,
-        integrationId: integrationId
-      };
+    if (!this.permissionManager.can(actor,"content.publish")) {
+      this.eventLog.add("CONTENT_PUBLICATION_REJECTED",{actor,capability:"content.publish",integrationId});
+      return {success:false,status:"REJECTED",reason:"Capacidade não autorizada: content.publish",operationId,integrationId};
     }
 
-    const operation = this.core.getOperation(operationId);
+    const operation=this.core.getOperation(operationId);
     if (!operation.compatibleIntegrations.includes(integrationId)) {
-      return {
-        success: false,
-        status: "REJECTED",
-        reason: "Integração incompatível com PUBLICAR_CONTEUDO.",
-        operationId: operationId,
-        integrationId: integrationId
-      };
+      return {success:false,status:"REJECTED",reason:"Integração incompatível com PUBLICAR_CONTEUDO.",operationId,integrationId};
     }
 
-    const result = this.integrationManager.execute(
-      integrationId,
-      operation.action,
-      content || {}
-    );
+    const result=this.integrationManager.execute(integrationId,operation.action,content || {});
+    this.eventLog.add(result.success ? "CONTENT_PUBLICATION_CONFIRMED":"CONTENT_PUBLICATION_FAILED",{
+      actor,integrationId,result
+    });
 
-    this.eventLog.add(
-      result.success ? "CONTENT_PUBLICATION_CONFIRMED" : "CONTENT_PUBLICATION_FAILED",
-      {
-        actor: actor,
-        integrationId: integrationId,
-        result: result
-      }
-    );
-
-    return Object.assign({
-      operationId: operationId,
-      integrationId: integrationId
-    }, result);
+    return Object.assign({operationId,integrationId},result);
   }
 
   simulateYouTubePublication(content) {
-    return this.publishContent("SC-INTEGRATION-YOUTUBE", content);
+    return this.publishContent("SC-INTEGRATION-YOUTUBE",content);
   }
 
-  requestPublicationThroughFactory(communication, runner, content, integrationIds, actor) {
-    if (!communication || !runner) {
-      return {
-        success:false,
-        status:"REJECTED",
-        reason:"Communication e OperationRunner são obrigatórios."
-      };
+  requestProductionThroughFactory(communication, content, actor, requirements) {
+    if (!communication) {
+      return {success:false,status:"REJECTED",reason:"Communication é obrigatória."};
     }
 
-    const targets=Array.isArray(integrationIds)
-      ? Array.from(new Set(integrationIds))
-      : [];
+    const payload = {
+      contentId: content && content.contentId ? content.contentId : null,
+      title: content && content.title ? content.title : null,
+      type: content && content.type ? content.type : "VIDEO",
+      body: content && content.body ? content.body : null,
+      asset: content && content.asset ? content.asset : null,
+      metadata: content && content.metadata ? content.metadata : null,
+      requirements: requirements || null
+    };
 
     const request=new DarkFactoryRequest({
       requester:actor || this.identity.identityId,
       origin:"state/sucocast",
       destination:"darkfactory",
-      task:"Publicação de conteúdo em múltiplas plataformas",
-      taskType:"content.publish",
+      task:"Produzir e editar conteúdo conforme requerimento do SucoCast",
+      taskType:"content.produce",
       permission:"approved",
-      payload:{
-        contentId:content && content.contentId ? content.contentId : null,
-        title:content && content.title ? content.title : null,
-        integrationIds:targets,
-        body:content && content.body ? content.body : null,
-        asset:content && content.asset ? content.asset : null,
-        metadata:content && content.metadata ? content.metadata : null
-      }
+      payload:payload
     });
 
     request.authorize();
-
     const factoryResponse=communication.send(request);
 
+    this.eventLog.add(
+      factoryResponse.success ? "FACTORY_PRODUCTION_REQUESTED":"FACTORY_PRODUCTION_REJECTED",
+      {requestId:request.id,result:factoryResponse}
+    );
+
     if (!factoryResponse.success) {
-      this.eventLog.add("FACTORY_PUBLICATION_REJECTED", {
-        requestId:request.id,
-        result:factoryResponse
-      });
       return {
         success:false,
         status:factoryResponse.status || "REJECTED",
         requestId:request.id,
-        factoryResponse:factoryResponse,
-        publication:null
+        factoryResponse
       };
     }
 
     const factoryResult=factoryResponse.result || {};
-    const publication=runner.run("SC-OP-DIS-003", {
-      actor:actor || this.identity.identityId,
-      batchId:factoryResult.batchId,
-      integrationIds:targets,
-      payload:content && typeof content.toJSON === "function"
-        ? content.toJSON()
-        : (content || {})
+    this.eventLog.add("FACTORY_PRODUCTION_RETURNED",{
+      requestId:request.id,
+      productionId:factoryResult.productionId || null,
+      contentId:factoryResult.contentId || payload.contentId
     });
 
-    this.eventLog.add(
-      publication.success ? "FACTORY_PUBLICATION_DISPATCHED" : "FACTORY_PUBLICATION_DISPATCH_FAILED",
-      {
-        requestId:request.id,
-        batchId:publication.batchId || factoryResult.batchId || null,
-        factoryResult:factoryResult,
-        publication:publication
-      }
-    );
-
     return {
-      success:publication.success,
-      status:publication.status,
+      success:true,
+      status:factoryResult.status || "PRODUCTION_ACCEPTED",
       requestId:request.id,
       requestMessageId:factoryResponse.requestMessageId || null,
       responseMessageId:factoryResponse.responseEnvelope
-        ? factoryResponse.responseEnvelope.messageId
-        : null,
-      batchId:publication.batchId || factoryResult.batchId || null,
-      factoryResponse:factoryResponse,
-      publication:publication
+        ? factoryResponse.responseEnvelope.messageId : null,
+      productionId:factoryResult.productionId || null,
+      contentId:factoryResult.contentId || payload.contentId,
+      producedContent:factoryResult
     };
   }
 
   createTestRequest() {
-    const request = new DarkFactoryRequest({
-      requester: this.identity.identityId,
-      origin: "state/sucocast",
-      destination: "darkfactory",
-      task: "Teste operacional do Estado SucoCast",
-      taskType: "test",
-      permission: "approved"
+    const request=new DarkFactoryRequest({
+      requester:this.identity.identityId,
+      origin:"state/sucocast",
+      destination:"darkfactory",
+      task:"Teste operacional do Estado SucoCast",
+      taskType:"test",
+      permission:"approved"
     });
-
     request.authorize();
     return request;
   }
 
   getSector(sectorId) {
-    return this.sectors.find((sector) => sector.sectorId === sectorId) || null;
+    return this.sectors.find((sector)=>sector.sectorId===sectorId) || null;
   }
 
   listSectors() {
-    return this.sectors.map((sector) => ({
-      sectorId: sector.sectorId,
-      name: sector.name,
-      status: sector.status,
-      operationCount: sector.operations.length
+    return this.sectors.map((sector)=>({
+      sectorId:sector.sectorId,
+      name:sector.name,
+      status:sector.status,
+      operationCount:sector.operations.length
     }));
   }
 
   getOperationCount() {
-    return this.sectors.reduce(
-      (total, sector) => total + sector.operations.length,
-      0
-    );
+    return this.sectors.reduce((total,sector)=>total+sector.operations.length,0);
   }
 
   getStatus() {
     return {
-      identityId: this.identity.identityId,
-      name: this.identity.name,
-      version: this.version,
-      status: this.status,
-      parentId: this.parentId,
-      sectorCount: this.sectors.length,
-      operationCount: this.getOperationCount()
+      identityId:this.identity.identityId,
+      name:this.identity.name,
+      version:this.version,
+      status:this.status,
+      parentId:this.parentId,
+      sectorCount:this.sectors.length,
+      operationCount:this.getOperationCount()
     };
   }
 }
 
-if (typeof window !== "undefined") {
-  window.SucoCastState = SucoCastState;
-}
-
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = SucoCastState;
-}
+if(typeof window!=="undefined") window.SucoCastState=SucoCastState;
+if(typeof module!=="undefined" && module.exports) module.exports=SucoCastState;

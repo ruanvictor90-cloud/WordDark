@@ -26,3 +26,33 @@ Ele existe para responder às necessidades geradas pela Terra.
 A Terra gera necessidades.
 
 O Céu encontra, cria ou fornece as soluções para essas necessidades.
+
+## Estrutura-base
+
+O Céu será organizado inicialmente pelas seguintes camadas:
+
+```
+CÉU
+├── DARK FACTORY
+├── ROUTING
+├── REGISTRY
+├── SECURITY
+├── STORAGE
+└── CONTRACTS
+```
+
+Cada camada possui responsabilidade própria e não deve absorver funções das demais.
+
+### Relação com a Terra
+
+A Terra gera necessidades.
+
+O Céu recebe, encaminha, autoriza, executa, registra e devolve resultados por mecanismos controlados.
+
+A arquitetura detalhada está documentada em [Dark Factory / Arquitetura](darkfactory/architecture/).
+
+## Estado atual
+
+A estrutura-base está sendo fechada antes dos testes operacionais.
+
+O próximo objetivo é transformar as interfaces entre essas camadas em contratos claros antes de conectar o primeiro Estado do Juice Country.

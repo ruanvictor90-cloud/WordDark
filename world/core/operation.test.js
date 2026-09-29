@@ -1,5 +1,5 @@
 const assert = require("assert");
-const WordDarkOperation = require("./operation");
+const WordDarkOperation = require("../contracts/operation");
 const WordDarkOperationEngine = require("./operation-engine");
 
 function baseOperation(extra = {}) {

@@ -29,9 +29,22 @@ class SucoCastState {
     this.eventLog = new SucoCastEventLog();
     this.integrationManager = new SucoCastIntegrationManager();
     this.youtubeAdapter = new SucoCastYouTubeAdapter();
+    this.instagramAdapter = new SucoCastInstagramAdapter();
+    this.tiktokAdapter = new SucoCastTikTokAdapter();
+    this.websiteAdapter = new SucoCastWebsiteAdapter();
+    this.externalAppAdapter = new SucoCastExternalAppAdapter();
 
     this.integrationManager.register(this.youtubeAdapter);
+    this.integrationManager.register(this.instagramAdapter);
+    this.integrationManager.register(this.tiktokAdapter);
+    this.integrationManager.register(this.websiteAdapter);
+    this.integrationManager.register(this.externalAppAdapter);
+
     this.core.registerIntegration(this.youtubeAdapter);
+    this.core.registerIntegration(this.instagramAdapter);
+    this.core.registerIntegration(this.tiktokAdapter);
+    this.core.registerIntegration(this.websiteAdapter);
+    this.core.registerIntegration(this.externalAppAdapter);
     this.registerCoreOperations();
 
     this.road = {
@@ -105,7 +118,8 @@ class SucoCastState {
       operationId: "SC-OP-DIS-003",
       name: "Publicar vídeo no YouTube",
       sectorId: "SC-SEC-DIS",
-      capability: "youtube.publish",
+      capability: "content.publish",
+      action: "publish",
       status: "REGISTERED"
     });
 
@@ -114,12 +128,13 @@ class SucoCastState {
       name: "Registrar resultado de publicação",
       sectorId: "SC-SEC-DIS",
       capability: "publication.record",
+      action: "record",
       status: "REGISTERED"
     });
   }
 
   simulateYouTubePublication(content) {
-    const capability = "youtube.publish";
+    const capability = "content.publish";
     const actor = this.identity.identityId;
 
     this.eventLog.add("EXTERNAL_OPERATION_REQUESTED", {

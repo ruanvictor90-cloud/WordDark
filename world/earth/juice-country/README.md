@@ -1,56 +1,57 @@
 # Juice Country
 
-O Juice Country é um país interno do WordDark, localizado na Terra.
+País interno da Terra e primeiro exemplo real da arquitetura territorial do WordDark.
 
-Ele será o primeiro exemplo concreto de uma estrutura do WordDark que pode gerar necessidades, solicitar serviços à Dark Factory e receber resultados rastreáveis.
-
-## Identidade
-
-Cada unidade do país deverá ter uma identidade própria. O nome visível identifica a unidade para as pessoas; um identificador estável será usado nas comunicações entre sistemas.
-
-## Organização territorial
+## Estrutura inicial
 
 JUICE COUNTRY
-- Estados / canais
-  - Setores / bairros
-    - Operações
-    - Solicitações
-    - Recursos locais
+│
+├── SucoCast
+├── SucoGeek
+├── SucoComed
+└── SucoFactor
 
-## Estados iniciais planejados
+Neste modelo inicial, cada item acima representa um Estado do Juice Country.
 
-- SucoCast
-- SucoGeek
-- SucoComed
-- SucoFactor
+## Estados
 
-A lista é expansível. Estes nomes definem a estrutura planejada; não significam que todos os canais já estejam implementados.
+### SucoCast
 
-## Relação com a Dark Factory
+Estado destinado ao primeiro teste real da comunicação entre Terra, Rodovia e Dark Factory.
 
-Uma unidade poderá enviar uma solicitação com origem, destino, tipo de tarefa e identidade. A Dark Factory deverá validar a solicitação, verificar autorização, selecionar um executor, registrar a execução e devolver o resultado pela Rodovia.
+### SucoGeek
 
-O país não deverá acessar diretamente os componentes internos da fábrica.
+Estado reservado para futura operação relacionada ao universo geek.
 
-## Princípios
+### SucoComed
 
-- Cada estado mantém sua identidade.
-- Setores podem crescer separadamente.
-- Unidades reutilizam contratos comuns.
-- Registrar uma unidade não significa autorizá-la.
-- Memória e dados locais devem ser separados do núcleo da fábrica.
-- Novas unidades não devem exigir reconstrução do sistema.
-- A estrutura será documentada antes da automação.
+Estado reservado para futura operação relacionada a humor e comédia.
 
-## Etapas de construção
+### SucoFactor
 
-1. Finalizar a arquitetura do país.
-2. Definir o modelo comum de estado e setor.
-3. Criar o primeiro estado de referência.
-4. Definir como uma unidade solicita um serviço.
-5. Testar o percurso completo com a Dark Factory.
-6. Expandir para os demais estados.
+Estado reservado para futura operação relacionada a indústria, processos e conteúdo factual.
 
-## Regra fundamental
+Os quatro estados não serão implementados como sistemas completos neste momento.
 
-O Juice Country deve ser um exemplo real de uso da arquitetura, mas sua construção será gradual. Primeiro estrutura e contratos; depois comportamento; por último automação e escala.
+## Próxima camada
+
+Cada Estado poderá possuir:
+
+- Setores
+- Operações
+- Identidade
+- Necessidades
+- Registros próprios
+- Rotas de comunicação
+
+## Regra
+
+O Juice Country deve obedecer ao mesmo modelo territorial usado por qualquer outro país da Terra.
+
+Ele existe para validar a arquitetura em um cenário real de crescimento, não para receber regras especiais.
+
+## Estado atual
+
+A estrutura é documental.
+
+Nenhuma operação real do Juice Country será executada antes da conclusão da estrutura-base da Terra, da Rodovia e da Dark Factory.

@@ -1,15 +1,5 @@
-/*
- * Dark Factory — Validator Core
- * DF-0.1
- *
- * Responsabilidade:
- * Validar solicitações antes que avancem no fluxo da fábrica.
- */
-
 class DarkFactoryValidator {
-
   static validateRequest(request) {
-
     const errors = [];
 
     if (!request) {
@@ -19,31 +9,14 @@ class DarkFactoryValidator {
       };
     }
 
-    if (!request.requester) {
-      errors.push("Solicitante não informado.");
-    }
+    if (!request.requester) errors.push("Solicitante não informado.");
+    if (!request.origin) errors.push("Origem não informada.");
+    if (!request.destination) errors.push("Destino não informado.");
+    if (!request.task) errors.push("Tarefa não informada.");
+    if (!request.taskType) errors.push("Tipo de tarefa não definido.");
+    if (!request.permission) errors.push("Permissão não definida.");
 
-    if (!request.origin) {
-      errors.push("Origem não informada.");
-    }
-
-    if (!request.destination) {
-      errors.push("Destino não informado.");
-    }
-
-    if (!request.task) {
-      errors.push("Tarefa não informada.");
-    }
-
-    if (!request.permission) {
-      errors.push("Permissão não definida.");
-    }
-
-    const validPermissions = [
-      "pending",
-      "approved",
-      "rejected"
-    ];
+    const validPermissions = ["pending", "approved", "rejected"];
 
     if (
       request.permission &&
@@ -58,9 +31,7 @@ class DarkFactoryValidator {
     };
   }
 
-
   static canExecute(request) {
-
     const validation = this.validateRequest(request);
 
     if (!validation.valid) {
@@ -85,13 +56,7 @@ class DarkFactoryValidator {
       errors: []
     };
   }
-
 }
-
-
-/*
- * Disponibiliza o módulo para uso pela Dark Factory.
- */
 
 if (typeof window !== "undefined") {
   window.DarkFactoryValidator = DarkFactoryValidator;

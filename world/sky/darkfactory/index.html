@@ -50,12 +50,12 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#101622;border:1px so
 <textarea id="task" required maxlength="2000" placeholder="Descreva o que precisa ser feito"></textarea>
 <label for="taskType">Tipo de executor</label>
 <select id="taskType">
-<option value="test">Teste</option>
+<option value="test">Teste</option>\n<option value="content.publish">Publicação de conteúdo (multi-plataforma)</option>
 <option value="web">Web (futuro)</option>
 <option value="file">Arquivo (futuro)</option>
 <option value="data">Dados (futuro)</option>
 </select>
-<label for="permission">Autorização inicial</label>
+<div id="contentFields" hidden>\n<label for="contentId">ID do conteúdo</label>\n<input id="contentId" maxlength="120" placeholder="Ex.: SC-CONTENT-001">\n<label for="contentTitle">Título do conteúdo</label>\n<input id="contentTitle" maxlength="200" placeholder="Ex.: Vídeo de teste WordDark">\n<label>Destinos</label>\n<div class="small"><label><input type="checkbox" class="contentTarget" value="SC-INTEGRATION-YOUTUBE" checked> YouTube</label><label><input type="checkbox" class="contentTarget" value="SC-INTEGRATION-INSTAGRAM" checked> Instagram</label><label><input type="checkbox" class="contentTarget" value="SC-INTEGRATION-TIKTOK"> TikTok</label><label><input type="checkbox" class="contentTarget" value="SC-INTEGRATION-WEBSITE"> Site próprio</label><label><input type="checkbox" class="contentTarget" value="SC-INTEGRATION-EXTERNAL"> Outra aplicação</label></div>\n</div>\n<label for="permission">Autorização inicial</label>
 <select id="permission">
 <option value="pending">Aguardando autorização</option>
 <option value="approved">Aprovada para teste</option>
@@ -117,7 +117,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#101622;border:1px so
 <script src="core/validator.js?v=0.2.1-ui3"></script>
 <script src="core/logger.js?v=0.2.1-ui3"></script>
 <script src="core/executor.js?v=0.3.0"></script>
-<script src="core/executor-manager.js?v=0.3.0"></script>
+<script src="core/executor-manager.js?v=0.3.0"></script>\n<script src="core/content-publication-executor.js?v=0.5.0"></script>
 <script src="core/factory.js?v=0.4.2"></script>
 <script src="core/communication.js?v=0.4.2"></script>
 
@@ -152,13 +152,13 @@ const lastResult=document.getElementById("lastResult");
 const requestMessage=document.getElementById("requestMessage");
 const responseMessage=document.getElementById("responseMessage");
 const logViewer=document.getElementById("logViewer");
-const stages=[
+const contentFields=document.getElementById("contentFields");\nconst taskTypeField=document.getElementById("taskType");\nconst stages=[
   document.getElementById("stageEntry"),
   document.getElementById("stageRouteIn"),
   document.getElementById("stageFactory"),
   document.getElementById("stageRouteOut")
 ];
-let requests=[];
+let requests=[];\n\ntaskTypeField.addEventListener("change",function(){\n  contentFields.hidden=taskTypeField.value!=="content.publish";\n});
 
 function setStages(active){
   stages.forEach(function(stage,index){

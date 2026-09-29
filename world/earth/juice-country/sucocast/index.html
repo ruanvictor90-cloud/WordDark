@@ -68,6 +68,7 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
 <script src="../../../sky/darkfactory/core/request.js"></script>
 <script src="../../../sky/darkfactory/core/executor.js"></script>
 <script src="../../../sky/darkfactory/core/executor-manager.js"></script>
+<script src="../../../sky/darkfactory/core/content-publication-executor.js"></script>
 <script src="../../../sky/darkfactory/core/factory.js"></script>
 <script src="../../../sky/darkfactory/routing/router.js"></script>
 <script src="../../../sky/darkfactory/core/communication.js"></script>
@@ -106,6 +107,18 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
     origin:"darkfactory",
     destination:"state/sucocast",
     service:"test"
+  }));
+  router.registerRoute(new WordDarkRoute({
+    routeId:"ROUTE-SUCOCAST-DF-CONTENT",
+    origin:"state/sucocast",
+    destination:"darkfactory",
+    service:"content.publish"
+  }));
+  router.registerRoute(new WordDarkRoute({
+    routeId:"ROUTE-DF-SUCOCAST-CONTENT",
+    origin:"darkfactory",
+    destination:"state/sucocast",
+    service:"content.publish"
   }));
 
   const factory = new DarkFactory();
@@ -181,20 +194,22 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
       contentId:"SC-CONTENT-TEST",
       type:"VIDEO",
       title:"Teste SucoCast",
-      body:"Conteúdo de teste do núcleo.",
+      body:"Conteúdo de teste do circuito SucoCast → Rodovia → Dark Factory.",
       asset:"simulated-video"
     });
 
-    const result = runner.run("SC-OP-DIS-003",{
-      actor:actor,
-      integrationIds:selectedIntegrations,
-      payload:content.toJSON()
-    });
+    const result = state.requestPublicationThroughFactory(
+      communication,
+      runner,
+      content,
+      selectedIntegrations,
+      actor
+    );
 
     document.getElementById("genericStatus").textContent =
       result.success
-        ? "Um único requerimento foi distribuído para "+result.confirmedCount+" plataforma(s) em modo de simulação."
-        : "Operação rejeitada: "+result.reason;
+        ? "Circuito completo: 1 requerimento → Dark Factory → "+result.confirmedCount+" plataforma(s)."
+        : "Circuito rejeitado: "+(result.reason || result.status);
     document.getElementById("genericStatus").className =
       "small "+(result.success ? "ok" : "warn");
     document.getElementById("genericResult").textContent = JSON.stringify(result,null,2);

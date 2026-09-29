@@ -65,9 +65,10 @@ class DarkFactoryContentExecutor {
       taskType:this.type,
       batchId:batchId,
       requestedIntegrations:integrationIds,
-      confirmedCount:integrationIds.length,
+      acceptedCount:integrationIds.length,
+      confirmedCount:0,
       failedCount:0,
-      message:"Requerimento único validado para distribuição multi-plataforma.",
+      message:"Requerimento único validado e preparado para distribuição multi-plataforma. Nenhuma publicação externa foi confirmada nesta etapa.",
       executedAt:new Date().toISOString()
     };
 

@@ -41,6 +41,12 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
 </div>
 
 <section class="card" style="margin-top:20px">
+<h2>Estrutura do Estado</h2>
+<p id="stateStatus" class="small">Carregando estrutura...</p>
+<div id="sectors" class="grid" style="margin-top:14px"></div>
+</section>
+
+<section class="card" style="margin-top:20px">
 <h2>Teste operacional</h2>
 <p class="small">Envia uma solicitação de teste com autorização aprovada e mantém os IDs de ida e volta.</p>
 <button id="run" type="button">Enviar teste pela Rodovia</button>
@@ -92,6 +98,15 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
     router.getStatus().name+" "+router.getStatus().version+" — "+router.listRoutes().length+" rotas ativas";
   document.getElementById("factory").textContent =
     factory.getStatus().name+" "+factory.getStatus().version+" — "+factory.getStatus().status;
+
+  const stateStatus = state.getStatus();
+  document.getElementById("stateStatus").textContent =
+    "Estado "+stateStatus.version+" — "+stateStatus.status+" · "+stateStatus.sectorCount+" setores · "+stateStatus.operationCount+" operações";
+  document.getElementById("sectors").innerHTML = state.sectors.map(function(sector){
+    return "<section class=\"card\"><h3>"+sector.name+"</h3><p class=\"small\">"+sector.sectorId+" · "+sector.status+"</p><ul class=\"small\">"+
+      sector.operations.map(function(operation){ return "<li>"+operation.name+" · "+operation.status+"</li>"; }).join("")+
+      "</ul></section>";
+  }).join("");
 
   document.getElementById("run").addEventListener("click",function(){
     const request = state.createTestRequest();

@@ -1,16 +1,15 @@
 /*
- * Dark Factory — Content Publication Executor
- * DF-0.5
+ * Dark Factory — Content Production Executor
+ * DF-0.6
  *
- * Primeiro executor de conteúdo do núcleo.
- * Neste estágio ele valida e organiza uma distribuição multi-destino.
- * Não acessa APIs externas nem guarda credenciais.
+ * A fábrica pertence ao Céu e presta serviço de criação/edição/processamento.
+ * Ela não define destino, canal ou plataforma de publicação.
  */
 
 class DarkFactoryContentExecutor {
   constructor() {
-    this.name = "DF-Content-Publication-Executor";
-    this.type = "content.publish";
+    this.name = "DF-Content-Production-Executor";
+    this.type = "content.produce";
     this.status = "IDLE";
   }
 
@@ -21,14 +20,11 @@ class DarkFactoryContentExecutor {
         status:"REJEITADO",
         executor:this.name,
         executorType:this.type,
-        message:"Requerimento de conteúdo sem payload."
+        message:"Requerimento de produção sem payload."
       };
     }
 
     const payload=request.payload;
-    const integrationIds=Array.isArray(payload.integrationIds)
-      ? Array.from(new Set(payload.integrationIds))
-      : [];
 
     if (!payload.contentId || !payload.title) {
       return {
@@ -36,39 +32,31 @@ class DarkFactoryContentExecutor {
         status:"REJEITADO",
         executor:this.name,
         executorType:this.type,
-        message:"Conteúdo inválido: contentId e title são obrigatórios."
-      };
-    }
-
-    if (!integrationIds.length) {
-      return {
-        success:false,
-        status:"REJEITADO",
-        executor:this.name,
-        executorType:this.type,
-        message:"Nenhum destino de publicação informado."
+        message:"Requerimento inválido: contentId e title são obrigatórios."
       };
     }
 
     this.status="EXECUTING";
 
-    const batchId=payload.batchId || (
-      "PUB-" + Math.random().toString(36).slice(2,10).toUpperCase()
+    const productionId=payload.productionId || (
+      "PROD-" + Math.random().toString(36).slice(2,10).toUpperCase()
     );
 
     const result={
       success:true,
-      status:"DISPATCH_READY",
+      status:"PRODUCTION_ACCEPTED",
       executor:this.name,
       executorType:this.type,
       requestId:request.id,
       taskType:this.type,
-      batchId:batchId,
-      requestedIntegrations:integrationIds,
-      acceptedCount:integrationIds.length,
-      confirmedCount:0,
-      failedCount:0,
-      message:"Requerimento único validado e preparado para distribuição multi-plataforma. Nenhuma publicação externa foi confirmada nesta etapa.",
+      productionId:productionId,
+      contentId:payload.contentId,
+      title:payload.title,
+      contentType:payload.type || "VIDEO",
+      productionRequirements:payload.requirements || null,
+      asset:payload.asset || null,
+      metadata:payload.metadata || null,
+      message:"Requerimento aceito. A Dark Factory produz/edita/valida o conteúdo e devolve o resultado ao Estado. Destino e publicação permanecem sob responsabilidade da Terra.",
       executedAt:new Date().toISOString()
     };
 

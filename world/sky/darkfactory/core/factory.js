@@ -1,65 +1,46 @@
 /*
  * Dark Factory — Factory Core
- * DF-0.1
+ * DF-0.3
  *
- * Responsabilidade:
- * Coordenar o fluxo básico de uma solicitação dentro
- * da Dark Factory.
- *
- * Fluxo:
- *
- * ENTRADA
- *   ↓
- * VALIDAÇÃO
- *   ↓
- * AUTORIZAÇÃO
- *   ↓
- * EXECUÇÃO
- *   ↓
- * REGISTRO
- *   ↓
- * RESULTADO
+ * O núcleo agora utiliza um gerenciador de executores.
+ * O fluxo principal permanece estável enquanto novos
+ * executores podem ser adicionados como módulos.
  */
 
 class DarkFactory {
 
   constructor() {
-
     this.name = "Dark Factory";
-
-    this.version = "DF-0.1";
-
+    this.version = "DF-0.3";
     this.status = "ONLINE";
 
     this.logger = new DarkFactoryLogger();
+    this.executorManager = new DarkFactoryExecutorManager();
 
-    this.executor = new DarkFactoryExecutor();
+    this.registerDefaultExecutors();
   }
 
+  registerDefaultExecutors() {
+    this.executorManager.register(
+      new DarkFactoryExecutor()
+    );
+  }
+
+  registerExecutor(executor) {
+    return this.executorManager.register(executor);
+  }
 
   process(request) {
-
-    /*
-     * 1. Entrada
-     */
-
     this.logger.log({
       requestId: request ? request.id : null,
       event: "REQUEST_RECEIVED",
       message: "Solicitação recebida pela Dark Factory."
     });
 
-
-    /*
-     * 2. Validação
-     */
-
     const validation =
       DarkFactoryValidator.validateRequest(request);
 
-
     if (!validation.valid) {
-
       this.logger.log({
         requestId: request ? request.id : null,
         event: "VALIDATION_FAILED",
@@ -75,17 +56,10 @@ class DarkFactory {
       };
     }
 
-
-    /*
-     * 3. Autorização
-     */
-
     const authorization =
       DarkFactoryValidator.canExecute(request);
 
-
     if (!authorization.allowed) {
-
       this.logger.log({
         requestId: request.id,
         event: "AUTHORIZATION_FAILED",
@@ -100,10 +74,39 @@ class DarkFactory {
       };
     }
 
+    const selection =
+      this.executorManager.select(request);
 
-    /*
-     * 4. Execução
-     */
+    if (!selection.success) {
+      this.logger.log({
+        requestId: request.id,
+        event: "EXECUTOR_NOT_FOUND",
+        message: selection.reason,
+        data: {
+          taskType: request.taskType
+        }
+      });
+
+      return {
+        success: false,
+        status: "REJEITADO",
+        stage: "EXECUTOR",
+        reason: selection.reason,
+        taskType: request.taskType
+      };
+    }
+
+    const executor = selection.executor;
+
+    this.logger.log({
+      requestId: request.id,
+      event: "EXECUTOR_SELECTED",
+      message: "Executor selecionado.",
+      data: {
+        taskType: request.taskType,
+        executor: executor.name
+      }
+    });
 
     this.logger.log({
       requestId: request.id,
@@ -111,14 +114,7 @@ class DarkFactory {
       message: "Execução iniciada."
     });
 
-
-    const result =
-      this.executor.execute(request);
-
-
-    /*
-     * 5. Registro do resultado
-     */
+    const result = executor.execute(request);
 
     this.logger.log({
       requestId: request.id,
@@ -127,57 +123,43 @@ class DarkFactory {
       data: result
     });
 
-
-    /*
-     * 6. Retorno
-     */
-
     return {
       success: result.success,
       status: result.status,
       requestId: request.id,
       executor: result.executor,
+      executorType: result.executorType || request.taskType,
+      taskType: result.taskType || request.taskType,
       message: result.message,
       executedAt: result.executedAt
     };
   }
 
-
   getStatus() {
-
     return {
       name: this.name,
       version: this.version,
       status: this.status,
-      executor: this.executor.getStatus()
+      executors: this.executorManager.list()
     };
   }
 
+  getExecutors() {
+    return this.executorManager.list();
+  }
 
   getLogs() {
-
     return this.logger.getAll();
   }
 
-
   getRequestLogs(requestId) {
-
     return this.logger.getByRequest(requestId);
   }
 
-
   clearLogs() {
-
     this.logger.clear();
   }
-
 }
-
-
-/*
- * Disponibiliza a fábrica para uso pela interface
- * e por outros módulos do WordDark.
- */
 
 if (typeof window !== "undefined") {
   window.DarkFactory = DarkFactory;

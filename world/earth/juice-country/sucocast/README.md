@@ -2,100 +2,65 @@
 
 Primeiro Estado operacional do Juice Country.
 
-## Hierarquia
+## Posição
+
+**SucoCast está na Terra.** É aqui que a marca cria suas raízes: identidade, estratégia, necessidade de conteúdo, canais, distribuição e aprendizado pertencem ao Estado.
+
+A **Dark Factory está no Céu** e é uma infraestrutura compartilhada que pode atender o SucoCast e outros Estados.
+
+## Regra de responsabilidade
 
 ```
-TERRA
-└── JUICE COUNTRY
-    └── SUCOCAST
-        ├── Identidade
-        ├── Administração
-        ├── Conteúdo
-        ├── Produção
-        ├── Distribuição
-        ├── Inteligência
-        ├── Segurança
-        └── Rodovia
-             └── Dark Factory
+TERRA · SUCOCAST
+├── define o que precisa
+├── define as especificações
+├── envia o requerimento
+├── recebe o material
+├── decide o destino
+└── publica / distribui
+
+              ↕ RODOVIA
+
+CÉU · DARK FACTORY
+├── cria
+├── edita
+├── processa
+└── valida
 ```
 
-## Regra do Estado
+A fábrica não recebe uma lista de plataformas para publicação. O Estado decide o destino depois de receber o material.
 
-O SucoCast possui identidade, estado operacional, setores e operações próprios.
+## Setores
 
-A **Dark Factory não pertence ao Estado**. Ela é um executor externo acessado pela Rodovia.
+- Administração
+- Conteúdo
+- Produção
+- Distribuição
+- Inteligência
+- Segurança
 
-Fluxo:
+A Distribuição continua dentro do SucoCast porque o Estado é o gestor da marca e dos seus canais.
+
+## Fluxo de produção
 
 ```
 SucoCast
-   ↓
+  ↓ requerimento
 Rodovia
-   ↓
+  ↓
 Dark Factory
-   ↓
+  ↓ produção / edição / validação
 Rodovia
-   ↓
+  ↓
 SucoCast
+  ↓ decisão de destino
+YouTube / Instagram / TikTok / Site / outros
 ```
+
+As integrações atuais são simulações. Nenhuma credencial ou publicação real é executada pelo repositório nesta etapa.
 
 ## Versão
 
-**SC-0.2**
+**SC-0.3**
 
-Esta versão estrutura o Estado em **Setores → Operações** sem transformar cada operação em uma automação real ainda.
-
-A implementação das operações deve acontecer individualmente, com autorização, registro e testes próprios.
-
-## Setores atuais
-
-- **Administração** — entrada, autorização e registro.
-- **Conteúdo** — pauta e preparação.
-- **Produção** — solicitação, recebimento e validação de material.
-- **Distribuição** — preparação e registro de publicação.
-- **Inteligência** — métricas e aprendizado.
-- **Segurança** — identidade e auditoria.
-
-## Próxima regra
-
-Primeiro consolidar o núcleo do Estado. Depois ativar as operações uma por uma.
-
-Não replicar esta estrutura para os demais Estados antes de validar o modelo no SucoCast.
-
-## Núcleo reutilizável
-
-A partir de **SC-0.3**, o Estado passa a separar:
-
-- **Núcleo** — identidade, configuração, operações, registros e integrações.
-- **Setores** — organização funcional do Estado.
-- **Integrações** — adaptadores para aplicações externas.
-- **Rodovia** — comunicação com serviços do WordDark, como a Dark Factory.
-
-O núcleo não depende de uma plataforma específica. Isso permite que o mesmo Estado seja usado dentro da estrutura WordDark e, futuramente, através de integrações externas autorizadas.
-
-## YouTube
-
-Foi criado o primeiro adaptador de contrato para YouTube.
-
-Fluxo previsto:
-
-```
-SucoCast
-→ autorização
-→ operação
-→ adaptador YouTube
-→ publicação
-→ confirmação
-→ registro
-```
-
-A implementação atual é **somente simulação**. Nenhuma chamada real ao YouTube é feita e nenhuma credencial fica no repositório público.
-
-Capacidades serão tratadas individualmente, por exemplo:
-
-- `youtube.read`
-- `youtube.upload`
-- `youtube.publish`
-
-A integração real dependerá posteriormente de uma camada segura para credenciais e execução externa.
-
+Esta versão consolida a separação entre **produção no Céu** e **gestão/distribuição na Terra**.

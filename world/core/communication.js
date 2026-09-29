@@ -1,3 +1,7 @@
+const WordDarkRequest = require("../contracts/request");
+const WordDarkMessage = require("../contracts/message");
+const WordDarkReceipt = require("../contracts/receipt");
+
 /* WordDark — Communication Bus
  * Transporte bidirecional pela Rodovia Global.
  * Pedido, recebimento e execução são etapas distintas.

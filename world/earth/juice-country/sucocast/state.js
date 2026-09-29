@@ -23,7 +23,7 @@ class SucoCastState {
       permission: "approved"
     });
 
-    request.authorize("approved");
+    request.authorize();
     return request;
   }
 

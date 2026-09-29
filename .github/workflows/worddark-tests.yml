@@ -36,3 +36,7 @@ jobs:
         run: node world/core/persistence.test.js
       - name: ACK and error contracts
         run: node world/contracts/ack-error.test.js
+      - name: Emergency Stop
+        run: node world/core/emergency-stop.test.js
+      - name: Dark Factory modular
+        run: node world/sky/darkfactory/core/DF-0.7.test.js

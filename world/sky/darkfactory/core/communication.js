@@ -3,13 +3,9 @@ class DarkFactoryCommunication {
     this.factory = factory;
     this.router = router;
     this.name = "DF-Communication";
-    this.version = "DF-0.4.0";
+    this.version = "DF-0.4.1";
     this.status = "ONLINE";
   }
-
-  // =========================================================
-  // ENVIO
-  // =========================================================
 
   send(request) {
     const envelope = this.createRequestEnvelope(request);
@@ -21,7 +17,8 @@ class DarkFactoryCommunication {
         stage: "ENVIO",
         reason: "Solicitação ausente.",
         requestMessageId: envelope.messageId,
-        requestEnvelope: envelope
+        requestEnvelope: envelope,
+        responseEnvelope: null
       };
     }
 
@@ -37,7 +34,8 @@ class DarkFactoryCommunication {
         return {
           ...routing,
           requestMessageId: envelope.messageId,
-          requestEnvelope: envelope
+          requestEnvelope: envelope,
+          responseEnvelope: null
         };
       }
     }
@@ -47,17 +45,14 @@ class DarkFactoryCommunication {
     return {
       ...response,
       requestMessageId: envelope.messageId,
-      requestEnvelope: envelope
+      requestEnvelope: envelope,
+      responseEnvelope: response
     };
   }
 
-  // =========================================================
-  // CRIAÇÃO DA MENSAGEM
-  // =========================================================
-
   createRequestEnvelope(request) {
     return {
-      protocol: "DF-0.4.0",
+      protocol: "DF-0.4.1",
       messageId: this.generateId("MSG"),
       requestId: request ? request.id : null,
       origin: request ? request.origin : null,
@@ -67,10 +62,6 @@ class DarkFactoryCommunication {
       payload: request ? request.toJSON() : null
     };
   }
-
-  // =========================================================
-  // RECEBIMENTO
-  // =========================================================
 
   receive(envelope) {
     if (!envelope) {
@@ -104,10 +95,6 @@ class DarkFactoryCommunication {
     );
   }
 
-  // =========================================================
-  // RECONSTRUÇÃO DA SOLICITAÇÃO
-  // =========================================================
-
   rebuildRequest(data, originalRequestId) {
     const request =
       new DarkFactoryRequest({
@@ -134,10 +121,6 @@ class DarkFactoryCommunication {
     return request;
   }
 
-  // =========================================================
-  // PROCESSAMENTO
-  // =========================================================
-
   processReceivedRequest(envelope, request) {
     const result =
       this.factory.process(request);
@@ -149,10 +132,6 @@ class DarkFactoryCommunication {
     );
   }
 
-  // =========================================================
-  // RESPOSTA
-  // =========================================================
-
   createResponseEnvelope(
     envelope,
     request,
@@ -161,7 +140,7 @@ class DarkFactoryCommunication {
     const responseEnvelope = {
       success: result.success,
       status: result.status,
-      protocol: "DF-0.4.0",
+      protocol: "DF-0.4.1",
       messageId: this.generateId("MSG"),
       responseTo: envelope.messageId,
       requestId: request.id,
@@ -186,10 +165,6 @@ class DarkFactoryCommunication {
     return responseEnvelope;
   }
 
-  // =========================================================
-  // STATUS
-  // =========================================================
-
   getStatus() {
     return {
       name: this.name,
@@ -197,10 +172,6 @@ class DarkFactoryCommunication {
       status: this.status
     };
   }
-
-  // =========================================================
-  // GERADOR DE ID
-  // =========================================================
 
   generateId(prefix) {
     const time =

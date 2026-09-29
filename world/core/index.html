@@ -17,6 +17,9 @@ button{padding:12px 16px;border:0;border-radius:8px;cursor:pointer}pre{white-spa
 <button id="run" type="button">Executar circuito real</button>
 <pre id="result">Aguardando operação...</pre>
 
+<script src="../contracts/identity.js"></script>
+<script src="../contracts/access.js"></script>
+<script src="../security/security-manager.js"></script>
 <script src="../contracts/operation.js"></script>
 <script src="operation-engine.js"></script>
 <script src="../sky/darkfactory/contracts/route.js"></script>
@@ -53,11 +56,20 @@ run.addEventListener("click",()=>{
    destination:"world/sky/darkfactory",
    service:"content.produce"
   }));
+  const security=new WordDarkSecurityManager();
+  security.registerIdentity(new WordDarkIdentity({identityId:"CITY-DEMO",type:"UNIT"}));
+  security.grant(new WordDarkAccessRule({
+   identityId:"CITY-DEMO",
+   capability:"content.produce",
+   action:"request",
+   environment:"TEST",
+   scope:"world/sky/darkfactory"
+  }));
   const factory=new DarkFactory();
   const bridge=new DarkFactoryOperationBridge({factory,router});
   const events=[];
   const engine=new WordDarkOperationEngine({
-   authorize:()=>({allowed:true,reference:"AUTH-DEMO-001"}),
+   security,
    route:op=>bridge.route(op),
    execute:op=>bridge.execute(op),
    record:op=>{events.push({status:op.status,at:op.updatedAt});draw(op.status)}
@@ -69,6 +81,10 @@ run.addEventListener("click",()=>{
    operationType:"content.produce",
    environment:"TEST",
    payload:{
+    identityId:"CITY-DEMO",
+    capability:"content.produce",
+    action:"request",
+    scope:"world/sky/darkfactory",
     task:"Produzir material de teste",
     contentId:"CONTENT-DEMO-001",
     title:"WordDark — primeiro circuito operacional",
@@ -83,6 +99,7 @@ run.addEventListener("click",()=>{
    factoryStatus:factory.getStatus(),
    factoryLogs:factory.getRequestLogs(result.payload && result.payload.requestId),
    routes:router.listRoutes(),
+   securityAudit:security.getAudit(),
    events
   },null,2);
  }catch(error){

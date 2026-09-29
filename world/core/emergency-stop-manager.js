@@ -1,4 +1,6 @@
-const WordDarkEmergencyStop = require("../contracts/emergency-stop");
+const WordDarkEmergencyStop = typeof require === "function"
+  ? require("../contracts/emergency-stop")
+  : (typeof window !== "undefined" ? window.WordDarkEmergencyStop : null);
 
 /* WordDark — Emergency Stop Manager
  * Mantém a parada de emergência fora do executor.

@@ -215,6 +215,88 @@ class SucoCastState {
     return this.publishContent("SC-INTEGRATION-YOUTUBE", content);
   }
 
+  requestPublicationThroughFactory(communication, runner, content, integrationIds, actor) {
+    if (!communication || !runner) {
+      return {
+        success:false,
+        status:"REJECTED",
+        reason:"Communication e OperationRunner são obrigatórios."
+      };
+    }
+
+    const targets=Array.isArray(integrationIds)
+      ? Array.from(new Set(integrationIds))
+      : [];
+
+    const request=new DarkFactoryRequest({
+      requester:actor || this.identity.identityId,
+      origin:"state/sucocast",
+      destination:"darkfactory",
+      task:"Publicação de conteúdo em múltiplas plataformas",
+      taskType:"content.publish",
+      permission:"approved",
+      payload:{
+        contentId:content && content.contentId ? content.contentId : null,
+        title:content && content.title ? content.title : null,
+        integrationIds:targets,
+        body:content && content.body ? content.body : null,
+        asset:content && content.asset ? content.asset : null,
+        metadata:content && content.metadata ? content.metadata : null
+      }
+    });
+
+    request.authorize();
+
+    const factoryResponse=communication.send(request);
+
+    if (!factoryResponse.success) {
+      this.eventLog.add("FACTORY_PUBLICATION_REJECTED", {
+        requestId:request.id,
+        result:factoryResponse
+      });
+      return {
+        success:false,
+        status:factoryResponse.status || "REJECTED",
+        requestId:request.id,
+        factoryResponse:factoryResponse,
+        publication:null
+      };
+    }
+
+    const factoryResult=factoryResponse.result || {};
+    const publication=runner.run("SC-OP-DIS-003", {
+      actor:actor || this.identity.identityId,
+      batchId:factoryResult.batchId,
+      integrationIds:targets,
+      payload:content && typeof content.toJSON === "function"
+        ? content.toJSON()
+        : (content || {})
+    });
+
+    this.eventLog.add(
+      publication.success ? "FACTORY_PUBLICATION_DISPATCHED" : "FACTORY_PUBLICATION_DISPATCH_FAILED",
+      {
+        requestId:request.id,
+        batchId:publication.batchId || factoryResult.batchId || null,
+        factoryResult:factoryResult,
+        publication:publication
+      }
+    );
+
+    return {
+      success:publication.success,
+      status:publication.status,
+      requestId:request.id,
+      requestMessageId:factoryResponse.requestMessageId || null,
+      responseMessageId:factoryResponse.responseEnvelope
+        ? factoryResponse.responseEnvelope.messageId
+        : null,
+      batchId:publication.batchId || factoryResult.batchId || null,
+      factoryResponse:factoryResponse,
+      publication:publication
+    };
+  }
+
   createTestRequest() {
     const request = new DarkFactoryRequest({
       requester: this.identity.identityId,

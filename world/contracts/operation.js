@@ -1,6 +1,6 @@
 /* WordDark — Global Operation Contract
- * Marco Zero: contrato conceitual de uma operação.
- * Este módulo não executa operações; apenas define sua identidade e estado.
+ * Marco Zero: contrato global de uma operação rastreável.
+ * Este módulo define identidade, ambiente e ciclo de vida.
  */
 
 class WordDarkOperation {
@@ -21,17 +21,8 @@ class WordDarkOperation {
 
   static get STATUSES() {
     return [
-      "CREATED",
-      "IDENTIFIED",
-      "AUTHORIZED",
-      "ROUTED",
-      "EXECUTING",
-      "VALIDATING",
-      "COMPLETED",
-      "REJECTED",
-      "BLOCKED",
-      "FAILED",
-      "CANCELLED"
+      "CREATED","IDENTIFIED","AUTHORIZED","ROUTED","EXECUTING",
+      "VALIDATING","COMPLETED","REJECTED","BLOCKED","FAILED","CANCELLED"
     ];
   }
 
@@ -39,9 +30,28 @@ class WordDarkOperation {
     return ["TEST", "PROD"];
   }
 
+  static get TERMINAL_STATUSES() {
+    return ["COMPLETED","REJECTED","BLOCKED","FAILED","CANCELLED"];
+  }
+
+  static get TRANSITIONS() {
+    return {
+      CREATED: ["IDENTIFIED","REJECTED","BLOCKED","CANCELLED"],
+      IDENTIFIED: ["AUTHORIZED","REJECTED","BLOCKED","CANCELLED"],
+      AUTHORIZED: ["ROUTED","REJECTED","BLOCKED","CANCELLED"],
+      ROUTED: ["EXECUTING","REJECTED","BLOCKED","FAILED","CANCELLED"],
+      EXECUTING: ["VALIDATING","FAILED","BLOCKED","CANCELLED"],
+      VALIDATING: ["COMPLETED","FAILED","BLOCKED"],
+      COMPLETED: [],
+      REJECTED: [],
+      BLOCKED: [],
+      FAILED: [],
+      CANCELLED: []
+    };
+  }
+
   validate() {
     const errors = [];
-
     if (!this.operationId) errors.push("operationId é obrigatório.");
     if (!this.requesterId) errors.push("requesterId é obrigatório.");
     if (!this.originId) errors.push("originId é obrigatório.");
@@ -52,15 +62,21 @@ class WordDarkOperation {
     if (!WordDarkOperation.STATUSES.includes(this.status)) {
       errors.push("status de operação inválido.");
     }
-
     return { valid: errors.length === 0, errors };
+  }
+
+  canTransitionTo(status) {
+    if (!WordDarkOperation.STATUSES.includes(status)) return false;
+    return WordDarkOperation.TRANSITIONS[this.status].includes(status);
   }
 
   transition(status, result = null) {
     if (!WordDarkOperation.STATUSES.includes(status)) {
       throw new Error("Estado de operação inválido: " + status);
     }
-
+    if (!this.canTransitionTo(status)) {
+      throw new Error("Transição de operação não permitida: " + this.status + " -> " + status);
+    }
     this.status = status;
     this.result = result;
     this.updatedAt = new Date().toISOString();
@@ -69,18 +85,10 @@ class WordDarkOperation {
 
   toJSON() {
     return {
-      operationId: this.operationId,
-      requesterId: this.requesterId,
-      originId: this.originId,
-      destinationId: this.destinationId,
-      operationType: this.operationType,
-      environment: this.environment,
-      status: this.status,
-      parentOperationId: this.parentOperationId,
-      payload: this.payload,
-      result: this.result,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt
+      operationId:this.operationId, requesterId:this.requesterId, originId:this.originId,
+      destinationId:this.destinationId, operationType:this.operationType,
+      environment:this.environment, status:this.status, parentOperationId:this.parentOperationId,
+      payload:this.payload, result:this.result, createdAt:this.createdAt, updatedAt:this.updatedAt
     };
   }
 }

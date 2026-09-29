@@ -12,13 +12,27 @@ A Terra é a área do WordDark responsável por gerar necessidades e movimentar 
 - Projetos
 - Negócios
 - Novas operações
+- Países internos e suas unidades
 
 Cada elemento da Terra pode gerar necessidades que serão atendidas pelo Céu.
 
-A Terra representa a atividade e a expansão do mundo.
+## Juice Country
+
+O **Juice Country** é um país interno da Terra e servirá como um dos primeiros grandes testes de escala da arquitetura.
+
+Ele poderá conter estados/canais independentes, como:
+
+- SucoCast
+- SucoGeek
+- SucoComed
+- SucoFactor
+
+A lista é expansível. Os estados poderão possuir setores e necessidades próprias, mas utilizarão a Dark Factory através de contratos e rotas padronizadas.
 
 ## Princípio
 
 A Terra cria, opera e expande.
 
 Ao crescer, gera necessidades que movimentam o Céu.
+
+O crescimento de uma unidade não deve exigir a reconstrução do sistema que atende as demais.

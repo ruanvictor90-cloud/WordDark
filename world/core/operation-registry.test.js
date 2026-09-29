@@ -27,4 +27,20 @@ assert.ok(centralLibrary.get(registry.getEvents("OP-TEST-001")[0].eventId));
 registry.archiveOperation(operation);
 assert.strictEqual(centralLibrary.count(), 2);
 
+localLibrary.save({
+  recordId: "LEARNING-001",
+  type: "LEARNING",
+  operationId: "OP-TEST-001",
+  data: { lesson: "teste de promoção seletiva" }
+});
+
+const promoted = registry.promoteLocalLearning("LEARNING-001", {
+  reason: "LEARNING_VALIDATED"
+});
+
+assert.ok(promoted);
+assert.strictEqual(promoted.type, "LEARNING_PROMOTION");
+assert.strictEqual(centralLibrary.count(), 3);
+assert.strictEqual(promoted.source, "LIB-TEST-LOCAL");
+
 console.log("operation-registry.test.js: OK");

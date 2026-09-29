@@ -35,6 +35,23 @@ class WordDarkWorldRuntime {
     };
   }
 
+  static compose(components = {}) {
+    const runtime = new WordDarkWorldRuntime(components);
+    const health = runtime.getHealth();
+    if (!health.ready) {
+      throw new Error("WordDark Runtime não está pronto: " + health.missing.join(", "));
+    }
+    return runtime;
+  }
+
+  assertReady() {
+    const health = this.getHealth();
+    if (!health.ready) {
+      throw new Error("WordDark Runtime não está pronto: " + health.missing.join(", "));
+    }
+    return true;
+  }
+
   createOperation(source = {}) {
     if (!this.operationEngine) throw new Error("Operation Engine não configurado.");
     return this.operationEngine.create(source);

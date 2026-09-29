@@ -36,3 +36,20 @@ A Terra cria, opera e expande.
 Ao crescer, gera necessidades que movimentam o Céu.
 
 O crescimento de uma unidade não deve exigir a reconstrução do sistema que atende as demais.
+
+
+## Modelo territorial
+
+A estrutura territorial da Terra está documentada em [Modelo Territorial](territory/).
+
+A hierarquia definida é:
+
+```
+Terra → País → Estado → Setor → Operação
+```
+
+O modelo será fechado antes dos testes operacionais.
+
+## Juice Country
+
+Documentação inicial: [Juice Country](juice-country/).

@@ -49,6 +49,7 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
 <section class="card" style="margin-top:20px">
 <h2>Núcleo do Estado</h2>
 <p id="coreStatus" class="small">Carregando núcleo...</p>
+<div id="integrationList" class="small"></div>
 <pre id="coreResult">Aguardando.</pre>
 </section>
 
@@ -95,6 +96,10 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
 <script src="core/content.js"></script>
 <script src="core/publication.js"></script>
 <script src="integrations/youtube/youtube-adapter.js"></script>
+<script src="integrations/instagram/instagram-adapter.js"></script>
+<script src="integrations/tiktok/tiktok-adapter.js"></script>
+<script src="integrations/website/website-adapter.js"></script>
+<script src="integrations/external/external-app-adapter.js"></script>
 <script src="state.js"></script>
 <script>
 (function(){
@@ -149,6 +154,12 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
     integrations: state.core.listIntegrations(),
     operations: state.core.listOperations()
   },null,2);
+
+  document.getElementById("integrationList").innerHTML =
+    "<strong>Integrações registradas:</strong> " +
+    state.core.listIntegrations().map(function(item){
+      return item.platform+" · "+item.status;
+    }).join(" | ");
 
   document.getElementById("youtubeTest").addEventListener("click",function(){
     state.permissionManager.grant(identity.identityId,"youtube.publish");

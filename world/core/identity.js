@@ -1,0 +1,1 @@
+window.WordDarkCoreIdentity={identityId:"WD-SEC-OPS-001",type:"SECTOR",name:"Núcleo de Operações",parentId:"WORDDARK",status:"ONLINE",areas:["WD-OPS-TEST-001","WD-OPS-EXEC-001","WD-OPS-KNOW-001"]};

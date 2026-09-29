@@ -40,3 +40,5 @@ jobs:
         run: node world/core/emergency-stop.test.js
       - name: Dark Factory modular
         run: node world/sky/darkfactory/core/DF-0.7.test.js
+      - name: Diagnostics and learning
+        run: node world/core/diagnostics-learning.test.js

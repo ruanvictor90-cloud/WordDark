@@ -376,7 +376,7 @@ Nenhuma solicitação processada.
 
   <section class="panel">
 
-    <h2>Comunicação DF-0.4.0</h2>
+    <h2>Comunicação DF-0.4.1</h2>
 
     <p
       id="communicationStatus"
@@ -456,7 +456,7 @@ Nenhum log registrado.
 
 <script src="core/factory.js?v=0.2.1-ui2"></script>
 
-<script src="core/communication.js?v=0.4.0"></script>
+<script src="core/communication.js?v=0.4.1"></script>
 
 
 <script>
@@ -836,36 +836,26 @@ Nenhum log registrado.
     // RESPONSE REAL
     // -----------------------------------------------------
 
-    const responseEnvelope = {
+    const responseEnvelope =
+      result.responseEnvelope || null;
 
-      protocol:
-        result.protocol || "DF-0.4.0",
+    if (responseEnvelope) {
 
-      messageId:
-        result.messageId || null,
+      responseMessage.textContent =
+        JSON.stringify(
+          responseEnvelope,
+          null,
+          2
+        );
 
-      responseTo:
-        result.responseTo || null,
+    } else {
 
-      requestId:
-        result.requestId || null,
+      responseMessage.textContent =
+        "Nenhuma resposta recebida.";
 
-      origin:
-        result.origin || null,
+    }
 
-      destination:
-        result.destination || null,
-
-      type:
-        result.type || "RESPONSE",
-
-      status:
-        result.status || null,
-
-      route:
-        result.route || null
-
-    };
+    return;
 
 
     responseMessage.textContent =
@@ -979,7 +969,7 @@ Nenhum log registrado.
           addTextElement(
             entry,
             "p",
-            "Message ID: " +
+            "Request Message ID: " +
             item.result.requestMessageId
           );
 
@@ -990,12 +980,23 @@ Nenhum log registrado.
         // RESPONSE TO REAL
         // -------------------------------------------------
 
+        if (item.result.messageId) {
+
+          addTextElement(
+            entry,
+            "p",
+            "Response Message ID: " +
+            item.result.messageId
+          );
+
+        }
+
         if (item.result.responseTo) {
 
           addTextElement(
             entry,
             "p",
-            "Response To: " +
+            "Response To (Request Message ID): " +
             item.result.responseTo
           );
 
@@ -1117,7 +1118,7 @@ Nenhum log registrado.
 
 
       communicationStatus.textContent =
-        "Comunicação DF-0.4.0 online.";
+        "Comunicação DF-0.4.1 online.";
 
 
       communicationStatus.className =

@@ -32,13 +32,36 @@ class SucoCastOperationRunner {
       };
     }
 
-    const integration = this.core.getIntegration(context.integrationId);
+    const integrationId = context.integrationId;
+    if (!integrationId) {
+      return {
+        success:false,
+        status:"REJECTED",
+        reason:"Integração não selecionada.",
+        operationId:operationId
+      };
+    }
+
+    if (Array.isArray(operation.compatibleIntegrations) &&
+        operation.compatibleIntegrations.length > 0 &&
+        !operation.compatibleIntegrations.includes(integrationId)) {
+      return {
+        success:false,
+        status:"REJECTED",
+        reason:"Integração incompatível com a operação.",
+        operationId:operationId,
+        integrationId:integrationId
+      };
+    }
+
+    const integration = this.core.getIntegration(integrationId);
     if (!integration) {
       return {
         success:false,
         status:"FAILED",
         reason:"Integração não encontrada.",
-        operationId:operationId
+        operationId:operationId,
+        integrationId:integrationId
       };
     }
 
@@ -50,12 +73,13 @@ class SucoCastOperationRunner {
     this.core.record({
       type:result.success ? "OPERATION_CONFIRMED" : "OPERATION_FAILED",
       operationId:operationId,
-      integrationId:context.integrationId,
+      integrationId:integrationId,
       result:result
     });
 
     return Object.assign({
-      operationId:operationId
+      operationId:operationId,
+      integrationId:integrationId
     }, result);
   }
 }

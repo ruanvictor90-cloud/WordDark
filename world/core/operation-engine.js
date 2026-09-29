@@ -1,3 +1,5 @@
+const WordDarkOperation = require("../contracts/operation");
+
 /* WordDark — Operation Engine
  * Núcleo mínimo para executar o circuito de uma operação.
  * Segurança: identidade, autorização, ambiente e proteção contra replay.

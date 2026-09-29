@@ -34,5 +34,28 @@ const status=runtime.getStatus();
 if (status.routes !== 1 || status.identities !== 1 || status.accounts !== 1) {
   throw new Error("Runtime não consolidou os módulos.");
 }
+if (status.components.operationEngine !== true || status.components.registry !== true) {
+  throw new Error("Runtime não expôs o estado dos componentes.");
+}
+
+const health=runtime.getHealth();
+if (health.status !== "DEGRADED" || health.ready !== false || !health.missing.includes("environmentGuard")) {
+  throw new Error("Runtime não detectou dependência ausente.");
+}
+if (runtime.isReady() !== false) {
+  throw new Error("Runtime marcou como pronto com dependência ausente.");
+}
+
+const completeRuntime=new WordDarkWorldRuntime({
+  accountManager:{accounts:new Map([["A1",{}]])},
+  security:{identities:new Map([["I1",{}]])},
+  environmentGuard:{canRun:()=>({allowed:true})},
+  road:{routes:new Map([["R1",{}]])},
+  registry:{list:()=>[],events:[]},
+  operationEngine:engine
+});
+if (completeRuntime.getHealth().status !== "HEALTHY" || completeRuntime.isReady() !== true) {
+  throw new Error("Runtime completo não ficou pronto.");
+}
 
 console.log("world-runtime.test: OK");

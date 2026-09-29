@@ -11,9 +11,10 @@ header{margin-top:24px}.code{color:#7f8da3;font-size:13px;letter-spacing:.08em}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:20px}
 .card{background:#121925;border:1px solid #293548;border-radius:16px;padding:18px}
 .card h2{margin-top:0}.ok{color:#7ee787}.warn{color:#f2cc60}
-button{border:0;border-radius:12px;padding:13px 16px;background:#f2a93b;color:#111;font-weight:700;cursor:pointer}
+button,select{border:0;border-radius:12px;padding:13px 16px;font-weight:700}
+button{background:#f2a93b;color:#111;cursor:pointer}select{background:#090d13;color:#edf2f7;border:1px solid #293548;width:100%;box-sizing:border-box}
 pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:12px;padding:14px;overflow:auto;color:#c9d1d9}
-.small{color:#9aa7b8;font-size:14px}
+.small{color:#9aa7b8;font-size:14px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -22,22 +23,13 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
 <header>
 <div class="code">ESTADO · SUCOCAST · SC-001</div>
 <h1>SucoCast</h1>
-<p class="small">Primeiro Estado operacional do Juice Country. O teste abaixo percorre Estado → Rodovia → Dark Factory → Rodovia → Estado.</p>
+<p class="small">Estado operacional. O Estado define a operação; as plataformas entram como integrações/adaptadores.</p>
 </header>
 
 <div class="grid">
-<section class="card">
-<h2>Identidade</h2>
-<p id="identity">Carregando...</p>
-</section>
-<section class="card">
-<h2>Rodovia</h2>
-<p id="road" class="small">Carregando...</p>
-</section>
-<section class="card">
-<h2>Dark Factory</h2>
-<p id="factory" class="small">Carregando...</p>
-</section>
+<section class="card"><h2>Identidade</h2><p id="identity">Carregando...</p></section>
+<section class="card"><h2>Rodovia</h2><p id="road" class="small">Carregando...</p></section>
+<section class="card"><h2>Dark Factory</h2><p id="factory" class="small">Carregando...</p></section>
 </div>
 
 <section class="card" style="margin-top:20px">
@@ -47,31 +39,28 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
 </section>
 
 <section class="card" style="margin-top:20px">
-<h2>Núcleo do Estado</h2>
-<p id="coreStatus" class="small">Carregando núcleo...</p>
-<div id="integrationList" class="small"></div>
-<pre id="coreResult">Aguardando.</pre>
+<h2>Catálogo de operações</h2>
+<p class="small">A operação é única. A integração define onde ela será executada.</p>
+<div id="operationCatalog"></div>
 </section>
 
 <section class="card" style="margin-top:20px">
-<h2>Operação genérica</h2>
-<p class="small">O Estado solicita uma operação; a plataforma é apenas o adaptador escolhido.</p>
-<button id="genericTest" type="button">Executar PUBLICAR_CONTEUDO</button>
+<h2>PUBLICAR_CONTEUDO</h2>
+<p class="small">Mesma operação, cinco destinos compatíveis. Todos os adaptadores abaixo estão em modo TESTE e não usam credenciais reais.</p>
+<div class="row">
+<div style="flex:1;min-width:220px">
+<label for="platform">Plataforma / integração</label>
+<select id="platform"></select>
+</div>
+<button id="genericTest" type="button">Executar publicação</button>
+</div>
 <p id="genericStatus" aria-live="polite" class="small"></p>
 <pre id="genericResult">Aguardando teste.</pre>
 </section>
 
 <section class="card" style="margin-top:20px">
-<h2>Integração externa — YouTube</h2>
-<p class="small">Teste de contrato. A publicação abaixo é simulada e não chama o YouTube nem usa credenciais reais.</p>
-<button id="youtubeTest" type="button">Simular publicação no YouTube</button>
-<p id="youtubeStatus" aria-live="polite" class="small"></p>
-<pre id="youtubeResult">Aguardando teste.</pre>
-</section>
-
-<section class="card" style="margin-top:20px">
 <h2>Teste operacional</h2>
-<p class="small">Envia uma solicitação de teste com autorização aprovada e mantém os IDs de ida e volta.</p>
+<p class="small">Envia uma solicitação de teste com autorização aprovada pela Rodovia até a Dark Factory e retorna os IDs do circuito.</p>
 <button id="run" type="button">Enviar teste pela Rodovia</button>
 <p id="status" aria-live="polite" class="small"></p>
 <pre id="result">Aguardando teste.</pre>
@@ -127,6 +116,7 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
   const factory = new DarkFactory();
   const communication = new DarkFactoryCommunication(factory,router);
   const state = new SucoCastState(identity);
+  const runner = new SucoCastOperationRunner(state.core,state.permissionManager);
 
   document.getElementById("identity").innerHTML =
     identity.name+" <span class='ok'>● ATIVO</span><br><span class='small'>"+identity.identityId+"</span>";
@@ -138,41 +128,71 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
   const stateStatus = state.getStatus();
   document.getElementById("stateStatus").textContent =
     "Estado "+stateStatus.version+" — "+stateStatus.status+" · "+stateStatus.sectorCount+" setores · "+stateStatus.operationCount+" operações";
+
   document.getElementById("sectors").innerHTML = state.sectors.map(function(sector){
-    return "<section class=\"card\"><h3>"+sector.name+"</h3><p class=\"small\">"+sector.sectorId+" · "+sector.status+"</p><ul class=\"small\">"+
+    return "<section class='card'><h3>"+sector.name+"</h3><p class='small'>"+sector.sectorId+" · "+sector.status+"</p><ul class='small'>"+
       sector.operations.map(function(operation){ return "<li>"+operation.name+" · "+operation.status+"</li>"; }).join("")+
       "</ul></section>";
   }).join("");
 
+  const operations = state.core.listOperations();
+  const publicationOperation = state.core.getOperation("SC-OP-DIS-003");
+  document.getElementById("operationCatalog").innerHTML = operations.map(function(operation){
+    const integrations = operation.compatibleIntegrations && operation.compatibleIntegrations.length
+      ? operation.compatibleIntegrations.join(", ")
+      : "núcleo / sem integração externa";
+    return "<div style='padding:12px 0;border-bottom:1px solid #293548'><strong>"+operation.name+"</strong>"+
+      "<div class='small'>"+operation.operationId+" · "+operation.capability+" · "+operation.status+"</div>"+
+      "<div class='small'>Compatível: "+integrations+"</div></div>";
+  }).join("");
+
+  const platformSelect = document.getElementById("platform");
+  const integrationMap = {
+    "SC-INTEGRATION-YOUTUBE":"YouTube",
+    "SC-INTEGRATION-INSTAGRAM":"Instagram",
+    "SC-INTEGRATION-TIKTOK":"TikTok",
+    "SC-INTEGRATION-WEBSITE":"Site próprio",
+    "SC-INTEGRATION-EXTERNAL":"Outra aplicação"
+  };
+
+  publicationOperation.compatibleIntegrations.forEach(function(integrationId){
+    const option=document.createElement("option");
+    option.value=integrationId;
+    option.textContent=integrationMap[integrationId] || integrationId;
+    platformSelect.appendChild(option);
+  });
+
   const coreStatus = state.core.getStatus();
-  document.getElementById("coreStatus").textContent =
-    "Núcleo "+coreStatus.version+" — "+coreStatus.status+" · "+
-    coreStatus.operationCount+" operações · "+coreStatus.integrationCount+" integrações · "+
-    coreStatus.recordCount+" registros";
-  document.getElementById("coreResult").textContent = JSON.stringify({
-    identityId: coreStatus.identityId,
-    integrations: state.core.listIntegrations(),
-    operations: state.core.listOperations()
-  },null,2);
+  document.getElementById("operationCatalog").insertAdjacentHTML("beforeend",
+    "<p class='small'><strong>Núcleo:</strong> "+coreStatus.version+" · "+
+    coreStatus.integrationCount+" integrações registradas · "+coreStatus.operationCount+" operações registradas.</p>");
 
-  document.getElementById("integrationList").innerHTML =
-    "<strong>Integrações registradas:</strong> " +
-    state.core.listIntegrations().map(function(item){
-      return item.platform+" · "+item.status;
-    }).join(" | ");
+  document.getElementById("genericTest").addEventListener("click",function(){
+    const integrationId = platformSelect.value;
+    const actor = identity.identityId;
+    state.permissionManager.grant(actor,"content.publish");
 
-  document.getElementById("youtubeTest").addEventListener("click",function(){
-    state.permissionManager.grant(identity.identityId,"youtube.publish");
-    const result = state.simulateYouTubePublication({
+    const content = new SucoCastContent({
+      contentId:"SC-CONTENT-TEST",
+      type:"VIDEO",
       title:"Teste SucoCast",
-      description:"Publicação de teste do núcleo do Estado.",
+      body:"Conteúdo de teste do núcleo.",
       asset:"simulated-video"
     });
-    document.getElementById("youtubeStatus").textContent =
-      result.success ? "Operação confirmada em modo de simulação." : "Operação rejeitada.";
-    document.getElementById("youtubeStatus").className =
+
+    const result = runner.run("SC-OP-DIS-003",{
+      actor:actor,
+      integrationId:integrationId,
+      payload:content.toJSON()
+    });
+
+    document.getElementById("genericStatus").textContent =
+      result.success
+        ? "PUBLICAR_CONTEUDO confirmado em modo de simulação para "+(integrationMap[integrationId] || integrationId)+"."
+        : "Operação rejeitada: "+result.reason;
+    document.getElementById("genericStatus").className =
       "small "+(result.success ? "ok" : "warn");
-    document.getElementById("youtubeResult").textContent = JSON.stringify(result,null,2);
+    document.getElementById("genericResult").textContent = JSON.stringify(result,null,2);
   });
 
   document.getElementById("run").addEventListener("click",function(){

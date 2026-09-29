@@ -72,7 +72,7 @@
 <script src="../../../contracts/identity.js"></script><script src="../../../contracts/access.js"></script><script src="../../../security/security-manager.js"></script>
 <script src="../../../contracts/operation.js"></script><script src="../../../contracts/message.js"></script><script src="../../../contracts/request.js"></script><script src="../../../contracts/receipt.js"></script><script src="../../../contracts/route.js"></script><script src="../../../contracts/environment.js"></script>
 <script src="../../../core/operation-engine.js"></script><script src="../../../core/environment-guard.js"></script><script src="../../../core/road.js"></script><script src="../../../core/communication.js"></script><script src="../../../core/operation-registry.js"></script>
-<script src="../../../core/emergency-stop-manager.js"></script><script src="../../../contracts/emergency-stop.js"></script>
+<script src="../../../core/emergency-stop-manager.js"></script><script src="../../../contracts/emergency-stop.js"></script><script src="../../../security/account-manager.js"></script><script src="../../../core/world-runtime.js"></script>
 <script src="../../../library/local-library.js"></script><script src="../../../library/central-library.js"></script>
 <script src="core/request.js"></script><script src="core/service-registry.js"></script><script src="core/production-validator.js"></script><script src="core/production-pipeline.js"></script><script src="core/content-publication-executor.js"></script><script src="core/factory.js"></script><script src="core/operation-bridge.js"></script>
 <script>
@@ -110,11 +110,22 @@
     execute:operation=>bridge.execute(operation),
     record:()=>{}
   });
+  const accountManager=new WordDarkAccountManager({security});
+  const runtime=WordDarkWorldRuntime.compose({
+    accountManager,
+    security,
+    environmentGuard:guard,
+    road,
+    registry,
+    operationEngine:engine
+  });
+  runtime.assertReady();
 
   let activeOperationId=null;
   const $=id=>document.getElementById(id);
   $("serviceCount").textContent=serviceRegistry.list().length;
   $("factoryStatus").textContent=factory.getStatus().status;
+  $("runStatus").textContent="Runtime: "+runtime.getHealth().status+" · aguardando operação.";
 
   function renderOperation(operation){
     activeOperationId=operation&&operation.operationId||activeOperationId;
@@ -152,7 +163,7 @@
         }
       });
       renderOperation(operation);$("runStatus").textContent="Executando operação pelo núcleo...";
-      const result=engine.run(operation);
+      const result=runtime.runOperation(operation);
       renderOperation(result);
       $("runStatus").textContent=result.status==="COMPLETED"?"Produção concluída e devolvida pela Rodovia.":"Operação terminou em "+result.status+".";
       $("lastResult").textContent=JSON.stringify(result.toJSON(),null,2);

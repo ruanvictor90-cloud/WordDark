@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SucoCast — Estado WordDark</title>
+<style>
+body{margin:0;background:#0b0f15;color:#edf2f7;font-family:system-ui,-apple-system,sans-serif;padding:24px}
+main{max-width:920px;margin:auto}.back{color:#f2a93b;text-decoration:none}
+header{margin-top:24px}.code{color:#7f8da3;font-size:13px;letter-spacing:.08em}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:20px}
+.card{background:#121925;border:1px solid #293548;border-radius:16px;padding:18px}
+.card h2{margin-top:0}.ok{color:#7ee787}.warn{color:#f2cc60}
+button{border:0;border-radius:12px;padding:13px 16px;background:#f2a93b;color:#111;font-weight:700;cursor:pointer}
+pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:12px;padding:14px;overflow:auto;color:#c9d1d9}
+.small{color:#9aa7b8;font-size:14px}
+</style>
+</head>
+<body>
+<main>
+<a class="back" href="../">← Juice Country</a>
+<header>
+<div class="code">ESTADO · SUCOCAST · SC-001</div>
+<h1>SucoCast</h1>
+<p class="small">Primeiro Estado operacional do Juice Country. O teste abaixo percorre Estado → Rodovia → Dark Factory → Rodovia → Estado.</p>
+</header>
+
+<div class="grid">
+<section class="card">
+<h2>Identidade</h2>
+<p id="identity">Carregando...</p>
+</section>
+<section class="card">
+<h2>Rodovia</h2>
+<p id="road" class="small">Carregando...</p>
+</section>
+<section class="card">
+<h2>Dark Factory</h2>
+<p id="factory" class="small">Carregando...</p>
+</section>
+</div>
+
+<section class="card" style="margin-top:20px">
+<h2>Teste operacional</h2>
+<p class="small">Envia uma solicitação de teste com autorização aprovada e mantém os IDs de ida e volta.</p>
+<button id="run" type="button">Enviar teste pela Rodovia</button>
+<p id="status" aria-live="polite" class="small"></p>
+<pre id="result">Aguardando teste.</pre>
+</section>
+
+<script src="../../../sky/darkfactory/contracts/identity.js"></script>
+<script src="../../../sky/darkfactory/contracts/route.js"></script>
+<script src="../../../sky/darkfactory/core/logger.js"></script>
+<script src="../../../sky/darkfactory/core/validator.js"></script>
+<script src="../../../sky/darkfactory/core/request.js"></script>
+<script src="../../../sky/darkfactory/core/executor.js"></script>
+<script src="../../../sky/darkfactory/core/executor-manager.js"></script>
+<script src="../../../sky/darkfactory/core/factory.js"></script>
+<script src="../../../sky/darkfactory/routing/router.js"></script>
+<script src="../../../sky/darkfactory/core/communication.js"></script>
+<script src="../../../sky/darkfactory/core/state.js"></script>
+<script>
+(function(){
+  const identity = new WordDarkIdentity({
+    identityId:"SC-001",
+    type:"STATE",
+    name:"SucoCast",
+    parentId:"world/earth/juice-country"
+  });
+
+  const router = new WordDarkRouter();
+  router.registerRoute(new WordDarkRoute({
+    routeId:"ROUTE-SUCOCAST-DARKFACTORY",
+    origin:"state/sucocast",
+    destination:"darkfactory",
+    service:"test"
+  }));
+  router.registerRoute(new WordDarkRoute({
+    routeId:"ROUTE-DARKFACTORY-SUCOCAST",
+    origin:"darkfactory",
+    destination:"state/sucocast",
+    service:"test"
+  }));
+
+  const factory = new DarkFactory();
+  const communication = new DarkFactoryCommunication(factory,router);
+  const state = new SucoCastState(identity);
+
+  document.getElementById("identity").innerHTML =
+    identity.name+" <span class='ok'>● ATIVO</span><br><span class='small'>"+identity.identityId+"</span>";
+  document.getElementById("road").textContent =
+    router.getStatus().name+" "+router.getStatus().version+" — "+router.listRoutes().length+" rotas ativas";
+  document.getElementById("factory").textContent =
+    factory.getStatus().name+" "+factory.getStatus().version+" — "+factory.getStatus().status;
+
+  document.getElementById("run").addEventListener("click",function(){
+    const request = state.createTestRequest();
+    const response = communication.send(request);
+    document.getElementById("status").textContent =
+      response.success ? "Circuito processado." : "Circuito rejeitado.";
+    document.getElementById("status").className =
+      "small "+(response.success ? "ok" : "warn");
+    document.getElementById("result").textContent = JSON.stringify({
+      requestId:request.id,
+      requestMessageId:response.requestMessageId,
+      responseMessageId:response.messageId,
+      responseTo:response.responseTo,
+      status:response.status,
+      protocol:response.protocol,
+      returnRoute:response.route || null
+    },null,2);
+  });
+})();
+</script>
+</main>
+</body>
+</html>

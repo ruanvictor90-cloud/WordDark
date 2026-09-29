@@ -1,38 +1,23 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WordDark — Mundo das Sombras</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WordDark — Mundo</title>
 <style>
-:root{color-scheme:dark;--bg:#070a10;--panel:#111722;--line:#263142;--text:#edf2f7;--muted:#9ca8b8;--accent:#f2a93b}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at 50% -10%,#1d2638 0,#0b0f17 45%,#05070b 100%);color:var(--text)}
-main{max-width:980px;margin:auto;padding:48px 20px 56px}header{text-align:center;margin-bottom:42px}h1{font-size:clamp(2.4rem,8vw,5rem);letter-spacing:.08em;margin:0 0 10px}header p{color:var(--muted);font-size:1.05rem;margin:0}
-.world{display:grid;grid-template-columns:1fr 1fr;gap:20px}.realm{display:block;text-decoration:none;color:inherit;background:linear-gradient(145deg,#121a27,#0d131d);border:1px solid var(--line);border-radius:22px;padding:28px;min-height:230px;transition:transform .2s,border-color .2s,background .2s}.realm:hover,.realm:focus-visible{transform:translateY(-3px);border-color:#526174;background:linear-gradient(145deg,#172233,#101722);outline:none}.symbol{font-size:2.5rem;margin-bottom:22px}.realm h2{margin:0 0 9px;font-size:1.7rem}.realm p{margin:0;color:var(--muted);line-height:1.6}.enter{display:inline-block;margin-top:24px;color:var(--accent);font-weight:700}
-footer{text-align:center;color:#687588;font-size:.85rem;margin-top:42px}
-@media(max-width:680px){main{padding-top:32px}.world{grid-template-columns:1fr}.realm{min-height:auto}}
-</style>
-</head>
-<body>
-<main>
-<header>
-<div class="symbol">◈</div>
-<h1>WORDDARK</h1>
-<p>Um mundo em construção. Cada área possui sua própria função, identidade e espaço para crescer.</p>
-</header>
-<section class="world" aria-label="Áreas do mundo">
-<a class="realm" href="world/sky/">
-<div class="symbol">☁</div><h2>Céu</h2>
-<p>Gestão, serviços, infraestrutura e mecanismos que atendem às necessidades do mundo.</p>
-<span class="enter">Entrar no Céu →</span>
-</a>
-<a class="realm" href="world/earth/">
-<div class="symbol">◉</div><h2>Terra</h2>
-<p>Onde surgem empresas, marcas, projetos, países e operações que movimentam o mundo.</p>
-<span class="enter">Entrar na Terra →</span>
-</a>
+:root{color-scheme:dark;--bg:#07090e;--panel:#10151e;--panel2:#151c28;--line:#273142;--text:#eef2f7;--muted:#96a2b4;--accent:#e9a33a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -20%,#1c2637,#0a0d13 48%,#05070a);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:980px;margin:auto;padding:42px 20px 56px}header{text-align:center;padding:18px 0 34px}.mark{font-size:2rem;opacity:.8}h1{font-size:clamp(2.4rem,8vw,4.8rem);letter-spacing:.14em;margin:8px 0}.sub{color:var(--muted);max-width:620px;margin:auto;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.card{display:block;color:inherit;text-decoration:none;background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:20px;padding:25px;min-height:205px;transition:.2s}.card:hover,.card:focus-visible{transform:translateY(-2px);border-color:#526176;outline:none}.icon{font-size:2rem;margin-bottom:20px}.card h2{margin:0 0 8px}.card p{color:var(--muted);line-height:1.55;margin:0}.go{display:inline-block;margin-top:22px;color:var(--accent);font-weight:700}
+.system{margin-top:18px;background:#0d121a;border:1px solid var(--line);border-radius:18px;padding:20px}.system strong{display:block;margin-bottom:5px}.system span{color:var(--muted);font-size:.92rem}
+footer{text-align:center;color:#647083;font-size:.82rem;margin-top:34px}
+@media(max-width:680px){.grid{grid-template-columns:1fr}main{padding-top:25px}}
+</style></head>
+<body><main>
+<header><div class="mark">◈</div><h1>WORDDARK</h1><p class="sub">Um mundo modular em construção. Cada camada tem sua função, identidade e caminho de expansão.</p></header>
+<section class="grid" aria-label="Camadas principais">
+<a class="card" href="world/sky/"><div class="icon">☁</div><h2>Céu</h2><p>Infraestrutura, serviços e execução compartilhada que sustentam o mundo.</p><span class="go">Entrar no Céu →</span></a>
+<a class="card" href="world/earth/"><div class="icon">◉</div><h2>Terra</h2><p>Países, estados, marcas, cidades e operações que geram necessidades e resultados.</p><span class="go">Entrar na Terra →</span></a>
 </section>
-<footer>Marco Zero · Estrutura modular · Expansão por etapas</footer>
-</main>
-</body>
-</html>
+<div class="system"><strong>⚙ Núcleo operacional</strong><span>Identidade → acesso → operação → comunicação → Rodovia → execução → resultado → registro.</span><br><a class="go" href="world/core/">Abrir circuito de operação →</a></div>
+<footer>Marco Zero · arquitetura modular · evolução por etapas</footer>
+</main></body></html>

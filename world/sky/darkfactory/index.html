@@ -1,49 +1,197 @@
 <!DOCTYPE html>
-<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Dark Factory — WordDark</title>
-<style>
-:root{color-scheme:dark;--panel:#111823;--line:#293548;--text:#edf2f7;--muted:#9ba8ba;--accent:#e9a33a;--ok:#77d69b}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% 0,#1b2535,#090d13 58%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:900px;margin:auto;padding:25px 20px 55px}.back{color:var(--muted);text-decoration:none}.back:hover{color:#fff}header{padding:32px 0 20px}.eyebrow{color:var(--accent);font-size:.82rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}h1{font-size:clamp(2rem,6vw,3.4rem);margin:7px 0}.sub{color:var(--muted);line-height:1.6}.panel{background:rgba(17,24,35,.92);border:1px solid var(--line);border-radius:18px;padding:20px;margin-top:16px}.panel h2{margin-top:0}.flow{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}.flow div{padding:10px 6px;text-align:center;border:1px solid #303c4f;border-radius:10px;color:#c8d1df;font-size:.78rem}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{margin-top:13px}.field label{display:block;margin-bottom:6px;font-size:.88rem;color:#cbd4e1}input,textarea,select,button{width:100%;font:inherit;border-radius:9px;padding:11px}input,textarea,select{background:#0b1119;color:#fff;border:1px solid #354157}textarea{min-height:100px;resize:vertical}button{margin-top:16px;border:0;background:var(--accent);color:#171717;font-weight:800;cursor:pointer}.status{padding:11px 13px;border-radius:10px;background:#0c121a;color:var(--muted);border:1px solid var(--line)}.ok{color:var(--ok)}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#0b1119;border:1px solid #293548;border-radius:10px;padding:13px;font-size:12px;max-height:420px;overflow:auto}.tag{display:inline-block;padding:4px 8px;border-radius:999px;border:1px solid #38445a;color:#cbd4e1;font-size:.75rem}
-@media(max-width:680px){.flow{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
-</style></head><body><main>
-<a class="back" href="../">← Céu</a>
-<header><div class="eyebrow">Céu · serviço compartilhado</div><h1>🏭 Dark Factory</h1><p class="sub">A fábrica produz. A Terra define a necessidade e decide o destino. Aqui testamos a produção e o retorno rastreável.</p></header>
-<section class="panel"><div class="flow"><div>Identidade</div><div>Acesso</div><div>Pedido</div><div>Rodovia</div><div>Execução</div><div>Resultado</div></div></section>
-<section class="panel"><h2>Solicitação de produção</h2><p class="sub">Este formulário é um teste do serviço <strong>content.produce</strong>. Não há publicação nem escolha de plataforma nesta etapa.</p>
-<form id="requestForm"><div class="grid">
-<div class="field"><label for="requester">Solicitante</label><input id="requester" required value="SC-001"></div>
-<div class="field"><label for="origin">Origem</label><input id="origin" required value="world/earth/demo-city"></div>
-</div>
-<div class="field"><label for="task">Requerimento</label><textarea id="task" required>Produzir material de teste do circuito WordDark.</textarea></div>
-<div class="grid">
-<div class="field"><label for="contentId">ID do conteúdo</label><input id="contentId" required value="CONTENT-DEMO-001"></div>
-<div class="field"><label for="contentTitle">Título</label><input id="contentTitle" required value="WordDark — primeiro circuito operacional"></div>
-</div>
-<div class="field"><label for="requirements">Especificações</label><textarea id="requirements">Vídeo curto · vertical · teste estrutural</textarea></div>
-<div class="field"><label for="permission">Autorização</label><select id="permission"><option value="approved">Aprovada para TESTE</option><option value="pending">Aguardando</option><option value="rejected">Rejeitada</option></select></div>
-<button type="submit">Enviar pela Rodovia</button></form></section>
-<section class="panel"><h2>Estado</h2><div id="systemStatus" class="status">Pronto para teste.</div></section>
-<section class="panel"><h2>Resultado</h2><pre id="lastResult">Nenhuma operação executada.</pre></section>
-<section class="grid"><div class="panel"><span class="tag">REQUEST</span><pre id="requestMessage">—</pre></div><div class="panel"><span class="tag">RESPONSE</span><pre id="responseMessage">—</pre></div></section>
-<section class="panel"><h2>Logs</h2><pre id="logViewer">Nenhum log.</pre></section>
+<link rel="stylesheet" href="../../../ui/worddark-ui.css">
+</head>
+<body class="wd-body">
+<div class="wd-shell">
+<aside class="wd-sidebar">
+  <div class="wd-brand"><div class="wd-mark">◈</div><div><strong>WORDDARK</strong><small>Dark Factory</small></div></div>
+  <nav class="wd-nav" aria-label="Navegação">
+    <a href="../../../">◈ WordDark</a>
+    <a href="../">☁ Céu</a>
+    <a class="active" href="./">⚙ Dark Factory</a>
+    <a href="../../../earth/">◉ Terra</a>
+    <a href="../../../earth/juice-country/sucocast/">🧃 SucoCast</a>
+    <a href="../../../core/">◎ Operações</a>
+  </nav>
+  <div class="wd-footer">Céu · serviço compartilhado<br>DF UI v0.1</div>
+</aside>
+
+<main class="wd-main">
+  <div class="wd-top">
+    <div>
+      <div class="wd-eyebrow">Céu · serviço compartilhado</div>
+      <h1 class="wd-title">Dark Factory</h1>
+      <p class="wd-sub">A fábrica produz. A Terra define a necessidade e decide o destino. Esta interface conecta o teste de produção à arquitetura visual do WordDark.</p>
+    </div>
+    <div class="wd-actions">
+      <button class="wd-btn" data-wd-theme type="button">Modo claro</button>
+      <button class="wd-btn danger" id="emergencyButton" type="button">🚨 Socorro Deus</button>
+    </div>
+  </div>
+
+  <section class="wd-grid">
+    <article class="wd-card full">
+      <div class="wd-eyebrow">Circuito</div>
+      <div class="wd-flow">
+        <span>Identidade</span><i class="wd-arrow">→</i><span>Acesso</span><i class="wd-arrow">→</i>
+        <span>Pedido</span><i class="wd-arrow">→</i><span>Rodovia</span><i class="wd-arrow">→</i>
+        <span>Execução</span><i class="wd-arrow">→</i><span>Validação</span><i class="wd-arrow">→</i><span>Resultado</span>
+      </div>
+    </article>
+
+    <article class="wd-card wide">
+      <div class="wd-eyebrow">Serviço · content.produce</div>
+      <h2>Solicitação de produção</h2>
+      <p class="wd-muted">Teste do circuito Terra → Rodovia → Dark Factory → retorno. Nenhuma publicação ou escolha de plataforma acontece aqui.</p>
+      <form id="requestForm">
+        <div class="wd-grid" style="margin-top:8px">
+          <div class="wd-card" style="grid-column:span 6;padding:0;border:0;background:none;box-shadow:none">
+            <label>Solicitante<input id="requester" required value="SC-001" style="margin-top:6px"></label>
+          </div>
+          <div class="wd-card" style="grid-column:span 6;padding:0;border:0;background:none;box-shadow:none">
+            <label>Origem<input id="origin" required value="world/earth/demo-city" style="margin-top:6px"></label>
+          </div>
+        </div>
+        <label style="display:block;margin-top:14px">Requerimento<textarea id="task" required style="width:100%;margin-top:6px">Produzir material de teste do circuito WordDark.</textarea></label>
+        <div class="wd-grid" style="margin-top:8px">
+          <div class="wd-card" style="grid-column:span 6;padding:0;border:0;background:none;box-shadow:none">
+            <label>ID do conteúdo<input id="contentId" required value="CONTENT-DEMO-001" style="margin-top:6px"></label>
+          </div>
+          <div class="wd-card" style="grid-column:span 6;padding:0;border:0;background:none;box-shadow:none">
+            <label>Título<input id="contentTitle" required value="WordDark — primeiro circuito operacional" style="margin-top:6px"></label>
+          </div>
+        </div>
+        <label style="display:block;margin-top:14px">Especificações<textarea id="requirements" style="width:100%;margin-top:6px">Vídeo curto · vertical · teste estrutural</textarea></label>
+        <label style="display:block;margin-top:14px">Autorização<select id="permission" style="width:100%;margin-top:6px"><option value="approved">Aprovada para TESTE</option><option value="pending">Aguardando</option><option value="rejected">Rejeitada</option></select></label>
+        <button class="wd-btn primary" type="submit" style="margin-top:16px">Enviar pela Rodovia</button>
+      </form>
+    </article>
+
+    <article class="wd-card">
+      <div class="wd-eyebrow">Estado</div>
+      <h2 id="systemStatus">Pronto</h2>
+      <span class="wd-badge ok">● Serviço disponível</span>
+      <div class="wd-list" style="margin-top:14px">
+        <div class="wd-item"><span>Rota Terra → DF</span><span class="wd-badge ok">ATIVA</span></div>
+        <div class="wd-item"><span>Rota DF → Terra</span><span class="wd-badge ok">ATIVA</span></div>
+        <div class="wd-item"><span>Publicação</span><span class="wd-badge">FORA DO DF</span></div>
+      </div>
+    </article>
+
+    <article class="wd-card wide">
+      <div class="wd-eyebrow">Resultado</div>
+      <h2>Última operação</h2>
+      <pre id="lastResult">Nenhuma operação executada.</pre>
+    </article>
+
+    <article class="wd-card">
+      <div class="wd-eyebrow">Mensagens</div>
+      <h3>REQUEST</h3><pre id="requestMessage">—</pre>
+      <h3>RESPONSE</h3><pre id="responseMessage">—</pre>
+    </article>
+
+    <article class="wd-card full">
+      <div class="wd-eyebrow">Logs</div>
+      <pre id="logViewer">Nenhum log.</pre>
+    </article>
+
+    <article class="wd-card full" id="emergencyPanel">
+      <div class="wd-eyebrow">Segurança · parada transversal</div>
+      <h2>🚨 Socorro Deus</h2>
+      <p class="wd-muted">O mecanismo de emergência é global por <strong>operationId</strong>: um setor pode solicitar a parada e a operação inteira deve ser cancelada nos pontos de verificação.</p>
+      <div class="wd-grid" style="margin-top:8px">
+        <div class="wd-card" style="grid-column:span 4;padding:0;border:0;background:none;box-shadow:none"><label>Setor<input id="stopSector" value="DARKFACTORY" style="margin-top:6px"></label></div>
+        <div class="wd-card" style="grid-column:span 4;padding:0;border:0;background:none;box-shadow:none"><label>Operation ID<input id="stopOperation" value="OP-TEST-001" style="margin-top:6px"></label></div>
+        <div class="wd-card" style="grid-column:span 4;padding:0;border:0;background:none;box-shadow:none"><label>Motivo<input id="stopReason" value="Teste de parada de emergência" style="margin-top:6px"></label></div>
+      </div>
+      <div class="wd-actions" style="margin-top:14px">
+        <button class="wd-btn danger" id="triggerStop" type="button">🚨 Acionar parada</button>
+        <button class="wd-btn" id="releaseStop" type="button">Liberar operação</button>
+      </div>
+      <pre id="emergencyResult">Aguardando teste de emergência.</pre>
+      <p class="wd-muted" style="font-size:.8rem">Nota: esta tela testa o contrato/gerenciador de emergência. O circuito legado de produção abaixo continua síncrono; a interrupção física de um executor em andamento exige worker/queue no futuro.</p>
+    </article>
+  </section>
 </main>
-<script src="contracts/route.js?v=1.2.0"></script><script src="routing/router.js?v=0.2.0"></script><script src="core/request.js?v=0.6.0"></script><script src="core/validator.js?v=0.3.0"></script><script src="core/logger.js?v=0.3.0"></script><script src="core/executor.js?v=0.4.0"></script><script src="core/executor-manager.js?v=0.4.0"></script><script src="core/content-publication-executor.js?v=0.6.0"></script><script src="core/factory.js?v=0.6.0"></script><script src="core/communication.js?v=0.6.0"></script>
+</div>
+
+<script src="../../../ui/worddark-ui.js"></script>
+<script src="contracts/route.js?v=1.2.0"></script>
+<script src="routing/router.js?v=0.2.0"></script>
+<script src="core/request.js?v=0.6.0"></script>
+<script src="core/validator.js?v=0.3.0"></script>
+<script src="core/logger.js?v=0.3.0"></script>
+<script src="core/executor.js?v=0.4.0"></script>
+<script src="core/executor-manager.js?v=0.4.0"></script>
+<script src="core/content-publication-executor.js?v=0.6.0"></script>
+<script src="core/factory.js?v=0.6.0"></script>
+<script src="core/communication.js?v=0.6.0"></script>
+<script src="../../../contracts/emergency-stop.js"></script>
+<script src="../../../core/emergency-stop-manager.js"></script>
 <script>
 const factory=new DarkFactory(),router=new WordDarkRouter();
 router.registerRoute(new WordDarkRoute({routeId:"ROUTE-TERRA-DF-PRODUCTION",origin:"state/sucocast",destination:"darkfactory",service:"content.produce"}));
 router.registerRoute(new WordDarkRoute({routeId:"ROUTE-DF-TERRA-PRODUCTION",origin:"darkfactory",destination:"state/sucocast",service:"content.produce"}));
 const communication=new DarkFactoryCommunication(factory,router);
-const form=document.getElementById("requestForm"),status=document.getElementById("systemStatus"),last=document.getElementById("lastResult"),req=document.getElementById("requestMessage"),res=document.getElementById("responseMessage"),logs=document.getElementById("logViewer");
+const emergencyStop=new WordDarkEmergencyStopManager();
+const form=document.getElementById("requestForm");
+const status=document.getElementById("systemStatus");
+const last=document.getElementById("lastResult");
+const req=document.getElementById("requestMessage");
+const res=document.getElementById("responseMessage");
+const logs=document.getElementById("logViewer");
+
 form.addEventListener("submit",e=>{e.preventDefault();try{
  const permission=document.getElementById("permission").value;
- const request=new DarkFactoryRequest({requester:requester.value.trim(),origin:origin.value.trim(),destination:"darkfactory",task:task.value.trim(),taskType:"content.produce",permission,payload:{contentId:contentId.value.trim(),title:contentTitle.value.trim(),type:"VIDEO",requirements:requirements.value.trim()||null}});
+ const request=new DarkFactoryRequest({
+   requester:document.getElementById("requester").value.trim(),
+   origin:document.getElementById("origin").value.trim(),
+   destination:"darkfactory",
+   task:document.getElementById("task").value.trim(),
+   taskType:"content.produce",
+   permission,
+   payload:{
+     contentId:document.getElementById("contentId").value.trim(),
+     title:document.getElementById("contentTitle").value.trim(),
+     type:"VIDEO",
+     requirements:document.getElementById("requirements").value.trim()||null
+   }
+ });
  if(permission==="approved") request.authorize();
  const response=communication.send(request);
  status.textContent=response.success?"Produção aceita pela Dark Factory.":"Solicitação rejeitada: "+(response.reason||response.status);
- status.className="status "+(response.success?"ok":"");
  last.textContent=JSON.stringify(response.result||response,null,2);
  req.textContent=JSON.stringify(response.requestEnvelope||null,null,2);
  res.textContent=JSON.stringify(response.responseEnvelope||response,null,2);
  logs.textContent=JSON.stringify(factory.getLogs(),null,2);
-}catch(err){status.textContent="Erro no circuito: "+err.message;last.textContent=JSON.stringify({error:err.message,stack:err.stack},null,2)}});
-</script></body></html>
+}catch(err){
+ status.textContent="Erro no circuito: "+err.message;
+ last.textContent=JSON.stringify({error:err.message,stack:err.stack},null,2);
+}});
+
+const stopManager=emergencyStop;
+const emergencyResult=document.getElementById("emergencyResult");
+document.getElementById("triggerStop").addEventListener("click",()=>{
+ const result=stopManager.trigger({
+   sectorId:document.getElementById("stopSector").value.trim(),
+   operationId:document.getElementById("stopOperation").value.trim(),
+   requesterId:"UI-TEST",
+   reason:document.getElementById("stopReason").value.trim()
+ });
+ emergencyResult.textContent=JSON.stringify(result,null,2);
+});
+document.getElementById("releaseStop").addEventListener("click",()=>{
+ const operationId=document.getElementById("stopOperation").value.trim();
+ const result=stopManager.release(operationId,{requesterId:"UI-TEST",reason:"Liberação manual de teste"});
+ emergencyResult.textContent=JSON.stringify(result,null,2);
+});
+document.getElementById("emergencyButton").addEventListener("click",()=>{
+ document.getElementById("emergencyPanel").scrollIntoView({behavior:"smooth",block:"start"});
+});
+</script>
+</body>
+</html>

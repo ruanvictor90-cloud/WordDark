@@ -17,58 +17,70 @@ function baseOperation(extra = {}) {
 (function testValidLifecycle() {
   const events = [];
   const engine = new WordDarkOperationEngine({
-    authorize: () => ({allowed:true, reference:"AUTH-TEST-001"}),
-    route: () => ({success:true, routeId:"ROUTE-TEST"}),
-    execute: () => ({success:true, result:{status:"PROCESSED"}, validated:true}),
+    authorize: () => ({allowed:true,reference:"AUTH-TEST-001"}),
+    route: () => ({success:true,routeId:"ROUTE-TEST"}),
+    execute: () => ({success:true,result:{status:"PROCESSED"},validated:true}),
     record: op => events.push(op.status)
   });
-  const result = engine.run(baseOperation());
-  assert.strictEqual(result.status, "COMPLETED");
-  assert.deepStrictEqual(events, [
-    "IDENTIFIED","AUTHORIZED","ROUTED","EXECUTING","VALIDATING","COMPLETED"
-  ]);
+  const result=engine.run(baseOperation());
+  assert.strictEqual(result.status,"COMPLETED");
+  assert.deepStrictEqual(events,["IDENTIFIED","AUTHORIZED","ROUTED","EXECUTING","VALIDATING","COMPLETED"]);
+})();
+
+(function testReplayProtection() {
+  let executions=0;
+  const engine=new WordDarkOperationEngine({
+    authorize:()=>({allowed:true}),
+    route:()=>({success:true,routeId:"ROUTE-TEST"}),
+    execute:()=>{executions+=1;return {success:true,result:{status:"PROCESSED"},validated:true};}
+  });
+  const operation=baseOperation({operationId:"OP-REPLAY-001"});
+  const first=engine.run(operation);
+  const second=engine.run(operation);
+  assert.strictEqual(first.status,"COMPLETED");
+  assert.strictEqual(second.status,"COMPLETED");
+  assert.strictEqual(executions,1);
+  assert.strictEqual(second.replayBlocked,true);
 })();
 
 (function testUnauthorized() {
-  const engine = new WordDarkOperationEngine({
-    authorize: () => ({allowed:false, reason:"Sem permissão."})
-  });
-  const result = engine.run(baseOperation());
-  assert.strictEqual(result.status, "REJECTED");
-  assert.strictEqual(result.result.reason, "Sem permissão.");
+  const engine=new WordDarkOperationEngine({authorize:()=>({allowed:false,reason:"Sem permissão."})});
+  const result=engine.run(baseOperation());
+  assert.strictEqual(result.status,"REJECTED");
+  assert.strictEqual(result.result.reason,"Sem permissão.");
 })();
 
 (function testMissingRoute() {
-  const engine = new WordDarkOperationEngine({
-    authorize: () => ({allowed:true}),
-    route: () => ({success:false, reason:"Rota inexistente."})
+  const engine=new WordDarkOperationEngine({
+    authorize:()=>({allowed:true}),
+    route:()=>({success:false,reason:"Rota inexistente."})
   });
-  const result = engine.run(baseOperation());
-  assert.strictEqual(result.status, "BLOCKED");
+  const result=engine.run(baseOperation());
+  assert.strictEqual(result.status,"BLOCKED");
 })();
 
 (function testExecutionFailure() {
-  const engine = new WordDarkOperationEngine({
-    authorize: () => ({allowed:true}),
-    route: () => ({success:true, routeId:"ROUTE-TEST"}),
-    execute: () => ({success:false, reason:"Executor indisponível."})
+  const engine=new WordDarkOperationEngine({
+    authorize:()=>({allowed:true}),
+    route:()=>({success:true,routeId:"ROUTE-TEST"}),
+    execute:()=>({success:false,reason:"Executor indisponível."})
   });
-  const result = engine.run(baseOperation());
-  assert.strictEqual(result.status, "FAILED");
+  const result=engine.run(baseOperation());
+  assert.strictEqual(result.status,"FAILED");
 })();
 
 (function testIllegalTransition() {
-  const operation = baseOperation();
-  assert.throws(() => operation.transition("COMPLETED"), /Transição de operação não permitida/);
+  const operation=baseOperation();
+  assert.throws(()=>operation.transition("COMPLETED"),/Transição de operação não permitida/);
   operation.transition("IDENTIFIED");
-  assert.throws(() => operation.transition("EXECUTING"), /Transição de operação não permitida/);
+  assert.throws(()=>operation.transition("EXECUTING"),/Transição de operação não permitida/);
 })();
 
 (function testTerminalState() {
-  const operation = baseOperation();
+  const operation=baseOperation();
   operation.transition("IDENTIFIED");
   operation.transition("REJECTED");
-  assert.throws(() => operation.transition("AUTHORIZED"), /Transição de operação não permitida/);
+  assert.throws(()=>operation.transition("AUTHORIZED"),/Transição de operação não permitida/);
 })();
 
 console.log("WordDark Operation tests: OK");

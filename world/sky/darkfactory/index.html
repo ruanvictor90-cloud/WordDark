@@ -1,283 +1,108 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#10131b">
-<title>Dark Factory — DF-0.4.2</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Dark Factory — Céu</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;padding:20px;background:#10131b;color:#edf1fa;font-family:Arial,sans-serif}
-main{max-width:760px;margin:auto}
-h1{margin-bottom:5px}.subtitle{color:#aab4c8}
-.panel{background:#1a2030;border:1px solid #30394d;border-radius:12px;padding:18px;margin-top:18px}
-label{display:block;margin-top:14px;margin-bottom:6px}
-input,textarea,select,button{width:100%;padding:12px;border-radius:8px;font:inherit}
-input,textarea,select{background:#101622;color:white;border:1px solid #414d65}
-textarea{min-height:90px;resize:vertical}
-button{margin-top:16px;border:0;background:#f0a43a;color:#171717;font-weight:bold;cursor:pointer}
-.secondary{background:#30394d;color:white}
-.entry{border-top:1px solid #30394d;padding:12px 0;overflow-wrap:anywhere}
-.status{color:#f0c16b}.success{color:#7ddf9b}.error{color:#ff7b7b}
-.small{color:#aab4c8;font-size:13px;line-height:1.5}
-.tag{display:inline-block;padding:4px 8px;border-radius:6px;background:#30394d;font-size:12px;margin-bottom:8px}
-.flow{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;align-items:center;margin-top:14px}
-.stage{padding:9px 5px;background:#101622;border:1px solid #30394d;border-radius:8px;text-align:center;font-size:12px}
-.arrow{text-align:center;color:#f0a43a;font-weight:bold}
-.stage.active{border-color:#f0a43a}
-pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#101622;border:1px solid #30394d;border-radius:8px;padding:12px;color:#dce4f5;font-size:13px}
-.back{display:inline-block;margin-top:20px;color:#aab4c8;text-decoration:none}.back:hover{color:#fff}
-@media(max-width:620px){.flow{grid-template-columns:1fr}.arrow{display:none}}
+*{box-sizing:border-box}body{margin:0;padding:20px;background:#10131b;color:#edf1fa;font-family:Arial,sans-serif}main{max-width:760px;margin:auto}
+h1{margin-bottom:5px}.subtitle,.small{color:#aab4c8}.panel{background:#1a2030;border:1px solid #30394d;border-radius:12px;padding:18px;margin-top:18px}
+label{display:block;margin-top:14px;margin-bottom:6px}input,textarea,select,button{width:100%;padding:12px;border-radius:8px;font:inherit}
+input,textarea,select{background:#101622;color:white;border:1px solid #414d65}textarea{min-height:100px;resize:vertical}
+button{margin-top:16px;border:0;background:#f0a43a;color:#171717;font-weight:bold;cursor:pointer}.entry{border-top:1px solid #30394d;padding:12px 0;overflow-wrap:anywhere}
+.status{color:#f0c16b}.success{color:#7ddf9b}.error{color:#ff7b7b}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#101622;border:1px solid #30394d;border-radius:8px;padding:12px;color:#dce4f5;font-size:13px}
+.back{display:inline-block;margin-top:0;color:#aab4c8;text-decoration:none}.tag{display:inline-block;padding:4px 8px;border-radius:6px;background:#30394d;font-size:12px}
 </style>
 </head>
-<body>
-<main>
+<body><main>
 <a class="back" href="../">← Voltar para o Céu</a>
 <h1>Dark Factory</h1>
-<div class="subtitle">WordDark · Céu · Circuito oficial DF-0.4.2</div>
+<div class="subtitle">WordDark · Céu · Fábrica compartilhada de criação e edição</div>
 
 <section class="panel">
-<h2>Central de solicitações</h2>
-<p>O teste percorre o circuito Entrada → Rodovia → Dark Factory → Rodovia → Origem.</p>
+<h2>Solicitação de produção</h2>
+<p class="small">A unidade da Terra define o que precisa. A fábrica recebe o requerimento, produz/processa/valida e devolve o resultado. Destino e publicação não pertencem à fábrica.</p>
 <form id="requestForm">
 <label for="requester">Identificação do solicitante</label>
-<input id="requester" required maxlength="80" placeholder="Ex.: world/earth">
+<input id="requester" required maxlength="80" placeholder="Ex.: SC-001">
 <label for="origin">Origem</label>
-<input id="origin" required maxlength="100" placeholder="Ex.: world/earth">
-<label for="destination">Destino</label>
-<input id="destination" required maxlength="100" placeholder="Ex.: darkfactory">
-<label for="task">Descrição da solicitação</label>
-<textarea id="task" required maxlength="2000" placeholder="Descreva o que precisa ser feito"></textarea>
-<label for="taskType">Tipo de executor</label>
-<select id="taskType">
-<option value="test">Teste</option>\n<option value="content.publish">Publicação de conteúdo (multi-plataforma)</option>
-<option value="web">Web (futuro)</option>
-<option value="file">Arquivo (futuro)</option>
-<option value="data">Dados (futuro)</option>
-</select>
-<div id="contentFields" hidden>\n<label for="contentId">ID do conteúdo</label>\n<input id="contentId" maxlength="120" placeholder="Ex.: SC-CONTENT-001">\n<label for="contentTitle">Título do conteúdo</label>\n<input id="contentTitle" maxlength="200" placeholder="Ex.: Vídeo de teste WordDark">\n<label>Destinos</label>\n<div class="small"><label><input type="checkbox" class="contentTarget" value="SC-INTEGRATION-YOUTUBE" checked> YouTube</label><label><input type="checkbox" class="contentTarget" value="SC-INTEGRATION-INSTAGRAM" checked> Instagram</label><label><input type="checkbox" class="contentTarget" value="SC-INTEGRATION-TIKTOK"> TikTok</label><label><input type="checkbox" class="contentTarget" value="SC-INTEGRATION-WEBSITE"> Site próprio</label><label><input type="checkbox" class="contentTarget" value="SC-INTEGRATION-EXTERNAL"> Outra aplicação</label></div>\n</div>\n<label for="permission">Autorização inicial</label>
-<select id="permission">
-<option value="pending">Aguardando autorização</option>
-<option value="approved">Aprovada para teste</option>
-<option value="rejected">Rejeitada</option>
-</select>
+<input id="origin" required maxlength="100" placeholder="Ex.: state/sucocast">
+<label for="task">Requerimento de produção</label>
+<textarea id="task" required maxlength="2000" placeholder="Ex.: Produzir um vídeo curto sobre..."></textarea>
+<label for="contentId">ID do conteúdo</label>
+<input id="contentId" required maxlength="120" placeholder="Ex.: SC-CONTENT-001">
+<label for="contentTitle">Título</label>
+<input id="contentTitle" required maxlength="200" placeholder="Ex.: Teste SucoCast">
+<label for="requirements">Especificações de produção</label>
+<textarea id="requirements" maxlength="2000" placeholder="Formato, duração, estilo, roteiro, legenda etc."></textarea>
+<label for="permission">Autorização inicial</label>
+<select id="permission"><option value="pending">Aguardando autorização</option><option value="approved">Aprovada para teste</option><option value="rejected">Rejeitada</option></select>
 <button type="submit">Enviar pela Rodovia</button>
 </form>
 </section>
 
-<section class="panel">
-<h2>Estado do circuito</h2>
+<section class="panel"><h2>Estado do circuito</h2>
 <p id="systemStatus" class="status">Inicializando...</p>
-<div class="flow" aria-label="Fluxo da solicitação">
-<div id="stageEntry" class="stage">Entrada</div><div class="arrow">→</div>
-<div id="stageRouteIn" class="stage">Rodovia</div><div class="arrow">→</div>
-<div id="stageFactory" class="stage">Fábrica</div><div class="arrow">→</div>
-<div id="stageRouteOut" class="stage">Retorno</div>
-</div>
-<p class="small">A Rodovia controla o caminho. A comunicação preserva requestId e messageId. A autorização continua demonstrativa nesta fase.</p>
-</section>
+<p class="small">Entrada → Rodovia → Dark Factory → Produção/Validação → Rodovia → Origem</p></section>
 
-<section class="panel">
-<h2>Último resultado</h2>
-<pre id="lastResult">Nenhuma solicitação processada.</pre>
-</section>
+<section class="panel"><h2>Último resultado</h2><pre id="lastResult">Nenhuma solicitação processada.</pre></section>
 
-<section class="panel">
-<h2>Registro de solicitações</h2>
-<p id="counter">Solicitações nesta sessão: 0</p>
-<div id="requestList">Nenhuma solicitação registrada.</div>
-<button id="clearButton" class="secondary" type="button">Limpar registros desta sessão</button>
-</section>
+<section class="panel"><h2>Mensagem enviada</h2><span class="tag">REQUEST</span><pre id="requestMessage">Nenhuma mensagem enviada.</pre>
+<h2>Resposta recebida</h2><span class="tag">RESPONSE</span><pre id="responseMessage">Nenhuma resposta recebida.</pre></section>
 
-<section class="panel">
-<h2>Comunicação DF-0.4.2</h2>
-<p id="communicationStatus" class="status">Inicializando comunicação...</p>
-<h3>Mensagem enviada</h3>
-<span class="tag">REQUEST REAL</span>
-<pre id="requestMessage">Nenhuma mensagem enviada.</pre>
-<h3>Resposta recebida</h3>
-<span class="tag">RESPONSE REAL</span>
-<pre id="responseMessage">Nenhuma resposta recebida.</pre>
-</section>
-
-<section class="panel">
-<h2>Executores disponíveis</h2>
-<pre id="executorList">Carregando executores...</pre>
-</section>
-
-<section class="panel">
-<h2>Logs do núcleo</h2>
-<pre id="logViewer">Nenhum log registrado.</pre>
-</section>
+<section class="panel"><h2>Executores disponíveis</h2><pre id="executorList">Carregando...</pre></section>
+<section class="panel"><h2>Logs do núcleo</h2><pre id="logViewer">Nenhum log registrado.</pre></section>
 </main>
 
-<script src="contracts/route.js?v=1.0.0"></script>
-<script src="routing/router.js?v=0.1.0"></script>
-<script src="core/request.js?v=0.3.0"></script>
-<script src="core/validator.js?v=0.2.1-ui3"></script>
-<script src="core/logger.js?v=0.2.1-ui3"></script>
-<script src="core/executor.js?v=0.3.0"></script>
-<script src="core/executor-manager.js?v=0.3.0"></script>\n<script src="core/content-publication-executor.js?v=0.5.0"></script>
-<script src="core/factory.js?v=0.4.2"></script>
-<script src="core/communication.js?v=0.4.2"></script>
-
+<script src="contracts/route.js?v=1.1.0"></script>
+<script src="routing/router.js?v=0.2.0"></script>
+<script src="core/request.js?v=0.6.0"></script>
+<script src="core/validator.js?v=0.3.0"></script>
+<script src="core/logger.js?v=0.3.0"></script>
+<script src="core/executor.js?v=0.4.0"></script>
+<script src="core/executor-manager.js?v=0.4.0"></script>
+<script src="core/content-publication-executor.js?v=0.6.0"></script>
+<script src="core/factory.js?v=0.6.0"></script>
+<script src="core/communication.js?v=0.6.0"></script>
 <script>
-const factory=new DarkFactory();
-const router=new WordDarkRouter();
-
-router.registerRoute(new WordDarkRoute({
-  routeId:"ROUTE-WORLD-EARTH-DF-TEST",
-  origin:"world/earth",
-  destination:"darkfactory",
-  service:"test"
-}));
-
-router.registerRoute(new WordDarkRoute({
-  routeId:"ROUTE-DF-WORLD-EARTH-TEST",
-  origin:"darkfactory",
-  destination:"world/earth",
-  service:"test"
-}));
-
+const factory=new DarkFactory(), router=new WordDarkRouter();
+router.registerRoute(new WordDarkRoute({routeId:"ROUTE-WORLD-EARTH-DF-TEST",origin:"world/earth",destination:"darkfactory",service:"test"}));
+router.registerRoute(new WordDarkRoute({routeId:"ROUTE-DF-WORLD-EARTH-TEST",origin:"darkfactory",destination:"world/earth",service:"test"}));
+router.registerRoute(new WordDarkRoute({routeId:"ROUTE-TERRA-DF-PRODUCTION",origin:"state/sucocast",destination:"darkfactory",service:"content.produce"}));
+router.registerRoute(new WordDarkRoute({routeId:"ROUTE-DF-TERRA-PRODUCTION",origin:"darkfactory",destination:"state/sucocast",service:"content.produce"}));
 const communication=new DarkFactoryCommunication(factory,router);
-
 const form=document.getElementById("requestForm");
-const list=document.getElementById("requestList");
-const counter=document.getElementById("counter");
-const systemStatus=document.getElementById("systemStatus");
-const communicationStatus=document.getElementById("communicationStatus");
-const clearButton=document.getElementById("clearButton");
-const executorList=document.getElementById("executorList");
-const lastResult=document.getElementById("lastResult");
-const requestMessage=document.getElementById("requestMessage");
-const responseMessage=document.getElementById("responseMessage");
-const logViewer=document.getElementById("logViewer");
-const contentFields=document.getElementById("contentFields");\nconst taskTypeField=document.getElementById("taskType");\nconst stages=[
-  document.getElementById("stageEntry"),
-  document.getElementById("stageRouteIn"),
-  document.getElementById("stageFactory"),
-  document.getElementById("stageRouteOut")
-];
-let requests=[];\n\ntaskTypeField.addEventListener("change",function(){\n  contentFields.hidden=taskTypeField.value!=="content.publish";\n});
-
-function setStages(active){
-  stages.forEach(function(stage,index){
-    stage.classList.toggle("active",index<active);
-  });
-}
-function renderExecutors(){
-  const executors=factory.getExecutors();
-  executorList.textContent=executors.length
-    ? executors.map(function(e){return e.type+" → "+e.name+" ("+e.status+")";}).join("\n")
-    : "Nenhum executor registrado.";
-}
-function renderResult(result){
-  lastResult.textContent=JSON.stringify(result,null,2);
-}
-function renderCommunication(result){
-  requestMessage.textContent=result.requestEnvelope
-    ? JSON.stringify(result.requestEnvelope,null,2)
-    : "Nenhum REQUEST disponível.";
-
-  responseMessage.textContent=result.responseEnvelope
-    ? JSON.stringify(result.responseEnvelope,null,2)
-    : "Nenhuma RESPONSE disponível.";
-}
-function addTextElement(parent,tag,text){
-  const element=document.createElement(tag);
-  element.textContent=text;
-  parent.appendChild(element);
-}
-function renderRequests(){
-  list.replaceChildren();
-  counter.textContent="Solicitações nesta sessão: "+requests.length;
-  if(!requests.length){list.textContent="Nenhuma solicitação registrada.";return;}
-  requests.forEach(function(item){
-    const entry=document.createElement("article");
-    entry.className="entry";
-    addTextElement(entry,"h3",item.request.id);
-    addTextElement(entry,"p","Solicitante: "+item.request.requester);
-    addTextElement(entry,"p","Origem: "+item.request.origin);
-    addTextElement(entry,"p","Destino: "+item.request.destination);
-    addTextElement(entry,"p","Tarefa: "+item.request.task);
-    addTextElement(entry,"p","Permissão: "+item.request.permission);
-    addTextElement(entry,"p","Resultado: "+item.result.status);
-    const response=item.result.responseEnvelope||null;
-    if(item.result.requestMessageId)addTextElement(entry,"p","Request Message ID: "+item.result.requestMessageId);
-    if(response && response.messageId)addTextElement(entry,"p","Response Message ID: "+response.messageId);
-    if(response && response.responseTo)addTextElement(entry,"p","Response To (Request Message ID): "+response.responseTo);
-    if(response && response.route && response.route.routeId)addTextElement(entry,"p","Rota de retorno: "+response.route.routeId+" — "+response.route.status);
-    list.appendChild(entry);
-  });
-}
-function renderLogs(){
-  const logs=factory.getLogs();
-  logViewer.textContent=logs.length?JSON.stringify(logs,null,2):"Nenhum log registrado.";
-}
-
-const initialStatus=factory.getStatus();
-systemStatus.textContent=initialStatus.name+" "+initialStatus.version+" — "+initialStatus.status;
-const initialCommunicationStatus=communication.getStatus();
-communicationStatus.textContent=initialCommunicationStatus.name+" "+initialCommunicationStatus.version+" — "+initialCommunicationStatus.status;
-
+const status=document.getElementById("systemStatus");
+const last=document.getElementById("lastResult");
+const reqMsg=document.getElementById("requestMessage");
+const resMsg=document.getElementById("responseMessage");
+const logs=document.getElementById("logViewer");
+const execs=document.getElementById("executorList");
+execs.textContent=JSON.stringify(factory.getExecutors().map(e=>({name:e.name,type:e.type,status:e.status})),null,2);
 form.addEventListener("submit",function(event){
-  event.preventDefault();
-  setStages(1);
-
-  const request=new DarkFactoryRequest({
-    requester:document.getElementById("requester").value.trim(),
-    origin:document.getElementById("origin").value.trim(),
-    destination:document.getElementById("destination").value.trim(),
-    task:document.getElementById("task").value.trim(),
-    taskType:document.getElementById("taskType").value,
-    permission:document.getElementById("permission").value
-  });
-
-  setStages(2);
-  const result=communication.send(request);
-  setStages(result.success?4:3);
-
-  requests.unshift({request:request.toJSON(),result:result});
-  renderRequests();
-  renderLogs();
-  renderResult(result);
-  renderCommunication(result);
-  form.reset();
-
-  if(result.success){
-    systemStatus.textContent="Circuito completo: entrada, rota, execução e retorno concluídos.";
-    systemStatus.className="status success";
-    communicationStatus.textContent="REQUEST e RESPONSE reais transportados com IDs relacionados.";
-    communicationStatus.className="status success";
-  }else{
-    systemStatus.textContent="Circuito interrompido: "+(result.reason||result.message||"verifique os registros.");
-    systemStatus.className="status error";
-    communicationStatus.textContent="A comunicação registrou a falha/rejeição.";
-    communicationStatus.className="status error";
-  }
-
-  console.log("DF-0.4.2 result:",result);
+ event.preventDefault();
+ const permission=document.getElementById("permission").value;
+ const request=new DarkFactoryRequest({
+   requester:document.getElementById("requester").value.trim(),
+   origin:document.getElementById("origin").value.trim(),
+   destination:"darkfactory",
+   task:document.getElementById("task").value.trim(),
+   taskType:"content.produce",
+   permission:permission,
+   payload:{
+     contentId:document.getElementById("contentId").value.trim(),
+     title:document.getElementById("contentTitle").value.trim(),
+     type:"VIDEO",
+     requirements:document.getElementById("requirements").value.trim() || null
+   }
+ });
+ if(permission==="approved") request.authorize();
+ const response=communication.send(request);
+ status.textContent=response.success ? "Produção aceita pela Dark Factory." : "Solicitação rejeitada: "+(response.reason || response.status);
+ status.className=response.success ? "success" : "error";
+ last.textContent=JSON.stringify(response.result || response,null,2);
+ reqMsg.textContent=JSON.stringify(response.requestEnvelope || null,null,2);
+ resMsg.textContent=JSON.stringify(response.responseEnvelope || response,null,2);
+ logs.textContent=JSON.stringify(factory.getLogs(),null,2);
 });
-
-clearButton.addEventListener("click",function(){
-  requests=[];
-  factory.clearLogs();
-  renderRequests();
-  renderLogs();
-  lastResult.textContent="Nenhuma solicitação processada.";
-  requestMessage.textContent="Nenhuma mensagem enviada.";
-  responseMessage.textContent="Nenhuma resposta recebida.";
-  setStages(0);
-  systemStatus.textContent="Registros da sessão limpos.";
-  systemStatus.className="status";
-  communicationStatus.textContent="Comunicação DF-0.4.2 online.";
-  communicationStatus.className="status";
-});
-
-renderRequests();
-renderLogs();
-renderExecutors();
-setStages(0);
 </script>
-</body>
-</html>
+</body></html>

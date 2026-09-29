@@ -47,6 +47,20 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
 </section>
 
 <section class="card" style="margin-top:20px">
+<h2>Núcleo do Estado</h2>
+<p id="coreStatus" class="small">Carregando núcleo...</p>
+<pre id="coreResult">Aguardando.</pre>
+</section>
+
+<section class="card" style="margin-top:20px">
+<h2>Integração externa — YouTube</h2>
+<p class="small">Teste de contrato. A publicação abaixo é simulada e não chama o YouTube nem usa credenciais reais.</p>
+<button id="youtubeTest" type="button">Simular publicação no YouTube</button>
+<p id="youtubeStatus" aria-live="polite" class="small"></p>
+<pre id="youtubeResult">Aguardando teste.</pre>
+</section>
+
+<section class="card" style="margin-top:20px">
 <h2>Teste operacional</h2>
 <p class="small">Envia uma solicitação de teste com autorização aprovada e mantém os IDs de ida e volta.</p>
 <button id="run" type="button">Enviar teste pela Rodovia</button>
@@ -64,6 +78,12 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
 <script src="../../../sky/darkfactory/core/factory.js"></script>
 <script src="../../../sky/darkfactory/routing/router.js"></script>
 <script src="../../../sky/darkfactory/core/communication.js"></script>
+<script src="core/state-core.js"></script>
+<script src="core/operation-registry.js"></script>
+<script src="core/permission-manager.js"></script>
+<script src="core/event-log.js"></script>
+<script src="core/integration-manager.js"></script>
+<script src="integrations/youtube/youtube-adapter.js"></script>
 <script src="state.js"></script>
 <script>
 (function(){
@@ -107,6 +127,31 @@ pre{white-space:pre-wrap;word-break:break-word;background:#090d13;border-radius:
       sector.operations.map(function(operation){ return "<li>"+operation.name+" · "+operation.status+"</li>"; }).join("")+
       "</ul></section>";
   }).join("");
+
+  const coreStatus = state.core.getStatus();
+  document.getElementById("coreStatus").textContent =
+    "Núcleo "+coreStatus.version+" — "+coreStatus.status+" · "+
+    coreStatus.operationCount+" operações · "+coreStatus.integrationCount+" integrações · "+
+    coreStatus.recordCount+" registros";
+  document.getElementById("coreResult").textContent = JSON.stringify({
+    identityId: coreStatus.identityId,
+    integrations: state.core.listIntegrations(),
+    operations: state.core.listOperations()
+  },null,2);
+
+  document.getElementById("youtubeTest").addEventListener("click",function(){
+    state.permissionManager.grant(identity.identityId,"youtube.publish");
+    const result = state.simulateYouTubePublication({
+      title:"Teste SucoCast",
+      description:"Publicação de teste do núcleo do Estado.",
+      asset:"simulated-video"
+    });
+    document.getElementById("youtubeStatus").textContent =
+      result.success ? "Operação confirmada em modo de simulação." : "Operação rejeitada.";
+    document.getElementById("youtubeStatus").className =
+      "small "+(result.success ? "ok" : "warn");
+    document.getElementById("youtubeResult").textContent = JSON.stringify(result,null,2);
+  });
 
   document.getElementById("run").addEventListener("click",function(){
     const request = state.createTestRequest();

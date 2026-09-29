@@ -1,4 +1,6 @@
-const WordDarkOperation = require("../contracts/operation");
+const WordDarkOperation = typeof require === "function"
+  ? require("../contracts/operation")
+  : (typeof window !== "undefined" ? window.WordDarkOperation : null);
 
 /* WordDark — World Runtime
  * Junta as fundações do mundo sem absorver as responsabilidades de cada camada.

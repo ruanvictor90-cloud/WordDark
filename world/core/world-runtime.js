@@ -52,12 +52,35 @@ class WordDarkWorldRuntime {
       name:this.name,
       version:this.version,
       status:this.status,
+      components:{...this.components},
       accounts:this.accountManager ? this.accountManager.accounts.size : 0,
       identities:this.security ? this.security.identities.size : 0,
       routes:this.road ? this.road.routes.size : 0,
       operations:this.registry ? this.registry.list().length : 0,
       events:this.registry ? this.registry.events.length : 0
     };
+  }
+
+  getHealth() {
+    const checks = {
+      accountManager: !!this.accountManager,
+      security: !!this.security,
+      environmentGuard: !!this.environmentGuard,
+      road: !!this.road,
+      registry: !!this.registry,
+      operationEngine: !!this.operationEngine
+    };
+    const missing = Object.keys(checks).filter(key => !checks[key]);
+    return {
+      status: missing.length === 0 ? "HEALTHY" : "DEGRADED",
+      ready: missing.length === 0,
+      checks,
+      missing
+    };
+  }
+
+  isReady() {
+    return this.getHealth().ready;
   }
 }
 

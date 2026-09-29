@@ -22,6 +22,9 @@ button{padding:12px 16px;border:0;border-radius:8px;cursor:pointer}pre{white-spa
 <script src="../security/security-manager.js"></script>
 <script src="../contracts/operation.js"></script>
 <script src="operation-engine.js"></script>
+<script src="../library/local-library.js"></script>
+<script src="../library/central-library.js"></script>
+<script src="operation-registry.js"></script>
 <script src="../sky/darkfactory/contracts/route.js"></script>
 <script src="../sky/darkfactory/core/request.js"></script>
 <script src="../sky/darkfactory/core/logger.js"></script>
@@ -68,10 +71,14 @@ run.addEventListener("click",()=>{
   const factory=new DarkFactory();
   const bridge=new DarkFactoryOperationBridge({factory,router});
   const events=[];
+  const localLibrary=new WordDarkLocalLibrary({libraryId:"LIB-DEMO-LOCAL",ownerId:"world/earth/demo-city"});
+  const centralLibrary=new WordDarkCentralLibrary();
+  const registry=new WordDarkOperationRegistry({localLibrary,centralLibrary});
   const engine=new WordDarkOperationEngine({
    security,
    route:op=>bridge.route(op),
    execute:op=>bridge.execute(op),
+   registry,
    record:op=>{events.push({status:op.status,at:op.updatedAt});draw(op.status)}
   });
   const operation=engine.create({
@@ -100,7 +107,9 @@ run.addEventListener("click",()=>{
    factoryLogs:factory.getRequestLogs(result.payload && result.payload.requestId),
    routes:router.listRoutes(),
    securityAudit:security.getAudit(),
-   events
+   events,
+   localLibrary:localLibrary.toJSON(),
+   centralLibrary:centralLibrary.toJSON()
   },null,2);
  }catch(error){
   output.textContent=JSON.stringify({error:error.message,stack:error.stack},null,2);

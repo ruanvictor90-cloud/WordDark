@@ -1,3 +1,5 @@
+const WordDarkOperation = require("../contracts/operation");
+
 /* WordDark — World Runtime
  * Junta as fundações do mundo sem absorver as responsabilidades de cada camada.
  *
@@ -22,7 +24,7 @@ class WordDarkWorldRuntime {
     this.operationEngine = operationEngine;
     this.name = "WordDark Runtime";
     this.version = "0.1";
-    this.status = "ONLINE";
+    this.status = "ONLINE";\n    this.components = {\n      accountManager: !!this.accountManager,\n      security: !!this.security,\n      environmentGuard: !!this.environmentGuard,\n      road: !!this.road,\n      registry: !!this.registry,\n      operationEngine: !!this.operationEngine\n    };
   }
 
   createOperation(source = {}) {

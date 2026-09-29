@@ -97,6 +97,7 @@ class DarkFactoryCommunication {
         origin: data.origin,
         destination: data.destination,
         task: data.task,
+        taskType: data.taskType || "test",
         permission: data.permission
       });
 

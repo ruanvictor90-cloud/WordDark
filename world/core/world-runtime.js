@@ -23,7 +23,7 @@ class WordDarkWorldRuntime {
     this.registry = registry;
     this.operationEngine = operationEngine;
     this.name = "WordDark Runtime";
-    this.version = "0.1";
+    this.version = "0.2";
     this.status = "ONLINE";
     this.components = {
       accountManager: !!this.accountManager,
@@ -63,14 +63,27 @@ class WordDarkWorldRuntime {
 
   getHealth() {
     const checks = {
-      accountManager: !!this.accountManager,
-      security: !!this.security,
-      environmentGuard: !!this.environmentGuard,
-      road: !!this.road,
-      registry: !!this.registry,
-      operationEngine: !!this.operationEngine
+      accountManager: !!this.accountManager && typeof this.accountManager.get === "function",
+      security: !!this.security &&
+        typeof this.security.registerIdentity === "function" &&
+        typeof this.security.authorize === "function",
+      environmentGuard: !!this.environmentGuard &&
+        typeof this.environmentGuard.canRun === "function",
+      road: !!this.road &&
+        typeof this.road.registerRoute === "function" &&
+        typeof this.road.findRoute === "function" &&
+        typeof this.road.send === "function",
+      registry: !!this.registry &&
+        typeof this.registry.record === "function" &&
+        typeof this.registry.recordEvent === "function" &&
+        typeof this.registry.list === "function",
+      operationEngine: !!this.operationEngine &&
+        typeof this.operationEngine.create === "function" &&
+        typeof this.operationEngine.run === "function"
     };
+
     const missing = Object.keys(checks).filter(key => !checks[key]);
+
     return {
       status: missing.length === 0 ? "HEALTHY" : "DEGRADED",
       ready: missing.length === 0,

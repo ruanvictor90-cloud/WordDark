@@ -8,11 +8,19 @@ class SucoCastOperationRegistry {
     if (!operation || !operation.operationId || !operation.name) {
       throw new Error("Operação precisa de operationId e name.");
     }
-    this.operations.set(operation.operationId, Object.assign({
+
+    const registered = Object.assign({
       status: "REGISTERED",
-      version: "1.0"
-    }, operation));
-    return this.operations.get(operation.operationId);
+      version: "1.0",
+      compatibleIntegrations: []
+    }, operation);
+
+    if (!Array.isArray(registered.compatibleIntegrations)) {
+      registered.compatibleIntegrations = [];
+    }
+
+    this.operations.set(operation.operationId, registered);
+    return registered;
   }
 
   get(operationId) {
@@ -21,6 +29,18 @@ class SucoCastOperationRegistry {
 
   list() {
     return Array.from(this.operations.values());
+  }
+
+  isCompatible(operationId, integrationId) {
+    const operation = this.get(operationId);
+    if (!operation) return false;
+    if (operation.compatibleIntegrations.length === 0) return true;
+    return operation.compatibleIntegrations.includes(integrationId);
+  }
+
+  listCompatibleIntegrations(operationId) {
+    const operation = this.get(operationId);
+    return operation ? operation.compatibleIntegrations.slice() : [];
   }
 }
 

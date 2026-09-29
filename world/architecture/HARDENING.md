@@ -110,3 +110,34 @@ O hardening inicial fecha quatro barreiras estruturais antes da expansão dos m�
 ### Limite atual
 
 Este bloco fortalece o núcleo lógico do MVP. Ainda não equivale a segurança de produção: autenticação externa, gestão de segredos, banco persistente, isolamento de processos, criptografia em trânsito/repouso e observabilidade operacional continuam como etapas posteriores.
+
+## Bloco 24 — Emergency Stop (Socorro Deus)
+
+O WordDark agora possui uma parada de emergência transversal por operação.
+
+### Regra
+
+> **Se qualquer setor detectar uma condição crítica e acionar o Socorro Deus, a operação inteira é parada.**
+
+A parada não pertence ao setor que a acionou: o setor apenas dispara o comando. O efeito é global para o operationId.
+
+Componentes:
+- world/contracts/emergency-stop.js — contrato da parada;
+- world/core/emergency-stop-manager.js — estado, bloqueio e auditoria;
+- world/core/emergency-stop.test.js — testes estruturais;
+- world/core/operation-engine.js — pontos de verificação antes/durante o circuito;
+- world/sky/darkfactory/core/production-pipeline.js — pontos de verificação dentro da produção.
+
+### Comportamento
+
+1. Cada setor possui seu próprio acionamento.
+2. O acionamento registra setor, operação, solicitante, motivo e horário.
+3. A operação passa para CANCELLED no próximo ponto seguro.
+4. A Rodovia/execução não deve iniciar uma nova etapa depois do stop.
+5. A produção também verifica o stop antes da execução, depois do executor e durante a validação.
+6. O stop permanece ativo até uma liberação explícita.
+7. A liberação não retoma automaticamente a operação cancelada; uma nova operação deve ser criada se for necessário recomeçar.
+
+### Limite técnico do MVP
+
+Em JavaScript síncrono, não é seguro prometer interrupção física de uma função que já esteja bloqueando o processo. Por isso o MVP usa cancelamento cooperativo em pontos de controle. Quando a Dark Factory migrar para workers/processos/filas, o mesmo contrato poderá ser conectado a AbortSignal, cancelamento de job e encerramento do worker.

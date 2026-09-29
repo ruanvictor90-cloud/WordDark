@@ -16,6 +16,24 @@ class SucoCastState {
     this.version = "SC-0.2";
     this.parentId = "world/earth/juice-country";
 
+    this.core = new SucoCastCore({
+      identity: this.identity,
+      version: "SC-CORE-0.1",
+      configuration: {
+        externalOperations: true,
+        credentialProvider: "FUTURE_SECURE_BACKEND"
+      }
+    });
+
+    this.permissionManager = new SucoCastPermissionManager();
+    this.eventLog = new SucoCastEventLog();
+    this.integrationManager = new SucoCastIntegrationManager();
+    this.youtubeAdapter = new SucoCastYouTubeAdapter();
+
+    this.integrationManager.register(this.youtubeAdapter);
+    this.core.registerIntegration(this.youtubeAdapter);
+    this.registerCoreOperations();
+
     this.road = {
       outbound: "ROUTE-SUCOCAST-DARKFACTORY",
       inbound: "ROUTE-DARKFACTORY-SUCOCAST"
@@ -79,6 +97,65 @@ class SucoCastState {
         ]
       }
     ];
+  }
+
+
+  registerCoreOperations() {
+    this.core.registerOperation({
+      operationId: "SC-OP-DIS-003",
+      name: "Publicar vídeo no YouTube",
+      sectorId: "SC-SEC-DIS",
+      capability: "youtube.publish",
+      status: "REGISTERED"
+    });
+
+    this.core.registerOperation({
+      operationId: "SC-OP-DIS-004",
+      name: "Registrar resultado de publicação",
+      sectorId: "SC-SEC-DIS",
+      capability: "publication.record",
+      status: "REGISTERED"
+    });
+  }
+
+  simulateYouTubePublication(content) {
+    const capability = "youtube.publish";
+    const actor = this.identity.identityId;
+
+    this.eventLog.add("EXTERNAL_OPERATION_REQUESTED", {
+      actor: actor,
+      operationId: "SC-OP-DIS-003",
+      platform: "YouTube"
+    });
+
+    if (!this.permissionManager.can(actor, capability)) {
+      this.eventLog.add("EXTERNAL_OPERATION_REJECTED", {
+        actor: actor,
+        capability: capability
+      });
+      return {
+        success: false,
+        status: "REJECTED",
+        reason: "Capacidade não autorizada: " + capability
+      };
+    }
+
+    const result = this.integrationManager.execute(
+      "SC-INTEGRATION-YOUTUBE",
+      "publish",
+      content
+    );
+
+    this.eventLog.add(
+      result.success ? "EXTERNAL_OPERATION_CONFIRMED" : "EXTERNAL_OPERATION_FAILED",
+      {
+        actor: actor,
+        platform: "YouTube",
+        result: result
+      }
+    );
+
+    return result;
   }
 
   createTestRequest() {

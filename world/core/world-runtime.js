@@ -24,7 +24,15 @@ class WordDarkWorldRuntime {
     this.operationEngine = operationEngine;
     this.name = "WordDark Runtime";
     this.version = "0.1";
-    this.status = "ONLINE";\n    this.components = {\n      accountManager: !!this.accountManager,\n      security: !!this.security,\n      environmentGuard: !!this.environmentGuard,\n      road: !!this.road,\n      registry: !!this.registry,\n      operationEngine: !!this.operationEngine\n    };
+    this.status = "ONLINE";
+    this.components = {
+      accountManager: !!this.accountManager,
+      security: !!this.security,
+      environmentGuard: !!this.environmentGuard,
+      road: !!this.road,
+      registry: !!this.registry,
+      operationEngine: !!this.operationEngine
+    };
   }
 
   createOperation(source = {}) {

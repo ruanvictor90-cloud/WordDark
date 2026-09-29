@@ -15,7 +15,7 @@
     content="#10131b"
   >
 
-  <title>Dark Factory — DF-0.3</title>
+  <title>Dark Factory — DF-0.4</title>
 
   <style>
 
@@ -169,7 +169,7 @@
   <h1>Dark Factory</h1>
 
   <div class="subtitle">
-    WordDark · Céu · Sistema de Executores DF-0.3
+    WordDark · Céu · Rodovia + Sistema de Executores DF-0.4
   </div>
 
 
@@ -376,7 +376,7 @@ Nenhuma solicitação processada.
 
   <section class="panel">
 
-    <h2>Comunicação DF-0.2.1</h2>
+    <h2>Comunicação DF-0.4.0</h2>
 
     <p
       id="communicationStatus"
@@ -478,6 +478,15 @@ Nenhum log registrado.
       routeId: "ROUTE-WORLD-EARTH-DF-TEST",
       origin: "world/earth",
       destination: "darkfactory",
+      service: "test"
+    })
+  );
+
+  router.registerRoute(
+    new WordDarkRoute({
+      routeId: "ROUTE-DF-WORLD-EARTH-TEST",
+      origin: "darkfactory",
+      destination: "world/earth",
       service: "test"
     })
   );
@@ -699,7 +708,7 @@ Nenhum log registrado.
       if (result.success) {
 
         systemStatus.textContent =
-          "Solicitação processada pelo núcleo DF-0.1 através da comunicação DF-0.2.1.";
+          "Solicitação processada pelo núcleo DF-0.3 através da Rodovia e comunicação DF-0.4.0.";
 
 
         systemStatus.className =
@@ -744,25 +753,25 @@ Nenhum log registrado.
       // ---------------------------------------------------
 
       console.log(
-        "DF-0.2.1 — Request ID original:",
+        "DF-0.4.0 — Request ID original:",
         originalRequestId
       );
 
 
       console.log(
-        "DF-0.2.1 — Request ID da resposta:",
+        "DF-0.4.0 — Request ID da resposta:",
         result.requestId
       );
 
 
       console.log(
-        "DF-0.2.1 — Request Message ID:",
+        "DF-0.4.0 — Request Message ID:",
         result.requestMessageId
       );
 
 
       console.log(
-        "DF-0.2.1 — Response To:",
+        "DF-0.4.0 — Response To:",
         result.responseTo
       );
 
@@ -825,7 +834,7 @@ Nenhum log registrado.
     const responseEnvelope = {
 
       protocol:
-        result.protocol || "DF-0.2.1",
+        result.protocol || "DF-0.4.0",
 
       messageId:
         result.messageId || null,

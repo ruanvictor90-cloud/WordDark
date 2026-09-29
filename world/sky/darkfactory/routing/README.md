@@ -31,3 +31,23 @@ DESTINO
 ## Regra
 
 A Rodovia transporta a solicitação. Ela não decide sozinha se a solicitação pode ser executada.
+
+
+## Implementação inicial
+
+O arquivo `router.js` transforma a Rodovia em um componente executável.
+
+Nesta primeira versão, a Rodovia consegue:
+
+- registrar rotas;
+- validar rotas antes do registro;
+- localizar uma rota ativa por origem, destino e serviço;
+- rejeitar mensagens sem rota;
+- preservar `messageId` e `requestId`;
+- encaminhar um envelope sem executar a tarefa.
+
+A Rodovia continua separada da autorização e da execução.
+
+## Próxima evolução
+
+A integração com Security e Dark Factory será feita depois que o contrato de passagem estiver validado isoladamente.

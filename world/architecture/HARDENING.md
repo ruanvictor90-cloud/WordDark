@@ -78,3 +78,35 @@ Esses componentes ainda são MVP/TEST. Não representam banco de produção, men
 **Primeiro concreto estrutural; depois infraestrutura pesada.**
 
 Cada camada deve continuar substituível sem quebrar as demais.
+
+
+## Bloco 23 — Security Hardening
+
+O hardening inicial fecha quatro barreiras estruturais antes da expansão dos módulos:
+
+1. **Acesso validado**
+   - identity + capability + action + environment + scope;
+   - datas de concessão/expiração precisam ser válidas;
+   - permissões expiradas deixam de autorizar operações.
+
+2. **Ambiente**
+   - TEST e PROD permanecem separados;
+   - ambientes bloqueados impedem execução;
+   - PROD exige uma aprovação separada da autorização normal da operação.
+
+3. **Identidade e auditoria**
+   - identidade duplicada não pode ser registrada novamente;
+   - ambiente inválido é rejeitado;
+   - toda decisão de autorização continua gerando auditoria.
+
+4. **Proteção contra replay**
+   - uma operação concluída não pode ser executada novamente pelo mesmo engine;
+   - o segundo processamento é registrado como tentativa bloqueada, sem chamar o executor novamente.
+
+### Regra de segurança do MVP
+
+> Nenhum módulo deve contornar identidade, acesso, ambiente, autorização ou auditoria para executar uma operação.
+
+### Limite atual
+
+Este bloco fortalece o núcleo lógico do MVP. Ainda não equivale a segurança de produção: autenticação externa, gestão de segredos, banco persistente, isolamento de processos, criptografia em trânsito/repouso e observabilidade operacional continuam como etapas posteriores.

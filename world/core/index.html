@@ -23,17 +23,21 @@ button{padding:12px 16px;border:0;border-radius:8px;cursor:pointer}pre{white-spa
 <script src="../security/account-manager.js"></script>
 <script src="../contracts/operation.js"></script>
 <script src="../contracts/message.js"></script>
+<script src="../contracts/request.js"></script>
+<script src="../contracts/receipt.js"></script>
+<script src="../contracts/record.js"></script>
 <script src="../contracts/route.js"></script>
 <script src="../contracts/environment.js"></script>
 <script src="../contracts/account.js"></script>
 <script src="operation-engine.js"></script>
 <script src="environment-guard.js"></script>
 <script src="road.js"></script>
+<script src="communication.js"></script>
 <script src="world-runtime.js"></script>
 <script src="../library/local-library.js"></script>
 <script src="../library/central-library.js"></script>
 <script src="operation-registry.js"></script>
-<script src="../sky/darkfactory/contracts/route.js"></script>
+
 <script src="../sky/darkfactory/core/request.js"></script>
 <script src="../sky/darkfactory/core/logger.js"></script>
 <script src="../sky/darkfactory/core/validator.js"></script>
@@ -60,16 +64,21 @@ draw("CREATED");
 
 run.addEventListener("click",()=>{
  try{
-  const router=new WordDarkRouter();
   const road=new WordDarkRoad();
-  const route=new WordDarkRoute({
+  const outboundRoute=new WordDarkRoute({
    routeId:"ROUTE-TERRA-DF-PRODUCE",
    origin:"world/earth/demo-city",
    destination:"world/sky/darkfactory",
    service:"content.produce"
   });
-  router.registerRoute(route);
-  road.registerRoute(route);
+  const returnRoute=new WordDarkRoute({
+   routeId:"ROUTE-DF-TERRA-PRODUCE",
+   origin:"world/sky/darkfactory",
+   destination:"world/earth/demo-city",
+   service:"content.produce"
+  });
+  road.registerRoute(outboundRoute);
+  road.registerRoute(returnRoute);
   const security=new WordDarkSecurityManager();
   const accountManager=new WordDarkAccountManager();
   accountManager.register(new WordDarkAccount({accountId:"ACC-CITY-DEMO",identityId:"CITY-DEMO",type:"PERSONAL"}));
@@ -82,12 +91,13 @@ run.addEventListener("click",()=>{
    scope:"world/sky/darkfactory"
   }));
   const factory=new DarkFactory();
-  const bridge=new DarkFactoryOperationBridge({factory,router});
   const events=[];
   const localLibrary=new WordDarkLocalLibrary({libraryId:"LIB-DEMO-LOCAL",ownerId:"world/earth/demo-city"});
   const centralLibrary=new WordDarkCentralLibrary();
   const registry=new WordDarkOperationRegistry({localLibrary,centralLibrary});
   const environmentGuard=new WordDarkEnvironmentGuard({environments:{TEST:new WordDarkEnvironment({name:"TEST"}),PROD:new WordDarkEnvironment({name:"PROD"})}});
+  const communication=new WordDarkCommunication({road,registry});
+  const bridge=new DarkFactoryOperationBridge({factory,communication});
   const engine=new WordDarkOperationEngine({
    security,
    route:op=>bridge.route(op),
@@ -120,9 +130,12 @@ run.addEventListener("click",()=>{
   output.textContent=JSON.stringify({
    operation:result.toJSON(),
    factoryStatus:factory.getStatus(),
-   factoryLogs:factory.getRequestLogs(result.payload && result.payload.requestId),
+   factoryLogs:factory.getRequestLogs(),
    runtime:runtime.getStatus(),
-   routes:router.listRoutes(),
+   routes:road.listRoutes(),
+   communication:communication.getStatus(),
+   receipts:communication.receipts,
+   messages:communication.messages,
    road:road.getStatus(),
    accounts:accountManager.list(),
    securityAudit:security.getAudit(),

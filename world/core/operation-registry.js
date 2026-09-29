@@ -63,6 +63,27 @@ class WordDarkOperationRegistry {
     });
   }
 
+  promoteKnowledge(knowledge, { centralLibrary = this.centralLibrary, reason = "KNOWLEDGE_VALIDATED" } = {}) {
+    if (!centralLibrary) throw new Error("Biblioteca Central não configurada.");
+    if (!knowledge || typeof knowledge.validate !== "function" || typeof knowledge.isValidated !== "function") {
+      throw new Error("knowledge must be a WordDarkKnowledgeRecord.");
+    }
+
+    knowledge.validate();
+    if (!knowledge.isValidated()) {
+      throw new Error("somente conhecimento VALIDATED pode ser promovido.");
+    }
+
+    return centralLibrary.append({
+      recordId: "KNOWLEDGE-" + knowledge.knowledgeId,
+      type: "KNOWLEDGE_PROMOTION",
+      source: knowledge.sourceId,
+      sourceType: knowledge.sourceType,
+      reason,
+      data: typeof knowledge.toJSON === "function" ? knowledge.toJSON() : { ...knowledge }
+    });
+  }
+
   archiveOperation(operation, reason = "OPERATION_COMPLETED") {
     if (!this.centralLibrary) return null;
     const snapshot = this.record(operation);

@@ -88,7 +88,8 @@ class SucoCastState {
         status: "ONLINE",
         operations: [
           { operationId: "SC-OP-DIS-001", name: "Preparar publicação", status: "READY" },
-          { operationId: "SC-OP-DIS-002", name: "Registrar publicação", status: "READY" }
+          { operationId: "SC-OP-DIS-002", name: "Registrar publicação", status: "READY" },
+          { operationId: "SC-OP-DIS-003", name: "PUBLICAR_CONTEUDO", status: "READY" }
         ]
       },
       {
@@ -112,65 +113,106 @@ class SucoCastState {
     ];
   }
 
-
   registerCoreOperations() {
+    const publicationIntegrations = [
+      "SC-INTEGRATION-YOUTUBE",
+      "SC-INTEGRATION-INSTAGRAM",
+      "SC-INTEGRATION-TIKTOK",
+      "SC-INTEGRATION-WEBSITE",
+      "SC-INTEGRATION-EXTERNAL"
+    ];
+
     this.core.registerOperation({
       operationId: "SC-OP-DIS-003",
-      name: "Publicar vídeo no YouTube",
+      name: "PUBLICAR_CONTEUDO",
       sectorId: "SC-SEC-DIS",
       capability: "content.publish",
       action: "publish",
+      compatibleIntegrations: publicationIntegrations,
       status: "REGISTERED"
     });
 
     this.core.registerOperation({
       operationId: "SC-OP-DIS-004",
-      name: "Registrar resultado de publicação",
+      name: "REGISTRAR_PUBLICACAO",
       sectorId: "SC-SEC-DIS",
       capability: "publication.record",
       action: "record",
+      compatibleIntegrations: [],
       status: "REGISTERED"
     });
   }
 
-  simulateYouTubePublication(content) {
-    const capability = "content.publish";
+  publishContent(integrationId, content) {
+    const operationId = "SC-OP-DIS-003";
     const actor = this.identity.identityId;
+    const integration = this.core.getIntegration(integrationId);
 
-    this.eventLog.add("EXTERNAL_OPERATION_REQUESTED", {
+    this.eventLog.add("CONTENT_PUBLICATION_REQUESTED", {
       actor: actor,
-      operationId: "SC-OP-DIS-003",
-      platform: "YouTube"
+      operationId: operationId,
+      integrationId: integrationId
     });
 
-    if (!this.permissionManager.can(actor, capability)) {
-      this.eventLog.add("EXTERNAL_OPERATION_REJECTED", {
+    if (!integration) {
+      return {
+        success: false,
+        status: "FAILED",
+        reason: "Integração não encontrada.",
+        operationId: operationId,
+        integrationId: integrationId
+      };
+    }
+
+    if (!this.permissionManager.can(actor, "content.publish")) {
+      this.eventLog.add("CONTENT_PUBLICATION_REJECTED", {
         actor: actor,
-        capability: capability
+        capability: "content.publish",
+        integrationId: integrationId
       });
       return {
         success: false,
         status: "REJECTED",
-        reason: "Capacidade não autorizada: " + capability
+        reason: "Capacidade não autorizada: content.publish",
+        operationId: operationId,
+        integrationId: integrationId
+      };
+    }
+
+    const operation = this.core.getOperation(operationId);
+    if (!operation.compatibleIntegrations.includes(integrationId)) {
+      return {
+        success: false,
+        status: "REJECTED",
+        reason: "Integração incompatível com PUBLICAR_CONTEUDO.",
+        operationId: operationId,
+        integrationId: integrationId
       };
     }
 
     const result = this.integrationManager.execute(
-      "SC-INTEGRATION-YOUTUBE",
-      "publish",
-      content
+      integrationId,
+      operation.action,
+      content || {}
     );
 
     this.eventLog.add(
-      result.success ? "EXTERNAL_OPERATION_CONFIRMED" : "EXTERNAL_OPERATION_FAILED",
+      result.success ? "CONTENT_PUBLICATION_CONFIRMED" : "CONTENT_PUBLICATION_FAILED",
       {
         actor: actor,
-        platform: "YouTube",
+        integrationId: integrationId,
         result: result
       }
     );
 
-    return result;
+    return Object.assign({
+      operationId: operationId,
+      integrationId: integrationId
+    }, result);
+  }
+
+  simulateYouTubePublication(content) {
+    return this.publishContent("SC-INTEGRATION-YOUTUBE", content);
   }
 
   createTestRequest() {

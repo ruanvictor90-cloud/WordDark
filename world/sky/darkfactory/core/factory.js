@@ -1,29 +1,26 @@
 /*
  * Dark Factory — Factory Core
- * DF-0.4.2
+ * DF-0.5
  *
- * O núcleo agora utiliza um gerenciador de executores.
- * O fluxo principal permanece estável enquanto novos
- * executores podem ser adicionados como módulos.
+ * O núcleo coordena validação, autorização, seleção de executor
+ * e execução. O conteúdo específico permanece em executores modulares.
  */
 
 class DarkFactory {
-
   constructor() {
     this.name = "Dark Factory";
-    this.version = "DF-0.4.2";
+    this.version = "DF-0.5";
     this.status = "ONLINE";
-
     this.logger = new DarkFactoryLogger();
     this.executorManager = new DarkFactoryExecutorManager();
-
     this.registerDefaultExecutors();
   }
 
   registerDefaultExecutors() {
-    this.executorManager.register(
-      new DarkFactoryExecutor()
-    );
+    this.executorManager.register(new DarkFactoryExecutor());
+    if (typeof DarkFactoryContentExecutor !== "undefined") {
+      this.executorManager.register(new DarkFactoryContentExecutor());
+    }
   }
 
   registerExecutor(executor) {
@@ -37,9 +34,7 @@ class DarkFactory {
       message: "Solicitação recebida pela Dark Factory."
     });
 
-    const validation =
-      DarkFactoryValidator.validateRequest(request);
-
+    const validation = DarkFactoryValidator.validateRequest(request);
     if (!validation.valid) {
       this.logger.log({
         requestId: request ? request.id : null,
@@ -47,65 +42,42 @@ class DarkFactory {
         message: "Solicitação rejeitada durante a validação.",
         data: validation.errors
       });
-
-      return {
-        success: false,
-        status: "REJEITADO",
-        stage: "VALIDAÇÃO",
-        errors: validation.errors
-      };
+      return { success:false, status:"REJEITADO", stage:"VALIDAÇÃO", errors:validation.errors };
     }
 
-    const authorization =
-      DarkFactoryValidator.canExecute(request);
-
+    const authorization = DarkFactoryValidator.canExecute(request);
     if (!authorization.allowed) {
       this.logger.log({
         requestId: request.id,
         event: "AUTHORIZATION_FAILED",
         message: authorization.reason
       });
-
-      return {
-        success: false,
-        status: "REJEITADO",
-        stage: "AUTORIZAÇÃO",
-        reason: authorization.reason
-      };
+      return { success:false, status:"REJEITADO", stage:"AUTORIZAÇÃO", reason:authorization.reason };
     }
 
-    const selection =
-      this.executorManager.select(request);
-
+    const selection = this.executorManager.select(request);
     if (!selection.success) {
       this.logger.log({
         requestId: request.id,
         event: "EXECUTOR_NOT_FOUND",
         message: selection.reason,
-        data: {
-          taskType: request.taskType
-        }
+        data: { taskType:request.taskType }
       });
-
       return {
-        success: false,
-        status: "REJEITADO",
-        stage: "EXECUTOR",
-        reason: selection.reason,
-        taskType: request.taskType
+        success:false,
+        status:"REJEITADO",
+        stage:"EXECUTOR",
+        reason:selection.reason,
+        taskType:request.taskType
       };
     }
 
     const executor = selection.executor;
-
     this.logger.log({
       requestId: request.id,
       event: "EXECUTOR_SELECTED",
       message: "Executor selecionado.",
-      data: {
-        taskType: request.taskType,
-        executor: executor.name
-      }
+      data: { taskType:request.taskType, executor:executor.name }
     });
 
     this.logger.log({
@@ -124,43 +96,34 @@ class DarkFactory {
     });
 
     return {
-      success: result.success,
-      status: result.status,
-      requestId: request.id,
-      executor: result.executor,
-      executorType: result.executorType || request.taskType,
-      taskType: result.taskType || request.taskType,
-      message: result.message,
-      executedAt: result.executedAt
+      success:result.success,
+      status:result.status,
+      requestId:request.id,
+      executor:result.executor,
+      executorType:result.executorType || request.taskType,
+      taskType:result.taskType || request.taskType,
+      message:result.message,
+      executedAt:result.executedAt,
+      batchId:result.batchId || null,
+      requestedIntegrations:result.requestedIntegrations || [],
+      confirmedCount:result.confirmedCount || 0,
+      failedCount:result.failedCount || 0
     };
   }
 
   getStatus() {
     return {
-      name: this.name,
-      version: this.version,
-      status: this.status,
-      executors: this.executorManager.list()
+      name:this.name,
+      version:this.version,
+      status:this.status,
+      executors:this.executorManager.list()
     };
   }
 
-  getExecutors() {
-    return this.executorManager.list();
-  }
-
-  getLogs() {
-    return this.logger.getAll();
-  }
-
-  getRequestLogs(requestId) {
-    return this.logger.getByRequest(requestId);
-  }
-
-  clearLogs() {
-    this.logger.clear();
-  }
+  getExecutors() { return this.executorManager.list(); }
+  getLogs() { return this.logger.getAll(); }
+  getRequestLogs(requestId) { return this.logger.getByRequest(requestId); }
+  clearLogs() { this.logger.clear(); }
 }
 
-if (typeof window !== "undefined") {
-  window.DarkFactory = DarkFactory;
-}
+if (typeof window !== "undefined") window.DarkFactory = DarkFactory;

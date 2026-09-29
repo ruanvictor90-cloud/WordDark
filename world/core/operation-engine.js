@@ -5,7 +5,19 @@
 
 class WordDarkOperationEngine {
   constructor(options = {}) {
-    this.authorize = options.authorize || (() => ({ allowed: false, reason: "Autorização não configurada." }));
+    this.security = options.security || null;
+    this.authorize = options.authorize || ((operation) => {
+      if (!this.security) return { allowed: false, reason: "Autorização não configurada." };
+      const payload = operation.payload || {};
+      return this.security.authorize({
+        identityId: payload.identityId || operation.requesterId,
+        operationId: operation.operationId,
+        capability: payload.capability || operation.operationType,
+        action: payload.action || "request",
+        environment: operation.environment,
+        scope: payload.scope || operation.destinationId || "*"
+      });
+    });
     this.route = options.route || (() => ({ success: false, reason: "Roteamento não configurado." }));
     this.execute = options.execute || (() => ({ success: false, reason: "Executor não configurado." }));
     this.record = options.record || (() => {});

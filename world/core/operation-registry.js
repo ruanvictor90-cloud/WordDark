@@ -47,6 +47,22 @@ class WordDarkOperationRegistry {
     return event;
   }
 
+  promoteLocalLearning(recordId, { centralLibrary = this.centralLibrary, reason = "LEARNING_PROMOTED" } = {}) {
+    if (!this.localLibrary) throw new Error("Biblioteca Local não configurada.");
+    if (!centralLibrary) throw new Error("Biblioteca Central não configurada.");
+
+    const localRecord = this.localLibrary.get(recordId);
+    if (!localRecord) return null;
+
+    return centralLibrary.append({
+      recordId: "LEARNING-" + recordId + "-" + Date.now().toString(36).toUpperCase(),
+      type: "LEARNING_PROMOTION",
+      source: this.localLibrary.libraryId,
+      reason,
+      data: localRecord
+    });
+  }
+
   archiveOperation(operation, reason = "OPERATION_COMPLETED") {
     if (!this.centralLibrary) return null;
     const snapshot = this.record(operation);

@@ -3,7 +3,7 @@ class DarkFactoryCommunication {
     this.factory = factory;
     this.router = router;
     this.name = "DF-Communication";
-    this.version = "DF-0.4.1";
+    this.version = "DF-0.4.2";
     this.status = "ONLINE";
   }
 
@@ -52,7 +52,7 @@ class DarkFactoryCommunication {
 
   createRequestEnvelope(request) {
     return {
-      protocol: "DF-0.4.1",
+      protocol: "DF-0.4.2",
       messageId: this.generateId("MSG"),
       requestId: request ? request.id : null,
       origin: request ? request.origin : null,

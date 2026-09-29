@@ -42,3 +42,5 @@ jobs:
         run: node world/sky/darkfactory/core/DF-0.7.test.js
       - name: Diagnostics and learning
         run: node world/core/diagnostics-learning.test.js
+      - name: World Runtime
+        run: node world/core/world-runtime.test.js

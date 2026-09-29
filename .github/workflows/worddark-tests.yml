@@ -32,3 +32,7 @@ jobs:
         run: node world/core/operation-registry.test.js
       - name: Knowledge
         run: node world/library/knowledge.test.js
+      - name: Persistence
+        run: node world/core/persistence.test.js
+      - name: ACK and error contracts
+        run: node world/contracts/ack-error.test.js

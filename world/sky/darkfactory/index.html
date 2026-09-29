@@ -298,11 +298,13 @@
 
       Entrada
       →
-      Envio
+      Rodovia
       →
       Recebimento
       →
       Execução
+      →
+      Rodovia
       →
       Resposta
 
@@ -310,7 +312,7 @@
 
     <p class="small">
 
-      DF-0.2.1 separa o fluxo de comunicação e preserva
+      A Rodovia valida o caminho antes do recebimento, enquanto a comunicação preserva
       a identidade da solicitação.
 
       <br><br>
@@ -441,6 +443,8 @@ Nenhum log registrado.
 <!-- CARREGAMENTO DO NÚCLEO -->
 <!-- ======================================================= -->
 
+<script src="contracts/route.js?v=1.0.0"></script>
+<script src="routing/router.js?v=0.1.0"></script>
 <script src="core/request.js?v=0.3.0"></script>
 
 <script src="core/validator.js?v=0.2.1-ui2"></script>
@@ -466,8 +470,20 @@ Nenhum log registrado.
     new DarkFactory();
 
 
+  const router =
+    new WordDarkRouter();
+
+  router.registerRoute(
+    new WordDarkRoute({
+      routeId: "ROUTE-WORLD-EARTH-DF-TEST",
+      origin: "world/earth",
+      destination: "darkfactory",
+      service: "test"
+    })
+  );
+
   const communication =
-    new DarkFactoryCommunication(factory);
+    new DarkFactoryCommunication(factory, router);
 
 
   // =======================================================
@@ -691,7 +707,7 @@ Nenhum log registrado.
 
 
         communicationStatus.textContent =
-          "REQUEST enviado, recebido e RESPONSE retornado com IDs reais.";
+          "REQUEST passou pela Rodovia, foi recebido e RESPONSE retornado com IDs reais.";
 
 
         communicationStatus.className =
@@ -1071,7 +1087,7 @@ Nenhum log registrado.
 
 
       communicationStatus.textContent =
-        "Comunicação DF-0.2.1 online.";
+        "Comunicação DF-0.4.0 online.";
 
 
       communicationStatus.className =

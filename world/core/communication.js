@@ -45,3 +45,4 @@ class WordDarkCommunication {
 }
 if(typeof module!=="undefined") module.exports=WordDarkCommunication;
 if(typeof window!=="undefined") window.WordDarkCommunication=WordDarkCommunication;
+if(typeof globalThis!=="undefined") globalThis.WordDarkCommunication=WordDarkCommunication;

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { runCommerceRuntime, recoverCommerceRuntime, openCommerceIncident, requeueCommerceIncident, resolveCommerceIncident } from "./runtime.js";
+import { runCommerceRuntime, recoverCommerceRuntime, openCommerceIncident, analyzeCommerceIncident, requeueCommerceIncident, resolveCommerceIncident } from "./runtime.js";
 
 const result = runCommerceRuntime({
   operationId:"WD-OP-CC-RUNTIME-001",
@@ -47,14 +47,12 @@ const incidentFlow = openCommerceIncident({
 assert.equal(incidentFlow.operation.status,"INCIDENT_OPEN");
 assert.equal(incidentFlow.incident.status,"OPEN");
 
-const analyzingIncident = {
-  ...incidentFlow,
-  incident: {
-    ...incidentFlow.incident,
-    status: "ANALYZING",
-    history: [...incidentFlow.incident.history, { status: "ANALYZING" }]
-  }
-};
+const analyzingIncident = analyzeCommerceIncident({
+  operation: incidentFlow.operation,
+  incident: incidentFlow.incident
+});
+assert.equal(analyzingIncident.operation.status,"INCIDENT_ANALYZING");
+assert.equal(analyzingIncident.incident.status,"ANALYZING");
 
 const requeued = requeueCommerceIncident({
   operation: analyzingIncident.operation,

@@ -156,8 +156,8 @@ renderSummary();
 
 const runtimeState={results:[], incident:null};
 
-function renderRuntimeResult(result){
-  runtimeState.results.unshift(result);
+function renderRuntimeResult(result,add=true){
+  if(add) runtimeState.results.unshift(result);
   const list=document.querySelector("#runtimeList");
   if(!list)return;
   const timeline=createRuntimeTimeline(result);
@@ -198,7 +198,7 @@ function deliverRuntimeTest(){
   const found=state.orders.find(o=>o.id===latest.order.id);
   if(found) found.status=latest.order.status;
   log("RUNTIME_DELIVERED",latest.order.id);
-  renderRuntimeResult(latest);
+  renderRuntimeResult(latest,false);
   openSector(sectors.find(s=>s.id==="commerce"),true);
 }
 

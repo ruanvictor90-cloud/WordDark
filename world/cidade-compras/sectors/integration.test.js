@@ -63,8 +63,9 @@ const incident = createIncident({
   operationId:"WD-OP-CC-TEST-001", type:"DELIVERY_EXCEPTION",
   description:"Exceção simulada para teste de recuperação."
 });
-assert.equal(transitionIncident(incident,"ANALYZING").status,"ANALYZING");
-assert.equal(transitionIncident(incident,"REQUEUED","Retornar à etapa necessária.").status,"REQUEUED");
+const incidentAnalyzing = transitionIncident(incident,"ANALYZING");
+assert.equal(incidentAnalyzing.status,"ANALYZING");
+assert.equal(transitionIncident(incidentAnalyzing,"REQUEUED","Retornar à etapa necessária.").status,"REQUEUED");
 
 assert.equal(recordCommerceKnowledge({
   id:"WD-KNOW-CC-TEST-001", source:"INCIDENT", type:"LESSON",

@@ -2,7 +2,7 @@ import { receiveAtGate, authorizeAtGate, routeFromGate } from "./sectors/gate.js
 import { receiveCommunication, handoffCommunication } from "./sectors/communication.js";
 import { startAttendance, advanceAttendance } from "./sectors/attendance.js";
 import { createCommerceSession, closeCommerceSession } from "./sectors/commerce.js";
-import { createAccountOperation, settleAccountOperation } from "./sectors/accounts.js";
+import { createAccountOperation, settleAccountOperation, refundAccountOperation } from "./sectors/accounts.js";
 import { createSupplierOrder, sendSupplierOrder } from "./sectors/suppliers.js";
 import { createShipment, updateShipment } from "./sectors/logistics.js";
 import { createIncident, transitionIncident } from "./sectors/incidents.js";
@@ -131,6 +131,38 @@ export function runCommerceRuntime({
   return result;
 }
 
+export function deliverCommerceRuntime({ operation, order, shipment, trackingCode = null }) {
+  if (!operation || !order || !shipment) throw new Error("INVALID_DELIVERY_RUNTIME");
+  if (order.status !== "SHIPPED") throw new Error("ORDER_NOT_READY_FOR_DELIVERY");
+  if (shipment.status !== "IN_TRANSIT") throw new Error("SHIPMENT_NOT_READY_FOR_DELIVERY");
+
+  const outForDelivery = updateShipment(shipment, "OUT_FOR_DELIVERY", trackingCode || shipment.trackingCode);
+  const deliveredShipment = updateShipment(outForDelivery, "DELIVERED", trackingCode || outForDelivery.trackingCode);
+  const deliveredOrder = transitionOrder(order, "DELIVERED", "Entrega confirmada.");
+
+  return {
+    operation: transitionOperation(operation, "ORDER_DELIVERED", "Entrega confirmada pela logística."),
+    order: deliveredOrder,
+    shipment: deliveredShipment
+  };
+}
+
+export function refundCommercePayment({ operation, order, account, note = "Reembolso financeiro concluído." }) {
+  if (!operation || !order || !account) throw new Error("INVALID_REFUND_RUNTIME");
+  if (order.status !== "INCIDENT" && order.status !== "DELIVERED") {
+    throw new Error("ORDER_NOT_READY_FOR_REFUND");
+  }
+
+  const refundedAccount = refundAccountOperation(account, note);
+  const refundedOrder = refundOrderAfterIncident(order, note);
+
+  return {
+    operation: transitionOperation(operation, "PAYMENT_REFUNDED", note),
+    order: refundedOrder,
+    account: refundedAccount
+  };
+}
+
 export function openCommerceIncident({
   operation,
   order = null,
@@ -217,6 +249,7 @@ export function resolveCommerceIncident({
   incident,
   resolution,
   order = null,
+  account = null,
   action = "RESUME"
 }) {
   if (!operation || !incident || incident.status !== "ANALYZING" || !resolution) {
@@ -230,17 +263,26 @@ export function resolveCommerceIncident({
 
   const resolved = transitionIncident(incident, "RESOLVED", resolution);
   let nextOrder = order;
+  let nextAccount = account;
+  let nextOperation = transitionOperation(operation, "INCIDENT_RESOLVED");
 
   if (order) {
     if (action === "RESUME") nextOrder = resumeOrderAfterIncident(order, resolution);
-    if (action === "REFUND") nextOrder = refundOrderAfterIncident(order, resolution);
     if (action === "CANCEL") nextOrder = transitionOrder(order, "CANCELLED", resolution);
+    if (action === "REFUND") {
+      if (!account) throw new Error("ACCOUNT_REQUIRED_FOR_REFUND");
+      const refund = refundCommercePayment({ operation: nextOperation, order, account, note: resolution });
+      nextOperation = refund.operation;
+      nextOrder = refund.order;
+      nextAccount = refund.account;
+    }
   }
 
   return {
-    operation: transitionOperation(operation, "INCIDENT_RESOLVED"),
+    operation: nextOperation,
     incident: resolved,
-    order: nextOrder
+    order: nextOrder,
+    account: nextAccount
   };
 }
 

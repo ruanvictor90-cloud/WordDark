@@ -133,6 +133,7 @@ export function runCommerceRuntime({
 
 export function openCommerceIncident({
   operation,
+  order = null,
   incidentId,
   source,
   type,
@@ -146,13 +147,17 @@ export function openCommerceIncident({
     id: incidentId,
     source,
     operationId: operation.id,
+    orderId: order?.id || null,
     type,
     description
   });
 
+  const nextOrder = order ? openOrderIncident(order) : null;
+
   return {
     operation: transitionOperation(operation, "INCIDENT_OPEN"),
-    incident
+    incident,
+    order: nextOrder
   };
 }
 
@@ -190,21 +195,83 @@ export function requeueCommerceIncident({
   };
 }
 
+export function reanalyzeCommerceIncident({
+  operation,
+  incident,
+  note = "Ocorrência voltou para análise."
+}) {
+  if (!operation || !incident || incident.status !== "REQUEUED") {
+    throw new Error("INCIDENT_NOT_READY_FOR_REANALYSIS");
+  }
+
+  const analyzing = transitionIncident(incident, "ANALYZING", note);
+
+  return {
+    operation: transitionOperation(operation, "INCIDENT_ANALYZING"),
+    incident: analyzing
+  };
+}
+
 export function resolveCommerceIncident({
   operation,
   incident,
-  resolution
+  resolution,
+  order = null,
+  action = "RESUME"
 }) {
   if (!operation || !incident || incident.status !== "ANALYZING" || !resolution) {
     throw new Error("INCIDENT_NOT_READY_FOR_RESOLUTION");
   }
 
+  const allowedActions = new Set(["RESUME", "REFUND", "CANCEL"]);
+  if (!allowedActions.has(action)) {
+    throw new Error("INVALID_INCIDENT_RESOLUTION_ACTION");
+  }
+
   const resolved = transitionIncident(incident, "RESOLVED", resolution);
+  let nextOrder = order;
+
+  if (order) {
+    if (action === "RESUME") nextOrder = resumeOrderAfterIncident(order, resolution);
+    if (action === "REFUND") nextOrder = refundOrderAfterIncident(order, resolution);
+    if (action === "CANCEL") nextOrder = transitionOrder(order, "CANCELLED", resolution);
+  }
 
   return {
     operation: transitionOperation(operation, "INCIDENT_RESOLVED"),
-    incident: resolved
+    incident: resolved,
+    order: nextOrder
   };
+}
+
+export function openIncidentAfterSales({
+  operation,
+  order,
+  customerId,
+  afterSalesCaseId,
+  type,
+  description
+}) {
+  if (!operation || !order || !customerId || !afterSalesCaseId || !type || !description) {
+    throw new Error("INVALID_INCIDENT_AFTER_SALES");
+  }
+
+  const afterSales = createAfterSalesCase({
+    id: afterSalesCaseId,
+    orderId: order.id,
+    customerId,
+    type,
+    description
+  });
+
+  return {
+    operation: transitionOperation(operation, "AFTER_SALES_OPENED"),
+    afterSales
+  };
+}
+
+export function advanceIncidentAfterSales(afterSales, note = "Atendimento de pós-venda iniciado.") {
+  return transitionAfterSalesCase(afterSales, "IN_PROGRESS", note);
 }
 
 export function recoverCommerceRuntime({

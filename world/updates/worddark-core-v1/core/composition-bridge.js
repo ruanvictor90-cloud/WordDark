@@ -40,6 +40,12 @@ class WordDarkCoreV1CompositionBridge {
       destinationId: context.destinationId,
       operationType: context.serviceId,
       environment: context.environment,
+      clientId: context.clientId,
+      projectId: context.projectId,
+      resourceId: context.resourceId,
+      serviceId: context.serviceId,
+      context,
+      request: { ...labOperation.request },
       payload: {
         ...labOperation.request,
         identityId: labOperation.requesterId,

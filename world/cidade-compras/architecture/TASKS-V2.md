@@ -10,7 +10,10 @@
 - [x] Responsabilidades dos setores.
 - [x] Limite Terra/Céu.
 - [x] Serviços externos declarados.
-- [ ] Contrato completo da cidade.
+- [x] Contrato V1 da cidade.
+- [x] Modelo de canais multicanal.
+- [x] Modelo de resultado de serviço.
+- [x] Vínculo operação ↔ recursos.
 
 ## Portão
 - [x] Entrada.
@@ -18,69 +21,92 @@
 - [x] Papel do ator.
 - [x] Autorização.
 - [x] Roteamento.
-- [ ] Permissões por setor.
+- [x] Integração com contrato de permissões.
+- [ ] Permissões específicas por setor.
 - [ ] Logs completos do ciclo.
 
 ## Comunicação
-- [ ] Normalização multicanal.
-- [ ] Site.
-- [ ] Redes sociais.
-- [ ] Mensageria.
-- [ ] Marketplaces.
-- [ ] Canais futuros.
-- [ ] Conversa vinculada à operação.
+- [x] Contrato multicanal.
+- [x] Site.
+- [x] Redes sociais.
+- [x] Mensageria.
+- [x] Marketplaces.
+- [x] Canal futuro via tipo OTHER.
+- [ ] Adaptadores reais por plataforma.
+- [ ] Conversa persistente vinculada à operação.
+
+## Atendimento
+- [x] Identificação.
+- [x] Intenções.
+- [x] Busca de catálogo (contrato preparado).
+- [x] Resposta.
+- [x] Construção de carrinho (contrato preparado).
+- [x] Confirmação.
+- [x] Handoff humano.
+- [ ] Motor de atendimento real.
 
 ## Comércio
-- [ ] Produto.
-- [ ] Carrinho.
-- [ ] Pedido.
-- [ ] Estados do pedido.
-- [ ] Cancelamento.
-- [ ] Reembolso.
+- [x] Produto.
+- [x] Carrinho.
+- [x] Pedido.
+- [x] Estados do pedido.
+- [x] Máquina de transição do pedido.
+- [x] Cancelamento (transição).
+- [x] Reembolso (transição).
+- [ ] Estoque/validação de disponibilidade.
+- [ ] Checkout real.
 
 ## Central de Contas
-- [ ] Cobrança.
-- [ ] Recebimento.
-- [ ] Reembolso.
-- [ ] Repasse.
-- [ ] Reconciliação.
+- [x] Cobrança.
+- [x] Recebimento.
+- [x] Reembolso.
+- [x] Repasse.
+- [x] Reconciliação.
+- [ ] Gateway de pagamento real.
+- [ ] Ledger financeiro persistente.
 
 ## Fornecedores e logística
-- [ ] Cadastro de fornecedor.
-- [ ] Pedido ao fornecedor.
-- [ ] Confirmação.
-- [ ] Remessa.
-- [ ] Rastreamento.
-- [ ] Entrega.
-- [ ] Exceções.
+- [x] Cadastro de fornecedor.
+- [x] Pedido ao fornecedor.
+- [x] Envio do pedido.
+- [x] Remessa.
+- [x] Rastreamento.
+- [x] Entrega.
+- [x] Exceções.
+- [ ] Adaptadores reais de fornecedor/transportadora.
 
 ## Pós-venda e ocorrências
-- [ ] Troca.
-- [ ] Devolução.
-- [ ] Reembolso.
-- [ ] Ocorrência.
-- [ ] Recuperação.
-- [ ] Escalonamento.
+- [x] Troca.
+- [x] Devolução.
+- [x] Reembolso.
+- [x] Ocorrência.
+- [x] Recuperação.
+- [x] Requeue/escalonamento básico.
+- [ ] Políticas comerciais configuráveis.
 
 ## Serviços do Céu
 - [x] Contrato de solicitação externa.
 - [x] Rota Terra → Rodovia → Céu.
 - [x] Serviço MARKETING.
 - [x] Serviço DARK_FACTORY.
+- [x] Contrato de resultado.
 - [x] Recebimento de resultado.
 - [ ] Integração real com os serviços do Céu.
 
 ## Biblioteca
-- [ ] Histórico operacional.
-- [ ] Resultados.
-- [ ] Ocorrências.
-- [ ] Aprendizados.
-- [ ] Preparação para Biblioteca Central.
+- [x] Registro de histórico operacional.
+- [x] Registro de resultados.
+- [x] Registro de ocorrências.
+- [x] Registro de aprendizados.
+- [x] Formato preparado para Biblioteca Central.
+- [ ] Persistência central real.
 
 ## Interface
-- [ ] Portão.
-- [ ] Painel.
-- [ ] Setores.
+- [x] Estrutura UI existente.
+- [x] Separação entre entrada, painel e setores.
+- [ ] Portão visual.
+- [ ] Painel operacional.
+- [ ] Setores navegáveis.
 - [ ] Operações.
 - [ ] Histórico.
 - [ ] Erros.
@@ -89,15 +115,26 @@
 ## Testes
 - [x] Teste de fronteira Terra/Céu.
 - [x] Teste de autorização do portão.
-- [ ] Fluxo comercial completo.
-- [ ] Fluxo multicanal.
-- [ ] Fluxo fornecedor/logística.
-- [ ] Pós-venda.
-- [ ] Recuperação de ocorrência.
-- [ ] Marketing.
-- [ ] Dark Factory.
-- [ ] Biblioteca.
-- [ ] Suite completa da cidade.
+- [x] Teste estrutural V1.
+- [x] Teste multicanal.
+- [x] Teste fornecedor/logística.
+- [x] Teste pós-venda.
+- [x] Teste recuperação de ocorrência.
+- [x] Teste Marketing → Dark Factory.
+- [x] Teste contrato de serviço.
+- [ ] Fluxo comercial completo com pedido real.
+- [ ] Suite completa executada localmente/CI.
 
 ## Critério de saída da V1
 A Cidade de Compras deve operar seu fluxo comercial de ponta a ponta e solicitar serviços externos sem incorporar responsabilidades do Céu.
+
+### Ordem de fechamento
+1. Motor comercial completo.
+2. Integração do runtime com a máquina de estados do pedido.
+3. Persistência/logs.
+4. Interface operacional.
+5. Suite completa.
+6. Revisão estrutural.
+7. Candidato a staging.
+
+> Esta checklist descreve estrutura e pendências. Um item marcado não significa que uma integração externa real já esteja disponível.

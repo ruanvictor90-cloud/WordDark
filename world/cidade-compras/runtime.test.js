@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { runCommerceRuntime, recoverCommerceRuntime, openCommerceIncident, analyzeCommerceIncident, requeueCommerceIncident, reanalyzeCommerceIncident, resolveCommerceIncident, openIncidentAfterSales, advanceIncidentAfterSales } from "./runtime.js";
+import { runCommerceRuntime, deliverCommerceRuntime, refundCommercePayment, recoverCommerceRuntime, openCommerceIncident, analyzeCommerceIncident, requeueCommerceIncident, reanalyzeCommerceIncident, resolveCommerceIncident, openIncidentAfterSales, advanceIncidentAfterSales } from "./runtime.js";
 
 const result = runCommerceRuntime({
   operationId:"WD-OP-CC-RUNTIME-001",
@@ -36,6 +36,27 @@ assert.equal(result.shipment.status,"IN_TRANSIT");
 assert.equal(result.operation.status,"COMMERCE_CLOSED");
 assert.equal(result.operation.history.length,9);
 
+const delivered = deliverCommerceRuntime({
+  operation: result.operation,
+  order: result.order,
+  shipment: result.shipment,
+  trackingCode: "BR-TRACK-001"
+});
+assert.equal(delivered.order.status,"DELIVERED");
+assert.equal(delivered.shipment.status,"DELIVERED");
+assert.equal(delivered.shipment.trackingCode,"BR-TRACK-001");
+assert.equal(delivered.operation.status,"ORDER_DELIVERED");
+
+const refund = refundCommercePayment({
+  operation: delivered.operation,
+  order: delivered.order,
+  account: result.account,
+  note: "Teste de reembolso após entrega."
+});
+assert.equal(refund.order.status,"REFUNDED");
+assert.equal(refund.account.status,"REFUNDED");
+assert.equal(refund.account.type,"REFUND");
+assert.equal(refund.operation.status,"PAYMENT_REFUNDED");
 
 const incidentFlow = openCommerceIncident({
   operation: result.operation,
@@ -80,7 +101,7 @@ const resolved = resolveCommerceIncident({
 assert.equal(resolved.operation.status,"INCIDENT_RESOLVED");
 assert.equal(resolved.incident.status,"RESOLVED");
 assert.equal(resolved.order.status,"VALIDATING");
-
+assert.equal(resolved.account,null);
 
 const afterSales = openIncidentAfterSales({
   operation: result.operation,
@@ -95,6 +116,7 @@ assert.equal(afterSales.afterSales.status,"OPEN");
 
 const afterSalesProgress = advanceIncidentAfterSales(afterSales.afterSales);
 assert.equal(afterSalesProgress.status,"IN_PROGRESS");
+
 const incident = recoverCommerceRuntime({
   operationId:"WD-OP-CC-RUNTIME-ERR-001",
   source:"LOGISTICS",

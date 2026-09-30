@@ -16,13 +16,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Operation lifecycle
+      - name: Core operation lifecycle
         run: node world/core/operation.test.js
-      - name: Communication
+      - name: Core communication
         run: node world/core/communication.test.js
-      - name: Security
+      - name: Core security
         run: node world/security/security.test.js
-      - name: Road
+      - name: Core road
         run: node world/core/road.test.js
       - name: Environment guard
         run: node world/core/environment-guard.test.js
@@ -38,11 +38,19 @@ jobs:
         run: node world/contracts/ack-error.test.js
       - name: Emergency Stop
         run: node world/core/emergency-stop.test.js
-      - name: Dark Factory modular
+      - name: Dark Factory core
         run: node world/sky/darkfactory/core/DF-0.7.test.js
       - name: Diagnostics and learning
         run: node world/core/diagnostics-learning.test.js
       - name: World Runtime
         run: node world/core/world-runtime.test.js
+      - name: Content Factory integration
+        run: node world/sky/darkfactory/content/integration.test.js
+      - name: Sector 01 Intelligence
+        run: node world/sky/darkfactory/content/intelligence/sector.test.js
+      - name: Sector 02 Script
+        run: node world/sky/darkfactory/content/script/sector.test.js
+      - name: Sector 03 Identity
+        run: node world/sky/darkfactory/content/identity/sector.test.js
       - name: Cidade de Compras V1
         run: cd world/cidade-compras && npm test

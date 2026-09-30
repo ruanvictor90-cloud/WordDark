@@ -2,9 +2,9 @@ name: WordDark — structural tests
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "develop"]
   pull_request:
-    branches: ["main"]
+    branches: ["main", "develop"]
 
 jobs:
   tests:
@@ -44,3 +44,5 @@ jobs:
         run: node world/core/diagnostics-learning.test.js
       - name: World Runtime
         run: node world/core/world-runtime.test.js
+      - name: Cidade de Compras V1
+        run: cd world/cidade-compras && npm test

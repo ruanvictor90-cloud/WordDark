@@ -103,6 +103,18 @@ assert.equal(resolved.incident.status,"RESOLVED");
 assert.equal(resolved.order.status,"VALIDATING");
 assert.equal(resolved.account,null);
 
+const deliveredAfterSales = openIncidentAfterSales({
+  operation: delivered.operation,
+  order: delivered.order,
+  customerId: delivered.order.customerId,
+  afterSalesCaseId: "WD-AS-CC-RUNTIME-DELIVERED-001",
+  type: "SUPPORT",
+  description: "Suporte aberto após entrega."
+});
+assert.equal(deliveredAfterSales.afterSales.status,"OPEN");
+const progressedAfterSales = advanceIncidentAfterSales(deliveredAfterSales.afterSales);
+assert.equal(progressedAfterSales.status,"IN_PROGRESS");
+
 const afterSales = openIncidentAfterSales({
   operation: result.operation,
   order: result.order,

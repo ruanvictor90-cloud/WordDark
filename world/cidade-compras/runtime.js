@@ -9,8 +9,8 @@ import { createIncident, transitionIncident } from "./sectors/incidents.js";
 import { recordCommerceKnowledge } from "./sectors/library.js";
 import { createCommerceOperation, transitionOperation } from "./core/commerce-operation.js";
 import { createOrder } from "./core/order.js";
-import { transitionOrder } from "./core/order-lifecycle.js";
-import { createAfterSalesCase } from "./sectors/after-sales.js";
+import { transitionOrder, openOrderIncident, resumeOrderAfterIncident, refundOrderAfterIncident } from "./core/order-lifecycle.js";
+import { createAfterSalesCase, transitionAfterSalesCase } from "./sectors/after-sales.js";
 
 export function runCommerceRuntime({
   operationId, gateId, messageId, attendanceId, sessionId, accountId,

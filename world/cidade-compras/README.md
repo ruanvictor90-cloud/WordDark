@@ -1,11 +1,44 @@
 # Cidade de Compras
 
-Cidade operacional do WordDark para comércio multicanal, pedidos, fornecedores e pós-venda.
+Cidade operacional da Terra responsável pelo comércio multicanal do WordDark.
 
-## Princípio
-Os canais de comunicação são portas de entrada diferentes para uma mesma central de comércio. Site, redes sociais, mensageria e futuros canais não criam pedidos isolados: todos convergem para a Central de Pedidos.
+## Objetivo
 
-## Conexão com o mundo
-Cliente → Canal → Atendimento → Pedido → Contas/Marketing quando necessário → Dark Factory → Fornecedor → Logística → Cliente.
+Transformar necessidades de compra em operações comerciais completas, independentemente do canal de entrada.
 
-A cidade não fica presa a um fornecedor ou canal específico.
+A cidade administra o comércio. Ela não incorpora funções globais do Céu.
+
+## Estrutura
+
+- Portão
+- Comunicação
+- Atendimento
+- Comércio
+- Central de Contas
+- Fornecedores
+- Logística
+- Pós-venda
+- Ocorrências
+- Biblioteca
+
+## Limite Terra/Céu
+
+A Cidade de Compras pode solicitar serviços externos, mas não possui esses serviços.
+
+Serviços atuais:
+- MARKETING
+- DARK_FACTORY
+
+Fluxo:
+TERRA/CIDADE -> PORTÃO -> REQUERIMENTO -> RODOVIA -> CÉU/SERVIÇO -> RESULTADO -> RODOVIA -> TERRA/CIDADE
+
+## Regra
+
+A cidade administra o comércio. O Céu fornece meios e serviços compartilhados.
+
+## Estado atual
+
+Esta implementação está sendo construída exclusivamente na branch develop.
+
+Fluxo futuro:
+develop -> staging -> main

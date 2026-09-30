@@ -1,4 +1,4 @@
-import { runCommerceRuntime, deliverCommerceRuntime, openCommerceIncident, analyzeCommerceIncident, requeueCommerceIncident, reanalyzeCommerceIncident, resolveCommerceIncident } from "../runtime.js";
+import { runCommerceRuntime, deliverCommerceRuntime, openCommerceIncident, analyzeCommerceIncident, requeueCommerceIncident, reanalyzeCommerceIncident, resolveCommerceIncident, openIncidentAfterSales, advanceIncidentAfterSales } from "../runtime.js";
 
 let sequence = 0;
 const uid = (prefix) => `${prefix}-${Date.now().toString(36).slice(-6)}-${(++sequence).toString(36)}`;
@@ -94,4 +94,24 @@ export function createRuntimeTimeline(result) {
     ["LOGÍSTICA", result.shipment?.status || "—"],
     ["OPERAÇÃO", result.operation?.status || "—"]
   ];
+}
+
+export function openRealAfterSales(state, { type = "SUPPORT", description = "Cliente solicitou atendimento de pós-venda." } = {}) {
+  if (!state?.operation || !state?.order) throw new Error("AFTER_SALES_RUNTIME_STATE_REQUIRED");
+  return openIncidentAfterSales({
+    operation: state.operation,
+    order: state.order,
+    customerId: state.order.customerId,
+    afterSalesCaseId: uid("WD-AS"),
+    type,
+    description
+  });
+}
+
+export function advanceRealAfterSales(state) {
+  if (!state?.afterSales) throw new Error("AFTER_SALES_CASE_REQUIRED");
+  return {
+    ...advanceIncidentAfterSales(state.afterSales),
+    operation: state.operation
+  };
 }

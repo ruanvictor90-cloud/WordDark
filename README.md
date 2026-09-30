@@ -35,6 +35,7 @@ A **Dark Factory** é uma fábrica compartilhada do Céu: produz, edita, process
 
 - [Arquitetura oficial do mundo](world/)
 - [Guia de arquitetura para devs](docs/DEVELOPERS.md)
+- [Modelo oficial de branches](docs/BRANCHING.md)
 - [Céu](world/sky/)
 - [Terra](world/earth/)
 - [Dark Factory](world/sky/darkfactory/)

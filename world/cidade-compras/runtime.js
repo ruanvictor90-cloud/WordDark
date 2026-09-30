@@ -8,6 +8,8 @@ import { createShipment, updateShipment } from "./sectors/logistics.js";
 import { createIncident, transitionIncident } from "./sectors/incidents.js";
 import { recordCommerceKnowledge } from "./sectors/library.js";
 import { createCommerceOperation, transitionOperation } from "./core/commerce-operation.js";
+import { createOrder } from "./core/order.js";
+import { transitionOrder } from "./core/order-lifecycle.js";
 
 export function runCommerceRuntime({
   operationId, gateId, messageId, attendanceId, sessionId, accountId,
@@ -50,14 +52,27 @@ export function runCommerceRuntime({
   const session = createCommerceSession({ id: sessionId, customerId, channel });
   operation = transitionOperation(operation, "COMMERCE_OPEN");
 
+  let order = createOrder({
+    id: orderId,
+    customerId,
+    channelId: channel,
+    items: [{ productId, quantity: 1 }],
+    total: amount
+  });
+  order = transitionOrder(order, "AWAITING_PAYMENT");
+  operation = transitionOperation(operation, "ORDER_AWAITING_PAYMENT");
+
   const account = settleAccountOperation(
     createAccountOperation({ id: accountId, type: "CHARGE", orderId, amount })
   );
+  order = transitionOrder(order, "PAID");
+  order = transitionOrder(order, "VALIDATING");
   operation = transitionOperation(operation, "PAYMENT_SETTLED");
 
   const supplierOrder = sendSupplierOrder(
     createSupplierOrder({ id: supplierOrderId, orderId, supplierId, items: [{ productId, quantity: 1 }] })
   );
+  order = transitionOrder(order, "SENT_TO_SUPPLIER");
   operation = transitionOperation(operation, "SUPPLIER_ORDER_SENT");
 
   const shipment = updateShipment(
@@ -65,6 +80,8 @@ export function runCommerceRuntime({
     "IN_TRANSIT",
     "PENDING-TRACKING"
   );
+  order = transitionOrder(order, "SUPPLIER_CONFIRMED");
+  order = transitionOrder(order, "SHIPPED");
   operation = transitionOperation(operation, "SHIPMENT_IN_TRANSIT");
 
   const closedSession = closeCommerceSession(session, "ORDER_CREATED");
@@ -78,6 +95,7 @@ export function runCommerceRuntime({
     attendance,
     session: closedSession,
     account,
+    order,
     supplierOrder,
     shipment,
     operation

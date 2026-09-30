@@ -11,7 +11,7 @@
   create(source={}){const op=new WordDarkOperation({...source,operationId:source.operationId||this.generateId()});const v=op.validate();if(!v.valid&&op.status==="CREATED")op.transition("REJECTED",{stage:"VALIDATION",errors:v.errors});return op;}
   recordStage(op,data={}){this.record(op);this.registry?.recordEvent?.(op,op.status,data);}
   run(operation){
-   if(!(operation instanceof WordDarkOperation))throw new Error("O engine exige WordDarkCoreOperation.");
+   if(!(operation instanceof WordDarkOperation))throw new Error("O engine exige uma operação do contrato central.");
    if(this.completedOperations.has(operation.operationId)){operation.replayBlocked=true;this.recordStage(operation,{stage:"SECURITY",reason:"OPERATION_ALREADY_COMPLETED"});return operation;}
    const v=operation.validate();if(!v.valid){if(operation.status==="CREATED")operation.transition("REJECTED",{stage:"VALIDATION",errors:v.errors});this.recordStage(operation);return operation;}
    const stop=()=>this.emergencyStop?.assertRunning?.(operation.operationId)||{allowed:true};if(!stop().allowed)return this.cancel(operation,"PRE_EXECUTION",stop());

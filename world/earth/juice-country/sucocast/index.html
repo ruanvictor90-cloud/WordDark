@@ -130,7 +130,7 @@
       try {
         const title=$("title").value.trim(), type=$("type").value, requirements=$("requirements").value.trim();
         if(!title || !requirements) throw new Error("Título e especificações são obrigatórios.");
-        const operation=new WordDarkOperation({
+        const operation=runtime.createOperation({
           requesterId:"SC-001",
           originId:"world/earth/juice-country/sucocast",
           destinationId:"world/sky/darkfactory",

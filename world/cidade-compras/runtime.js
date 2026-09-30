@@ -156,6 +156,23 @@ export function openCommerceIncident({
   };
 }
 
+export function analyzeCommerceIncident({
+  operation,
+  incident,
+  note = "Ocorrência encaminhada para análise."
+}) {
+  if (!operation || !incident || incident.status !== "OPEN") {
+    throw new Error("INCIDENT_NOT_READY_FOR_ANALYSIS");
+  }
+
+  const analyzing = transitionIncident(incident, "ANALYZING", note);
+
+  return {
+    operation: transitionOperation(operation, "INCIDENT_ANALYZING"),
+    incident: analyzing
+  };
+}
+
 export function requeueCommerceIncident({
   operation,
   incident,

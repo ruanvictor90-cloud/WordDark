@@ -1,4 +1,4 @@
-import { runRealCommerceTest, deliverRealCommerceTest, runIncidentStep, createRuntimeTimeline } from "./runtime-adapter.js";
+import { runRealCommerceTest, deliverRealCommerceTest, runIncidentStep, openRealAfterSales, advanceRealAfterSales, createRuntimeTimeline } from "./runtime-adapter.js";
 
 const sectors=[
 {id:"communication",icon:"💬",name:"Comunicação",desc:"Site, redes sociais, mensageria, marketplaces e futuros canais."},
@@ -106,6 +106,33 @@ function runRealIncidentAction(action){
   }
 }
 
+function injectAfterSalesControls(){
+  const body=document.querySelector("#sectorBody"); if(!body||document.querySelector("#realAfterSalesPanel"))return;
+  const panel=document.createElement("div"); panel.id="realAfterSalesPanel"; panel.className="runtime-panel";
+  panel.innerHTML=`<div><span class="eyebrow">PÓS-VENDA · RUNTIME REAL</span><strong>Atendimento vinculado ao pedido</strong><small>Abre um caso real no runtime e permite iniciar o atendimento sem perder o vínculo com cliente e pedido.</small></div><div class="runtime-actions"><button class="secondary" id="realAfterSalesOpen" type="button">Abrir pós-venda</button><button class="secondary" id="realAfterSalesAdvance" type="button">Iniciar atendimento</button></div><div id="realAfterSalesList" class="runtime-results"></div>`;
+  body.appendChild(panel);
+  const render=()=>{
+    const list=document.querySelector("#realAfterSalesList"); if(!list)return;
+    const a=runtimeState.afterSales?.afterSales;
+    if(!a){list.innerHTML=`<div class="empty">Execute primeiro um fluxo real de comércio e confirme a entrega.</div>`;return;}
+    list.innerHTML=`<div class="event"><span>${a.id} · ${a.status}</span><small>${a.type} · pedido ${a.orderId}</small></div>`;
+  };
+  document.querySelector("#realAfterSalesOpen").onclick=()=>{
+    try{
+      const latest=runtimeState.results[0]; if(!latest||latest.order?.status!=="DELIVERED")throw new Error("ORDER_MUST_BE_DELIVERED");
+      runtimeState.afterSales=openRealAfterSales(latest,{type:"SUPPORT",description:"Cliente abriu atendimento após entrega."});
+      log("AFTER_SALES_RUNTIME_OPEN",runtimeState.afterSales.afterSales.id); render();
+    }catch(error){log("AFTER_SALES_ERROR",error?.message||"UNKNOWN_ERROR");render();}
+  };
+  document.querySelector("#realAfterSalesAdvance").onclick=()=>{
+    try{
+      runtimeState.afterSales=advanceRealAfterSales(runtimeState.afterSales);
+      log("AFTER_SALES_RUNTIME_STARTED",runtimeState.afterSales.afterSales.id); render();
+    }catch(error){log("AFTER_SALES_ERROR",error?.message||"UNKNOWN_ERROR");render();}
+  };
+  render();
+}
+
 function injectIncidentControls(){
   const body=document.querySelector("#sectorBody"); if(!body||document.querySelector("#realIncidentPanel"))return;
   const panel=document.createElement("div"); panel.id="realIncidentPanel"; panel.className="runtime-panel";
@@ -154,7 +181,7 @@ document.querySelector("#backBtn").onclick=()=>{
 document.querySelector("#themeToggle").onclick=()=>document.body.classList.toggle("light");
 renderSummary();
 
-const runtimeState={results:[], incident:null};
+const runtimeState={results:[], incident:null, afterSales:null};
 
 function renderRuntimeResult(result,add=true){
   if(add) runtimeState.results.unshift(result);
@@ -220,5 +247,6 @@ const originalOpenSector=openSector;
 openSector=function(s,refresh=false){
   originalOpenSector(s,refresh);
   if(s.id==="commerce") injectRuntimeControls();
+  if(s.id==="after-sales") injectAfterSalesControls();
   if(s.id==="incidents") injectIncidentControls();
 };

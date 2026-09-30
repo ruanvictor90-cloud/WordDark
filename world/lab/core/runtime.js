@@ -19,12 +19,12 @@ class WordDarkLabRuntime {
     this.registry=new Map(); this.permissions=new WordDarkLabPermissionSet();
     this.router=new WordDarkLabRouter(); this.services=new ServiceRegistry();
     this.recovery=new Recovery(); this.inbox=new Inbox(); this.versioning=new Versioning();
-    this.gates=new Map(); this.events=[];
+    this.gates=new Map(); this.events=[]; this.resultSequence=0;
   }
   register(entity){this.registry.set(entity.id,entity);return entity;}
   addGate(g){this.gates.set(g.gateId,g);return g;}
   log(event,data={}){this.events.push({event,timestamp:new Date().toISOString(),data});}
-  process(operation,gateId){
+  process(operation,gateId,returnGateId=null){
     try{
       if(!operation.validate().valid)throw new Error(operation.validate().errors.join(" "));
       const gate=this.gates.get(gateId); if(!gate)throw new Error("GATE_NOT_FOUND");

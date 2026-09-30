@@ -26,6 +26,7 @@ const GlobalRoute = require("../../../../world/contracts/route");
 const { WordDarkOperationRegistry: Registry } = require("../../../../world/core/operation-registry");
 const Engine = require("../../../../world/core/operation-engine");
 const WorldRuntime = require("../../../../world/core/world-runtime");
+const EmergencyStopManager = require("../../../../world/core/emergency-stop-manager");
 
 function test(name, fn) {
   try {
@@ -192,7 +193,11 @@ test("V1 -> consolidated Core composition", () => {
     environmentGuard: new EnvironmentGuard(),
     road,
     registry,
-    operationEngine: engine
+    operationEngine: engine,
+    entityRegistry: { entities: new Map(), register(entity){ this.entities.set(entity.id, entity); return entity; } },
+    permissionSet: { authorize(){ return true; } },
+    serviceRegistry: { services: new Map(), register(service){ this.services.set(service.id || service.serviceId, service); return service; } },
+    emergencyStop: new EmergencyStopManager()
   });
   assert(runtime.isReady());
 

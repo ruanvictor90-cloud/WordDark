@@ -1,9 +1,46 @@
-export const INCIDENT_STATES = Object.freeze(["OPEN","ANALYZING","RESOLVED","CANCELLED","REQUEUED"]);
-export function createIncident({ id, source, operationId = null, type, description }) {
+export const INCIDENT_STATES = Object.freeze(["OPEN","ANALYZING","REQUEUED","RESOLVED","CANCELLED"]);
+
+export const INCIDENT_TRANSITIONS = Object.freeze({
+  OPEN: ["ANALYZING", "CANCELLED"],
+  ANALYZING: ["REQUEUED", "RESOLVED", "CANCELLED"],
+  REQUEUED: ["ANALYZING", "CANCELLED"],
+  RESOLVED: [],
+  CANCELLED: []
+});
+
+export function createIncident({
+  id,
+  source,
+  operationId = null,
+  orderId = null,
+  type,
+  description
+}) {
   if (!id || !source || !type || !description) throw new Error("INVALID_INCIDENT");
-  return { id, source, operationId, type, description, status: "OPEN", history: [{ status: "OPEN", at: new Date().toISOString() }] };
+
+  return {
+    id,
+    source,
+    operationId,
+    orderId,
+    type,
+    description,
+    status: "OPEN",
+    history: [{ status: "OPEN", at: new Date().toISOString() }]
+  };
 }
+
 export function transitionIncident(incident, status, note = null) {
-  if (!INCIDENT_STATES.includes(status)) throw new Error("INVALID_INCIDENT_STATUS");
-  return { ...incident, status, history: [...incident.history, { status, note, at: new Date().toISOString() }] };
+  if (!incident || !INCIDENT_TRANSITIONS[incident.status]?.includes(status)) {
+    throw new Error("INVALID_INCIDENT_TRANSITION");
+  }
+
+  return {
+    ...incident,
+    status,
+    history: [
+      ...incident.history,
+      { status, note, at: new Date().toISOString() }
+    ]
+  };
 }

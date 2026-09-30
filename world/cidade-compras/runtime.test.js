@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { runCommerceRuntime, recoverCommerceRuntime, openCommerceIncident, analyzeCommerceIncident, requeueCommerceIncident, resolveCommerceIncident } from "./runtime.js";
+import { runCommerceRuntime, recoverCommerceRuntime, openCommerceIncident, analyzeCommerceIncident, requeueCommerceIncident, reanalyzeCommerceIncident, resolveCommerceIncident, openIncidentAfterSales, advanceIncidentAfterSales } from "./runtime.js";
 
 const result = runCommerceRuntime({
   operationId:"WD-OP-CC-RUNTIME-001",
@@ -39,11 +39,13 @@ assert.equal(result.operation.history.length,9);
 
 const incidentFlow = openCommerceIncident({
   operation: result.operation,
+  order: result.order,
   incidentId: "WD-ERR-CC-RUNTIME-FLOW-001",
   source: "LOGISTICS",
   type: "DELIVERY_EXCEPTION",
   description: "Falha simulada de entrega."
 });
+assert.equal(incidentFlow.order.status,"INCIDENT");
 assert.equal(incidentFlow.operation.status,"INCIDENT_OPEN");
 assert.equal(incidentFlow.incident.status,"OPEN");
 
@@ -61,13 +63,46 @@ const requeued = requeueCommerceIncident({
 assert.equal(requeued.operation.status,"INCIDENT_REQUEUED");
 assert.equal(requeued.incident.status,"REQUEUED");
 
-const resolved = resolveCommerceIncident({
+const reanalyzed = reanalyzeCommerceIncident({
   operation: requeued.operation,
-  incident: { ...requeued.incident, status: "ANALYZING" },
+  incident: requeued.incident
+});
+assert.equal(reanalyzed.operation.status,"INCIDENT_ANALYZING");
+assert.equal(reanalyzed.incident.status,"ANALYZING");
+
+const resolved = resolveCommerceIncident({
+  operation: reanalyzed.operation,
+  incident: reanalyzed.incident,
+  order: incidentFlow.order,
+  action: "RESUME",
   resolution: "Transportadora reprocessará a entrega."
 });
 assert.equal(resolved.operation.status,"INCIDENT_RESOLVED");
 assert.equal(resolved.incident.status,"RESOLVED");
+assert.equal(resolved.order.status,"VALIDATING");
+
+const refundResolved = resolveCommerceIncident({
+  operation: resolved.operation,
+  incident: { ...resolved.incident, status: "ANALYZING" },
+  order: { ...resolved.order, status: "INCIDENT" },
+  action: "REFUND",
+  resolution: "Reembolso autorizado."
+});
+assert.equal(refundResolved.order.status,"REFUNDED");
+
+const afterSales = openIncidentAfterSales({
+  operation: result.operation,
+  order: result.order,
+  customerId: result.order.customerId,
+  afterSalesCaseId: "WD-AS-CC-INCIDENT-001",
+  type: "EXCHANGE",
+  description: "Cliente solicitou troca após ocorrência."
+});
+assert.equal(afterSales.operation.status,"AFTER_SALES_OPENED");
+assert.equal(afterSales.afterSales.status,"OPEN");
+
+const afterSalesProgress = advanceIncidentAfterSales(afterSales.afterSales);
+assert.equal(afterSalesProgress.status,"IN_PROGRESS");
 const incident = recoverCommerceRuntime({
   operationId:"WD-OP-CC-RUNTIME-ERR-001",
   source:"LOGISTICS",

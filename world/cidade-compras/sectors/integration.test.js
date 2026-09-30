@@ -46,9 +46,11 @@ const marketing = createMarketingRequest({
   brief:"Produzir conteúdo de teste para o produto TEST-001",
   channelIds:["WD-CH-TEST-001"]
 });
-const factoryRequest = sendToFactory(marketing);
+const plannedMarketing = planMarketingRequest(marketing);
+assert.equal(plannedMarketing.status,"PLANNED");
+const factoryRequest = sendToFactory(plannedMarketing);
 assert.equal(factoryRequest.status,"SENT_TO_FACTORY");
-assert.equal(factoryRequest.nextService,"DARK_FACTORY");
+assert.equal(factoryRequest.currentService,"DARK_FACTORY");
 
 const afterSales = createAfterSalesCase({
   id:"WD-AS-CC-TEST-001", orderId:"WD-ORD-CC-TEST-001",

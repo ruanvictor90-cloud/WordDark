@@ -131,11 +131,83 @@ export function runCommerceRuntime({
   return result;
 }
 
-export function recoverCommerceRuntime({
-  operationId, source = "RUNTIME", type = "RUNTIME_ERROR", description
+export function openCommerceIncident({
+  operation,
+  incidentId,
+  source,
+  type,
+  description
 }) {
+  if (!operation || !incidentId || !source || !type || !description) {
+    throw new Error("INVALID_COMMERCE_INCIDENT");
+  }
+
   const incident = createIncident({
-    id: `${operationId}-ERR`, source, operationId, type, description
+    id: incidentId,
+    source,
+    operationId: operation.id,
+    type,
+    description
   });
+
+  return {
+    operation: transitionOperation(operation, "INCIDENT_OPEN"),
+    incident
+  };
+}
+
+export function requeueCommerceIncident({
+  operation,
+  incident,
+  note = "Retornar para processamento."
+}) {
+  if (!operation || !incident || incident.status !== "ANALYZING") {
+    throw new Error("INCIDENT_NOT_READY_FOR_REQUEUE");
+  }
+
+  const requeued = transitionIncident(incident, "REQUEUED", note);
+
+  return {
+    operation: transitionOperation(operation, "INCIDENT_REQUEUED"),
+    incident: requeued
+  };
+}
+
+export function resolveCommerceIncident({
+  operation,
+  incident,
+  resolution
+}) {
+  if (!operation || !incident || incident.status !== "ANALYZING" || !resolution) {
+    throw new Error("INCIDENT_NOT_READY_FOR_RESOLUTION");
+  }
+
+  const resolved = transitionIncident(incident, "RESOLVED", resolution);
+
+  return {
+    operation: transitionOperation(operation, "INCIDENT_RESOLVED"),
+    incident: resolved
+  };
+}
+
+export function recoverCommerceRuntime({
+  operationId,
+  source = "RUNTIME",
+  type = "RUNTIME_ERROR",
+  description,
+  incidentId = null
+}) {
+  if (!operationId || !description) {
+    throw new Error("INVALID_RUNTIME_RECOVERY");
+  }
+
+  const incident = createIncident({
+    id: incidentId || (operationId + "-ERR"),
+    source,
+    operationId,
+    type,
+    description
+  });
+
   return transitionIncident(incident, "ANALYZING");
 }

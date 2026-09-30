@@ -1,3 +1,5 @@
+import { runRealCommerceTest, createRuntimeTimeline } from "./runtime-adapter.js";
+
 const sectors=[
 {id:"communication",icon:"💬",name:"Comunicação",desc:"Site, redes sociais, mensageria, marketplaces e futuros canais."},
 {id:"attendance",icon:"🤖",name:"Atendimento",desc:"Identifica cliente e intenção, responde e encaminha a operação."},
@@ -103,3 +105,56 @@ document.querySelector("#backBtn").onclick=()=>{
 };
 document.querySelector("#themeToggle").onclick=()=>document.body.classList.toggle("light");
 renderSummary();
+
+const runtimeState={results:[]};
+
+function renderRuntimeResult(result){
+  runtimeState.results.unshift(result);
+  const list=document.querySelector("#runtimeList");
+  if(!list)return;
+  const timeline=createRuntimeTimeline(result);
+  list.innerHTML=runtimeState.results.slice(0,3).map((r,index)=>{
+    const order=r.order?.id||"—";
+    const status=r.order?.status||"—";
+    const steps=createRuntimeTimeline(r).map(([name,state])=>`<div class="runtime-step"><span>${name}</span><b>${state}</b></div>`).join("");
+    return `<div class="runtime-result"><div class="runtime-head"><div><span class="eyebrow">RUNTIME REAL · TESTE #${runtimeState.results.length-index}</span><strong>${order}</strong></div><span class="runtime-status">${status}</span></div><div class="runtime-timeline">${steps}</div></div>`;
+  }).join("");
+}
+
+function runRuntimeTest(){
+  const button=document.querySelector("#realRuntime");
+  if(button) button.disabled=true;
+  try{
+    const result=runRealCommerceTest();
+    const order={id:result.order.id,customer:"Cliente runtime",channel:"SOCIAL",total:result.order.total,status:result.order.status,createdAt:now()};
+    state.orders.unshift(order);
+    log("RUNTIME_COMPLETED",result.operationId);
+    renderRuntimeResult(result);
+    openSector(sectors.find(s=>s.id==="commerce"),true);
+  }catch(error){
+    log("RUNTIME_ERROR",error?.message||"UNKNOWN_ERROR");
+    const list=document.querySelector("#runtimeList");
+    if(list) list.innerHTML=`<div class="empty">Falha no runtime: ${error?.message||"erro desconhecido"}</div>`;
+  }finally{
+    if(button) button.disabled=false;
+  }
+}
+
+function injectRuntimeControls(){
+  const body=document.querySelector("#sectorBody");
+  if(!body)return;
+  const existing=document.querySelector("#runtimePanel");
+  if(existing) return;
+  const panel=document.createElement("div");
+  panel.id="runtimePanel";
+  panel.className="runtime-panel";
+  panel.innerHTML=`<div><span class="eyebrow">CÉU → TERRA · RUNTIME</span><strong>Executar fluxo real da Cidade</strong><small>Agora a interface chama o runtime.js da própria Cidade de Compras. Os registros continuam locais ao navegador.</small></div><button class="primary" id="realRuntime" type="button">Executar fluxo real</button><div id="runtimeList" class="runtime-results"></div>`;
+  body.appendChild(panel);
+  document.querySelector("#realRuntime").onclick=runRuntimeTest;
+}
+
+const originalOpenSector=openSector;
+openSector=function(s,refresh=false){
+  originalOpenSector(s,refresh);
+  if(s.id==="commerce") injectRuntimeControls();
+};

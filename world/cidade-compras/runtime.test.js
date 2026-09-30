@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { runCommerceRuntime, recoverCommerceRuntime } from "./runtime.js";
+import { runCommerceRuntime, recoverCommerceRuntime, openCommerceIncident, requeueCommerceIncident, resolveCommerceIncident } from "./runtime.js";
 
 const result = runCommerceRuntime({
   operationId:"WD-OP-CC-RUNTIME-001",
@@ -36,6 +36,40 @@ assert.equal(result.shipment.status,"IN_TRANSIT");
 assert.equal(result.operation.status,"COMMERCE_CLOSED");
 assert.equal(result.operation.history.length,9);
 
+
+const incidentFlow = openCommerceIncident({
+  operation: result.operation,
+  incidentId: "WD-ERR-CC-RUNTIME-FLOW-001",
+  source: "LOGISTICS",
+  type: "DELIVERY_EXCEPTION",
+  description: "Falha simulada de entrega."
+});
+assert.equal(incidentFlow.operation.status,"INCIDENT_OPEN");
+assert.equal(incidentFlow.incident.status,"OPEN");
+
+const analyzingIncident = {
+  ...incidentFlow,
+  incident: {
+    ...incidentFlow.incident,
+    status: "ANALYZING",
+    history: [...incidentFlow.incident.history, { status: "ANALYZING" }]
+  }
+};
+
+const requeued = requeueCommerceIncident({
+  operation: analyzingIncident.operation,
+  incident: analyzingIncident.incident
+});
+assert.equal(requeued.operation.status,"INCIDENT_REQUEUED");
+assert.equal(requeued.incident.status,"REQUEUED");
+
+const resolved = resolveCommerceIncident({
+  operation: requeued.operation,
+  incident: { ...requeued.incident, status: "ANALYZING" },
+  resolution: "Transportadora reprocessará a entrega."
+});
+assert.equal(resolved.operation.status,"INCIDENT_RESOLVED");
+assert.equal(resolved.incident.status,"RESOLVED");
 const incident = recoverCommerceRuntime({
   operationId:"WD-OP-CC-RUNTIME-ERR-001",
   source:"LOGISTICS",

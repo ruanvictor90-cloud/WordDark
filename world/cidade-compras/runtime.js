@@ -1,4 +1,4 @@
-import { receiveAtGate, routeFromGate } from "./sectors/gate.js";
+import { receiveAtGate, authorizeAtGate, routeFromGate } from "./sectors/gate.js";
 import { receiveCommunication, handoffCommunication } from "./sectors/communication.js";
 import { startAttendance, advanceAttendance } from "./sectors/attendance.js";
 import { createCommerceSession, closeCommerceSession } from "./sectors/commerce.js";
@@ -20,6 +20,7 @@ export function runCommerceRuntime({
   shipmentId,
   customerId,
   channel = "SOCIAL",
+  actorRole = "CUSTOMER",
   message,
   orderId,
   supplierId,
@@ -31,7 +32,8 @@ export function runCommerceRuntime({
   }
 
   let operation = createCommerceOperation({ id:operationId, type:"PURCHASE", source:channel, customerId, orderId });
-  const gate = routeFromGate(receiveAtGate({ id:gateId, source:channel, destination:"COMMUNICATION", actorId:customerId, context:{operationId} }));
+  const gateEntry = receiveAtGate({ id:gateId, source:channel, destination:"COMMUNICATION", actorId:customerId, actorRole, context:{operationId} });
+  const gate = routeFromGate(authorizeAtGate(gateEntry));
   operation = transitionOperation(operation, "GATE_ACCEPTED");
 
   const communication = receiveCommunication({ id:messageId, channel, customerId, message });

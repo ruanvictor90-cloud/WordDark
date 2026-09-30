@@ -1,9 +1,17 @@
-export function createContentRequirement({id,commerceSource,brief,channelIds=[],campaignId=null}){
-  if(!id || !commerceSource || !brief) throw new Error("INVALID_CONTENT_REQUIREMENT");
-  return {id,commerceSource,brief,channelIds,campaignId,status:"REQUESTED",targetService:"MARKETING"};
+import { createMarketingRequest, planMarketingRequest, sendToFactory, returnToMarketing, distributeMarketingResult } from "./marketing-request.js";
+export { createMarketingRequest, planMarketingRequest, sendToFactory, returnToMarketing, distributeMarketingResult };
+export function createContentRequirement(args) {
+  return createMarketingRequest({id:args.id,source:args.commerceSource,channelIds:args.channelIds,brief:args.brief,requestedBy:args.commerceSource,campaignId:args.campaignId});
 }
-
-export function dispatchToFactory(requirement){
-  if(requirement.status!=="REQUESTED") throw new Error("REQUIREMENT_NOT_READY");
-  return {...requirement,status:"SENT_TO_MARKETING",nextService:"DARK_FACTORY"};
+export function dispatchToMarketing(requirement) {
+  return planMarketingRequest(requirement);
+}
+export function dispatchToFactory(requirement) {
+  return sendToFactory(requirement);
+}
+export function receiveFactoryResult(requirement,resultId) {
+  return returnToMarketing(requirement,resultId);
+}
+export function prepareDistribution(requirement) {
+  return distributeMarketingResult(requirement);
 }

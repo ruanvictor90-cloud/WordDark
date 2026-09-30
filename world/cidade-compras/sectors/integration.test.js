@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import {
   receiveAtGate, receiveCommunication, startAttendance, advanceAttendance,
   createCommerceSession, createAccountOperation, settleAccountOperation,
-  createMarketingRequest, sendToFactory, createSupplierOrder, sendSupplierOrder,
+  createMarketingRequest, planMarketingRequest, sendToFactory, receiveFactoryResult, prepareDistribution, createSupplierOrder, sendSupplierOrder,
   createShipment, updateShipment, createAfterSalesCase, closeAfterSalesCase,
   createIncident, transitionIncident, recordCommerceKnowledge
 } from "./index.js";
@@ -70,3 +70,20 @@ assert.equal(recordCommerceKnowledge({
 }).status,"RECORDED");
 
 console.log("Commerce integration flow: PASS");
+
+
+// Content flow: Commerce -> Marketing -> Dark Factory -> Marketing -> Channel
+const contentRequest = createMarketingRequest({
+  id:"WD-MKT-CC-TEST-002", source:"COMMERCE_CITY",
+  brief:"Produzir conteúdo de teste para o produto TEST-002", channelIds:["WD-CH-TEST-002"],
+  requestedBy:"COMMERCE_CITY"
+});
+const plannedContent = planMarketingRequest(contentRequest);
+assert.equal(plannedContent.nextService,"DARK_FACTORY");
+const sentToFactory = sendToFactory(plannedContent);
+assert.equal(sentToFactory.currentService,"DARK_FACTORY");
+const returnedToMarketing = receiveFactoryResult(sentToFactory,"WD-RES-CC-TEST-002");
+assert.equal(returnedToMarketing.currentService,"MARKETING");
+const readyForChannel = prepareDistribution(returnedToMarketing);
+assert.equal(readyForChannel.nextService,"CHANNEL");
+assert.deepEqual(readyForChannel.history.map(entry => entry.status),["REQUESTED","PLANNED","SENT_TO_FACTORY","RESULT_RETURNED","READY_FOR_DISTRIBUTION"]);

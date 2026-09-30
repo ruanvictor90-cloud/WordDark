@@ -1,6 +1,7 @@
-import { runCommerceRuntime, openCommerceIncident, analyzeCommerceIncident, requeueCommerceIncident, reanalyzeCommerceIncident, resolveCommerceIncident } from "../runtime.js";
+import { runCommerceRuntime, deliverCommerceRuntime, openCommerceIncident, analyzeCommerceIncident, requeueCommerceIncident, reanalyzeCommerceIncident, resolveCommerceIncident } from "../runtime.js";
 
-const uid = (prefix) => prefix + "-" + String(Date.now()).slice(-8);
+let sequence = 0;
+const uid = (prefix) => `${prefix}-${Date.now().toString(36).slice(-6)}-${(++sequence).toString(36)}`;
 
 export function runRealCommerceTest({
   customerId = "WD-USR-TEST",
@@ -19,27 +20,78 @@ export function runRealCommerceTest({
   });
 }
 
+export function deliverRealCommerceTest(state) {
+  if (!state?.operation || !state?.order || !state?.shipment) {
+    throw new Error("DELIVERY_RUNTIME_STATE_REQUIRED");
+  }
+  return deliverCommerceRuntime({
+    operation: state.operation,
+    order: state.order,
+    shipment: state.shipment,
+    trackingCode: state.shipment.trackingCode || "WD-TRACK-TEST"
+  });
+}
+
 export function runIncidentStep(action, state) {
   if (!state?.operation) throw new Error("INCIDENT_RUNTIME_STATE_REQUIRED");
-  if (action === "OPEN") return openCommerceIncident({ operation: state.operation, order: state.order || null, incidentId: uid("WD-ERR"), source: "UI_RUNTIME", type: "DELIVERY_EXCEPTION", description: "Ocorrência aberta pelo console operacional." });
+
+  if (action === "OPEN") {
+    return openCommerceIncident({
+      operation: state.operation,
+      order: state.order || null,
+      incidentId: uid("WD-ERR"),
+      source: "UI_RUNTIME",
+      type: "DELIVERY_EXCEPTION",
+      description: "Ocorrência aberta pelo console operacional."
+    });
+  }
+
   if (!state.incident) throw new Error("INCIDENT_RUNTIME_STATE_REQUIRED");
+
   const common = { operation: state.operation, incident: state.incident };
-  if (action === "ANALYZE") return analyzeCommerceIncident(common);
-  if (action === "REQUEUE") return requeueCommerceIncident(common);
-  if (action === "REANALYZE") return reanalyzeCommerceIncident(common);
-  if (action === "RESUME") return resolveCommerceIncident({ ...common, order: state.order || null, resolution: "Fluxo liberado após análise.", action: "RESUME" });
-  if (action === "REFUND") return resolveCommerceIncident({ ...common, order: state.order || null, resolution: "Reembolso encaminhado após análise.", action: "REFUND" });
-  if (action === "CANCEL") return resolveCommerceIncident({ ...common, order: state.order || null, resolution: "Pedido cancelado após análise.", action: "CANCEL" });
+
+  if (action === "ANALYZE") return { ...analyzeCommerceIncident(common), order: state.order, account: state.account };
+  if (action === "REQUEUE") return { ...requeueCommerceIncident(common), order: state.order, account: state.account };
+  if (action === "REANALYZE") return { ...reanalyzeCommerceIncident(common), order: state.order, account: state.account };
+
+  if (action === "RESUME") {
+    return {
+      ...resolveCommerceIncident({ ...common, order: state.order || null, account: state.account || null, resolution: "Fluxo liberado após análise.", action: "RESUME" }),
+      account: state.account || null
+    };
+  }
+
+  if (action === "REFUND") {
+    return resolveCommerceIncident({
+      ...common,
+      order: state.order || null,
+      account: state.account || null,
+      resolution: "Reembolso encaminhado após análise.",
+      action: "REFUND"
+    });
+  }
+
+  if (action === "CANCEL") {
+    return {
+      ...resolveCommerceIncident({ ...common, order: state.order || null, account: state.account || null, resolution: "Pedido cancelado após análise.", action: "CANCEL" }),
+      account: state.account || null
+    };
+  }
+
   throw new Error("UNKNOWN_INCIDENT_ACTION");
 }
 
 export function createRuntimeTimeline(result) {
   if (!result) return [];
   return [
-    ["PORTÃO", result.gate?.status || "—"], ["COMUNICAÇÃO", result.communication?.status || "—"],
-    ["ATENDIMENTO", result.attendance?.status || "—"], ["COMÉRCIO", result.session?.status || "—"],
-    ["CONTAS", result.account?.status || "—"], ["PEDIDO", result.order?.status || "—"],
-    ["FORNECEDOR", result.supplierOrder?.status || "—"], ["LOGÍSTICA", result.shipment?.status || "—"],
+    ["PORTÃO", result.gate?.status || "—"],
+    ["COMUNICAÇÃO", result.communication?.status || "—"],
+    ["ATENDIMENTO", result.attendance?.status || "—"],
+    ["COMÉRCIO", result.session?.status || "—"],
+    ["CONTAS", result.account?.status || "—"],
+    ["PEDIDO", result.order?.status || "—"],
+    ["FORNECEDOR", result.supplierOrder?.status || "—"],
+    ["LOGÍSTICA", result.shipment?.status || "—"],
     ["OPERAÇÃO", result.operation?.status || "—"]
   ];
 }

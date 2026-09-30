@@ -1,4 +1,4 @@
-import { runRealCommerceTest, runIncidentStep, createRuntimeTimeline } from "./runtime-adapter.js";
+import { runRealCommerceTest, deliverRealCommerceTest, runIncidentStep, createRuntimeTimeline } from "./runtime-adapter.js";
 
 const sectors=[
 {id:"communication",icon:"💬",name:"Comunicação",desc:"Site, redes sociais, mensageria, marketplaces e futuros canais."},
@@ -114,7 +114,7 @@ function injectIncidentControls(){
   document.querySelector("#realIncidentOpen").onclick=()=>{
     try{
       const latest=runtimeState.results[0]; if(!latest)throw new Error("RUN_REAL_COMMERCE_FIRST");
-      runtimeState.incident=runIncidentStep("OPEN",{operation:latest.operation,order:latest.order,incident:null});
+      runtimeState.incident=runIncidentStep("OPEN",{operation:latest.operation,order:latest.order,account:latest.account,incident:null});
       log("INCIDENT_RUNTIME_OPEN",runtimeState.incident.incident.id);
       renderRealIncident();
     }catch(error){
@@ -188,6 +188,20 @@ function runRuntimeTest(){
   }
 }
 
+function deliverRuntimeTest(){
+  const latest=runtimeState.results[0];
+  if(!latest) throw new Error("RUN_REAL_COMMERCE_FIRST");
+  const delivered=deliverRealCommerceTest(latest);
+  latest.operation=delivered.operation;
+  latest.order=delivered.order;
+  latest.shipment=delivered.shipment;
+  const found=state.orders.find(o=>o.id===latest.order.id);
+  if(found) found.status=latest.order.status;
+  log("RUNTIME_DELIVERED",latest.order.id);
+  renderRuntimeResult(latest);
+  openSector(sectors.find(s=>s.id==="commerce"),true);
+}
+
 function injectRuntimeControls(){
   const body=document.querySelector("#sectorBody");
   if(!body)return;
@@ -196,9 +210,10 @@ function injectRuntimeControls(){
   const panel=document.createElement("div");
   panel.id="runtimePanel";
   panel.className="runtime-panel";
-  panel.innerHTML=`<div><span class="eyebrow">CÉU → TERRA · RUNTIME</span><strong>Executar fluxo real da Cidade</strong><small>Agora a interface chama o runtime.js da própria Cidade de Compras. Os registros continuam locais ao navegador.</small></div><button class="primary" id="realRuntime" type="button">Executar fluxo real</button><div id="runtimeList" class="runtime-results"></div>`;
+  panel.innerHTML=`<div><span class="eyebrow">CÉU → TERRA · RUNTIME</span><strong>Executar fluxo real da Cidade</strong><small>Agora a interface chama o runtime.js da própria Cidade de Compras. Os registros continuam locais ao navegador.</small></div><div class="runtime-actions"><button class="primary" id="realRuntime" type="button">Executar fluxo real</button><button class="secondary" id="realDelivery" type="button">Confirmar entrega</button></div><div id="runtimeList" class="runtime-results"></div>`;
   body.appendChild(panel);
   document.querySelector("#realRuntime").onclick=runRuntimeTest;
+  document.querySelector("#realDelivery").onclick=()=>{try{deliverRuntimeTest();}catch(error){log("DELIVERY_ERROR",error?.message||"UNKNOWN_ERROR");const list=document.querySelector("#runtimeList");if(list)list.innerHTML=`<div class="empty">Falha na entrega: ${error?.message||"erro desconhecido"}</div>`;}};
 }
 
 const originalOpenSector=openSector;

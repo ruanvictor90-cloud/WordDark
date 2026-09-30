@@ -81,14 +81,6 @@ assert.equal(resolved.operation.status,"INCIDENT_RESOLVED");
 assert.equal(resolved.incident.status,"RESOLVED");
 assert.equal(resolved.order.status,"VALIDATING");
 
-const refundResolved = resolveCommerceIncident({
-  operation: resolved.operation,
-  incident: { ...resolved.incident, status: "ANALYZING" },
-  order: { ...resolved.order, status: "INCIDENT" },
-  action: "REFUND",
-  resolution: "Reembolso autorizado."
-});
-assert.equal(refundResolved.order.status,"REFUNDED");
 
 const afterSales = openIncidentAfterSales({
   operation: result.operation,

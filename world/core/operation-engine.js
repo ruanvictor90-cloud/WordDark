@@ -1,4 +1,6 @@
-const WordDarkOperation = require("../contracts/operation");
+const WordDarkOperation = typeof require === "function"
+  ? require("../contracts/operation")
+  : (typeof window !== "undefined" ? window.WordDarkOperation : null);
 
 /* WordDark — Operation Engine
  * Núcleo mínimo para executar o circuito de uma operação.

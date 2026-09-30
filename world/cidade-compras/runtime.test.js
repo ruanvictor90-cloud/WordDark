@@ -16,7 +16,10 @@ const result = runCommerceRuntime({
   orderId:"WD-ORD-CC-RUNTIME-001",
   supplierId:"WD-SUP-CC-RUNTIME-001",
   productId:"WD-PROD-CC-RUNTIME-001",
-  amount:199.90
+  amount:199.90,
+  afterSalesCaseId:"WD-AS-CC-RUNTIME-001",
+  afterSalesType:"TRACKING",
+  afterSalesDescription:"Cliente solicitou acompanhamento da entrega."
 });
 
 assert.equal(result.status,"COMPLETED");
@@ -26,6 +29,8 @@ assert.equal(result.attendance.step,"CONFIRM_ORDER");
 assert.equal(result.account.status,"SETTLED");
 assert.equal(result.order.status,"SHIPPED");
 assert.equal(result.order.total,199.90);
+assert.equal(result.afterSales.status,"OPEN");
+assert.equal(result.afterSales.type,"TRACKING");
 assert.equal(result.supplierOrder.status,"SENT");
 assert.equal(result.shipment.status,"IN_TRANSIT");
 assert.equal(result.operation.status,"COMMERCE_CLOSED");

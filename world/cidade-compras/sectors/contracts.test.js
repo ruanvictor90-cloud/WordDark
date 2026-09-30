@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import {
   receiveAtGate, receiveCommunication, startAttendance, createCommerceSession,
-  createAccountOperation, createMarketingRequest, sendToFactory,
+  createAccountOperation, createMarketingRequest, planMarketingRequest, sendToFactory,
   createSupplierOrder, sendSupplierOrder, createShipment, updateShipment,
   createAfterSalesCase, closeAfterSalesCase, createIncident, transitionIncident,
   recordCommerceKnowledge
@@ -20,8 +20,14 @@ assert.equal(session.status, "OPEN");
 const account = createAccountOperation({ id:"WD-ACC-0001", type:"CHARGE", orderId:"WD-ORD-0001", amount:199.9 });
 assert.equal(account.status, "PENDING");
 
-const marketing = createMarketingRequest({ id:"WD-MKT-0001", source:"COMMERCE_CITY", brief:"Criar campanha para o produto X", channelIds:["WD-CH-0001"] });
-const factoryRequest = sendToFactory(marketing);
+const marketing = createMarketingRequest({
+  id:"WD-MKT-0001", source:"COMMERCE_CITY",
+  brief:"Criar campanha para o produto X", channelIds:["WD-CH-0001"],
+  requestedBy:"COMMERCE_CITY"
+});
+const plannedMarketing = planMarketingRequest(marketing);
+assert.equal(plannedMarketing.status, "PLANNED");
+const factoryRequest = sendToFactory(plannedMarketing);
 assert.equal(factoryRequest.nextService, "DARK_FACTORY");
 
 const supplierOrder = createSupplierOrder({ id:"WD-SUPORD-0001", orderId:"WD-ORD-0001", supplierId:"WD-SUP-0001", items:[{productId:"WD-PROD-0001", quantity:1}] });

@@ -179,6 +179,7 @@
     const result=emergencyStop.trigger({sectorId:"DARKFACTORY",operationId:activeOperationId,requesterId:"UI-DF",reason:"Parada acionada no setor Dark Factory"});
     $("emergencyResult").textContent=JSON.stringify(result,null,2);
   });
+  $("emergencyButton").addEventListener("click",()=> $("triggerStop").click());
   $("releaseStop").addEventListener("click",()=>{
     if(!activeOperationId){$("emergencyResult").textContent=JSON.stringify({success:false,reason:"NO_ACTIVE_OPERATION"},null,2);return;}
     $("emergencyResult").textContent=JSON.stringify(emergencyStop.release(activeOperationId,{requesterId:"UI-DF",reason:"Liberação manual de teste"}),null,2);

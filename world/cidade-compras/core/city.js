@@ -19,6 +19,7 @@ export function createCommerceCity({
     responsibility: "MULTICHANNEL_COMMERCE",
     entryGateId: `${id}-GATE`,
     sectors: [
+      "GATE",
       "COMMUNICATION",
       "ATTENDANCE",
       "COMMERCE",

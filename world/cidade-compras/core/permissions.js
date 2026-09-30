@@ -18,7 +18,8 @@ export function authorizeCityAction({ actorId, actorRole, action, cityId }) {
     ADMIN: ACTIONS,
     MANAGER: new Set(["ENTER_CITY", "VIEW", "OPERATE", "REQUEST_SERVICE"]),
     OPERATOR: new Set(["ENTER_CITY", "VIEW", "OPERATE", "REQUEST_SERVICE"]),
-    VIEWER: new Set(["ENTER_CITY", "VIEW"])
+    VIEWER: new Set(["ENTER_CITY", "VIEW"]),
+    CUSTOMER: new Set(["ENTER_CITY", "VIEW"])
   };
 
   const roleActions = allowedRoles[actorRole];

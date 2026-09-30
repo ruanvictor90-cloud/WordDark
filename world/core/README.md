@@ -1,42 +1,37 @@
-# WordDark — Operation MVP
+# WordDark Core — Unified Central Copy
 
-O primeiro circuito operacional global do WordDark.
+This branch is the isolated experimental copy of the central WordDark Core.
 
-## Fluxo
-IDENTIDADE → ACESSO → OPERAÇÃO → ROTA → EXECUÇÃO → VALIDAÇÃO → RESULTADO → REGISTRO
+## Architecture
+The consolidated runtime remains responsible for operational execution:
+- operation engine
+- security
+- environment guard
+- road / communication
+- registry / persistence
+- emergency stop
 
-## Segurança
-O Operation Engine recebe uma função authorize. O próximo acoplamento usa o WordDark Security Manager para que essa função deixe de ser demonstrativa.
+The integrated Core V1 foundation adds the structural layer:
+- identity IDs
+- entities and registry
+- context
+- contextual permissions
+- gates
+- operation package
+- results
+- services
+- external connectors
+- error recovery
+- inbox
+- version history
 
-## Estados
-CREATED → IDENTIFIED → AUTHORIZED → ROUTED → EXECUTING → VALIDATING → COMPLETED
+There is one active Core architecture. The old laboratory naming is not used by the integrated modules.
 
-Terminais: REJECTED | BLOCKED | FAILED | CANCELLED
+## Runtime
+Use `WordDarkCoreRuntime` as the unified composition layer. It extends the existing operational runtime instead of creating a second world/runtime.
 
-O contrato impede saltos arbitrários entre estados.
+## Safety
+This branch is `staging-core-v1-integration`. It is isolated from `main`. No code here is promoted automatically.
 
-## Central de Testes e Diagnóstico
-
-O Núcleo de Operações também possui a responsabilidade de organizar diagnósticos operacionais. Um diagnóstico pode verificar etapas como identidade, autorização, ambiente, rota, comunicação, execução e validação, apresentando cada componente como ONLINE, FAILED, NOT_TESTED ou UNKNOWN.
-
-Quando uma falha é encontrada, o diagnóstico preserva evidências e identifica o ponto afetado. O Learning Engine pode transformar a falha em um **conhecimento candidato** do tipo ERROR_CORRECTION.
-
-Fluxo de aprendizado:
-
-~~~
-TESTE
-  ↓
-DIAGNÓSTICO
-  ↓
-FALHA + EVIDÊNCIAS
-  ↓
-CONHECIMENTO CANDIDATO
-  ↓
-INVESTIGAÇÃO / CORREÇÃO
-  ↓
-VALIDAÇÃO
-  ↓
-BIBLIOTECA CENTRAL
-~~~
-
-Regra: **o mundo aprende com erros, mas nenhum erro é promovido automaticamente como verdade.** O aprendizado precisa ser investigado, corrigido e validado antes de entrar no conhecimento permanente do WordDark.
+Pipeline:
+SETOR → TESTES → VALIDAÇÃO → REVISÃO → AUTORIZAÇÃO → TRANSPLANTE → MAIN

@@ -3,6 +3,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node core/contracts.test.js && node sectors/contracts.test.js && node sectors/integration.test.js && node runtime.test.js"
+    "test": "node core/contracts.test.js && node sectors/contracts.test.js && node sectors/integration.test.js && node integration-matrix.test.js && node runtime.test.js"
   }
 }

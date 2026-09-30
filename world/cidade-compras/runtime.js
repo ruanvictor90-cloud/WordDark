@@ -10,57 +10,58 @@ import { recordCommerceKnowledge } from "./sectors/library.js";
 import { createCommerceOperation, transitionOperation } from "./core/commerce-operation.js";
 
 export function runCommerceRuntime({
-  operationId,
-  gateId,
-  messageId,
-  attendanceId,
-  sessionId,
-  accountId,
-  supplierOrderId,
-  shipmentId,
-  customerId,
-  channel = "SOCIAL",
-  actorRole = "CUSTOMER",
-  message,
-  orderId,
-  supplierId,
-  productId,
-  amount
+  operationId, gateId, messageId, attendanceId, sessionId, accountId,
+  supplierOrderId, shipmentId, customerId, cityId = "WD-CITY-COMMERCE",
+  channel = "SOCIAL", actorRole = "CUSTOMER", message, orderId,
+  supplierId, productId, amount
 }) {
-  if (!operationId || !gateId || !messageId || !attendanceId || !sessionId || !accountId || !supplierOrderId || !shipmentId || !customerId || !message || !orderId || !supplierId || !productId || amount == null) {
+  if (!operationId || !gateId || !messageId || !attendanceId || !sessionId || !accountId ||
+      !supplierOrderId || !shipmentId || !customerId || !message || !orderId ||
+      !supplierId || !productId || amount == null) {
     throw new Error("INVALID_COMMERCE_RUNTIME_INPUT");
   }
 
-  let operation = createCommerceOperation({ id:operationId, type:"PURCHASE", source:channel, customerId, orderId });
-  const gateEntry = receiveAtGate({ id:gateId, source:channel, destination:"COMMUNICATION", actorId:customerId, actorRole, context:{operationId} });
+  let operation = createCommerceOperation({
+    id: operationId, type: "PURCHASE", source: channel, customerId, orderId
+  });
+
+  const gateEntry = receiveAtGate({
+    id: gateId,
+    source: channel,
+    destination: "COMMUNICATION",
+    actorId: customerId,
+    actorRole,
+    context: { operationId, cityId, action: "ENTER_CITY" }
+  });
+
   const gate = routeFromGate(authorizeAtGate(gateEntry));
   operation = transitionOperation(operation, "GATE_ACCEPTED");
 
-  const communication = receiveCommunication({ id:messageId, channel, customerId, message });
+  const communication = receiveCommunication({ id: messageId, channel, customerId, message });
   const handedOff = handoffCommunication(communication, "ATTENDANCE");
   operation = transitionOperation(operation, "COMMUNICATION_RECEIVED");
 
   const attendance = advanceAttendance(
-    startAttendance({ id:attendanceId, communicationId:handedOff.id, customerId }),
+    startAttendance({ id: attendanceId, communicationId: handedOff.id, customerId }),
     "CONFIRM_ORDER"
   );
   operation = transitionOperation(operation, "ATTENDANCE_CONFIRMED");
 
-  const session = createCommerceSession({ id:sessionId, customerId, channel });
+  const session = createCommerceSession({ id: sessionId, customerId, channel });
   operation = transitionOperation(operation, "COMMERCE_OPEN");
 
   const account = settleAccountOperation(
-    createAccountOperation({ id:accountId, type:"CHARGE", orderId, amount })
+    createAccountOperation({ id: accountId, type: "CHARGE", orderId, amount })
   );
   operation = transitionOperation(operation, "PAYMENT_SETTLED");
 
   const supplierOrder = sendSupplierOrder(
-    createSupplierOrder({ id:supplierOrderId, orderId, supplierId, items:[{productId, quantity:1}] })
+    createSupplierOrder({ id: supplierOrderId, orderId, supplierId, items: [{ productId, quantity: 1 }] })
   );
   operation = transitionOperation(operation, "SUPPLIER_ORDER_SENT");
 
   const shipment = updateShipment(
-    createShipment({ id:shipmentId, orderId }),
+    createShipment({ id: shipmentId, orderId }),
     "IN_TRANSIT",
     "PENDING-TRACKING"
   );
@@ -92,7 +93,11 @@ export function runCommerceRuntime({
   return result;
 }
 
-export function recoverCommerceRuntime({ operationId, source = "RUNTIME", type = "RUNTIME_ERROR", description }) {
-  const incident = createIncident({ id:`${operationId}-ERR`, source, operationId, type, description });
+export function recoverCommerceRuntime({
+  operationId, source = "RUNTIME", type = "RUNTIME_ERROR", description
+}) {
+  const incident = createIncident({
+    id: `${operationId}-ERR`, source, operationId, type, description
+  });
   return transitionIncident(incident, "ANALYZING");
 }

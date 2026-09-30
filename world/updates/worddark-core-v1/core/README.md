@@ -1,55 +1,62 @@
-# WordDark Core V1 — Composition Layer
+# WordDark Core V1 — Operational City Lab
 
-Este diretório é um laboratório isolado para a próxima composição do Core.
+Este diretório é o laboratório isolado da próxima composição do Core.
 
-## Regra de integração
+## Objetivo atual
 
-O Core consolidado em `world/core` continua sendo a autoridade operacional.
+A V1 agora possui uma **cidade operacional autônoma**. Ela não depende da existência de uma cidade definitiva no mundo para testar uma operação real.
 
-A V1 acrescenta, sem substituição imediata:
+A cidade consegue:
 
-- contexto de execução;
-- entidades de cliente/canal/projeto/usuário/serviço;
-- portões de entrada;
-- permissões contextualizadas;
-- pacote de operação;
-- recuperação de erros;
-- inbox acionável;
-- versionamento;
-- conectores externos;
-- composição ponta a ponta.
+- receber operações pelo portão;
+- identificar solicitante e contexto;
+- validar permissões;
+- localizar serviço e rota;
+- executar localmente quando possui capacidade;
+- registrar operação, resultado e histórico;
+- capturar falhas e abrir recuperação;
+- gerar pedido externo quando não possui a capacidade necessária;
+- manter o pedido pendente na inbox;
+- resolver o pedido sem apagar o histórico;
+- permanecer isolada para futuros transplantes.
 
-## Ponte
+## Fluxo
 
-`composition-bridge.js` é a primeira camada de união.
+`Operação`
+→ `Portão da cidade`
+→ `Permissões`
+→ **capacidade local?**
+→ sim → `Serviço local` → `Resultado`
 
-Fluxo:
+ou
 
-V1 Context/Operation
-→ Gate V1
-→ PermissionSet V1
-→ tradução para Global Operation
-→ WordDark Operation Engine
-→ Road / Executor / Registry / Libraries
+→ não → `Pedido externo` → `Inbox` → outro setor
 
-A ponte não substitui:
+A cidade **não executa diretamente o serviço de outro setor**. Ela cria um pedido rastreável para o destino responsável.
 
-- `world/contracts/operation.js`
-- `world/core/operation-engine.js`
-- `world/core/world-runtime.js`
-- `world/core/road.js`
-- `world/core/operation-registry.js`
+## Peças
 
-## Critério de promoção
+- `city.js` — orquestrador da cidade.
+- `operation.js` — ciclo da operação.
+- `operation-package.js` — pacote independente.
+- `context.js` — contexto.
+- `entities.js` / `entity-registry.js` — entidades.
+- `gate.js` — entrada.
+- `permissions.js` — autorização contextual.
+- `route.js` — rotas.
+- `service.js` — execução local.
+- `error-recovery.js` — falhas e recuperação.
+- `inbox.js` — pedidos e notificações.
+- `versioning.js` — histórico de versões.
+- `connector.js` — fronteira externa.
+- `composition-bridge.js` — experimento de transplante para o Core consolidado.
 
-Nenhum bloco deve ser movido para `world/core` apenas porque funciona isoladamente.
+## Regra do laboratório
 
-Cada bloco precisa:
+Este branch pode quebrar.
 
-1. teste isolado;
-2. teste de integração;
-3. compatibilidade com o contrato consolidado;
-4. ausência de regressão;
-5. aprovação explícita para promoção.
+O que não pode acontecer é uma experiência quebrada ser promovida automaticamente para `main`.
 
-Assim, o laboratório pode evoluir sem quebrar o que já foi consolidado.
+`staging` = composição, incompatibilidade, testes e descoberta.
+
+`main` = consolidação posterior.

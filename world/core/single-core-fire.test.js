@@ -6,6 +6,7 @@ const EnvironmentGuard = require("./environment-guard");
 const { WordDarkOperationRegistry: Registry } = require("./operation-registry");
 const Road = require("./road");
 const GlobalRoute = require("../contracts/route");
+const EmergencyStop = require("./emergency-stop-manager");
 
 function test(name, fn) {
   try {
@@ -19,7 +20,7 @@ function test(name, fn) {
 
 const {
   Identity, Operation, Entity, EntityRegistry, Context, Permissions,
-  Gate, Service, WorldRuntime, OperationEngine
+  Gate, Service, WorldRuntime, OperationEngine, Result
 } = Core;
 
 test("CORE STRUCTURE: single entry exports all integrated sectors", () => {
@@ -262,3 +263,53 @@ test("WORLD RUNTIME: integrated Core reports healthy with one runtime", () => {
 });
 
 console.log("WordDark Core — NEW SINGLE-CORE FIRE TEST: COMPLETE");
+
+
+test("RESULT CONTRACT: READY requires explicit validation timestamp", () => {
+  const result = new Result({ resultId: "WD-RES-TEST-001", operationId: "WD-OP-TEST-001" });
+  assert(result.validate().valid);
+  result.markReady({ status: "VALIDATED" });
+  assert.strictEqual(result.status, "READY");
+  assert(result.validate().valid);
+});
+
+test("EMERGENCY STOP: cancellation blocks completion and is audited", () => {
+  const emergencyStop = new EmergencyStop();
+  let executed = false;
+  const engine = new OperationEngine({
+    emergencyStop,
+    authorize: () => ({ allowed: true }),
+    route: () => ({ success: true }),
+    execute: () => { executed = true; return { success: true, validated: true }; }
+  });
+  const operation = engine.create({
+    operationId: "WD-OP-STOP-001",
+    requesterId: "WD-USR-TEST-001",
+    clientId: "WD-CLI-TEST-001",
+    resourceId: "WD-CH-TEST-001",
+    originId: "test/origin",
+    destinationId: "test/destination",
+    operationType: "content.produce",
+    serviceId: "content.produce",
+    environment: "TEST"
+  });
+  const stop = emergencyStop.trigger({
+    sectorId: "TEST-SECTOR",
+    operationId: operation.operationId,
+    requesterId: "WD-USR-TEST-001",
+    reason: "Teste de parada"
+  });
+  assert.strictEqual(stop.status, "STOPPED");
+  const result = engine.run(operation);
+  assert.strictEqual(result.status, "CANCELLED");
+  assert.strictEqual(executed, false);
+  assert.strictEqual(emergencyStop.getAudit().length, 1);
+});
+
+test("CONNECTOR: disconnected or unauthorized publication is rejected", () => {
+  const Connector = Core.Connector;
+  const connector = new Connector({ id: "WD-CON-TEST-001", platform: "TEST" });
+  assert.strictEqual(connector.publish({ test: true }).reason, "CONNECTOR_DISCONNECTED");
+  connector.connect();
+  assert.strictEqual(connector.publish({ test: true }).reason, "CONNECTOR_NOT_AUTHORIZED");
+});

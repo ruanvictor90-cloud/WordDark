@@ -1,5 +1,5 @@
 const assert = require("assert");
-const WordDarkOperation = require("../contracts/operation");
+const WordDarkOperation = require("./operation");
 const WordDarkOperationEngine = require("./operation-engine");
 
 function baseOperation(extra = {}) {
@@ -10,6 +10,10 @@ function baseOperation(extra = {}) {
     destinationId:"world/sky/darkfactory",
     operationType:"test.circuit",
     environment:"TEST",
+    clientId:"CLIENT-TEST",
+    projectId:"PROJECT-TEST",
+    resourceId:"RESOURCE-TEST",
+    serviceId:"test.circuit",
     ...extra
   });
 }

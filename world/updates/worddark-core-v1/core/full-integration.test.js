@@ -117,7 +117,7 @@ test("V1 operational runtime", () => {
     environment: "TEST"
   });
   const out = rt.process(op, "WD-GATE-DF-001");
-  assert(out.success);
+  assert(out.success, JSON.stringify(out));
   assert.strictEqual(out.operation.status, "COMPLETED");
   assert.strictEqual(out.result.status, "READY");
   assert(rt.versioning.latest(op.operationId));

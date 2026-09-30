@@ -253,7 +253,8 @@ test("WORLD RUNTIME: integrated Core reports healthy with one runtime", () => {
     operationEngine: engine,
     entityRegistry,
     permissionSet,
-    serviceRegistry
+    serviceRegistry,
+    emergencyStop: new EmergencyStop()
   });
 
   const health = runtime.getHealth();

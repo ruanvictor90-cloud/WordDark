@@ -44,7 +44,7 @@ assert.equal(updateShipment(shipment,"IN_TRANSIT","TEST-TRACK-001").trackingCode
 const marketing = createMarketingRequest({
   id:"WD-MKT-CC-TEST-001", source:"COMMERCE_CITY",
   brief:"Produzir conteúdo de teste para o produto TEST-001",
-  channelIds:["WD-CH-TEST-001"]
+  channelIds:["WD-CH-TEST-001"], requestedBy:"COMMERCE_CITY"
 });
 const plannedMarketing = planMarketingRequest(marketing);
 assert.equal(plannedMarketing.status,"PLANNED");

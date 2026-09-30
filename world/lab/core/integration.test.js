@@ -72,4 +72,4 @@ ok("Error recovery and actionable inbox",()=>{
  const out=rt.process(op,"WD-GATE-DF-001");assert(!out.success);assert.strictEqual(rt.inbox.getOpen().length,1);assert.strictEqual(rt.recovery.list().length,1);
 });
 
-console.log("WordDark Lab integration suite: COMPLETE");
+\nok("Unknown requester is rejected without crashing permission lookup",()=>{\n const rt=new Runtime();\n rt.addGate(new Gate({gateId:"WD-GATE-DF-001",destinationId:"darkfactory",allowedProfiles:["CLIENT_OPERATOR"]}));\n const op=new Operation({operationId:"WD-OP-0003",requesterId:"WD-USR-4040",clientId:"WD-CLI-0001",resourceId:"WD-CH-0001",origin:"sucogeek",destination:"darkfactory",serviceId:"WD-SVC-0001"});\n const out=rt.process(op,"WD-GATE-DF-001");assert(!out.success);assert.strictEqual(out.error.reason,"REQUESTER_NOT_FOUND");\n});\n\nconsole.log("WordDark Lab integration suite: COMPLETE");

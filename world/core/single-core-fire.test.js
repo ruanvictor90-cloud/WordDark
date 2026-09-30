@@ -3,7 +3,7 @@ const assert = require("assert");
 const Core = require("./index");
 const Security = require("../security/security-manager");
 const EnvironmentGuard = require("./environment-guard");
-const Registry = require("./operation-registry");
+const { WordDarkOperationRegistry: Registry } = require("./operation-registry");
 const Road = require("./road");
 const GlobalRoute = require("../contracts/route");
 

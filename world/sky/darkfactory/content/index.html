@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Criação de Conteúdo — Dark Factory</title>
+<link rel="stylesheet" href="../../../ui/worddark-ui.css">
+<style>
+.df-sector-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.df-sector{display:flex;flex-direction:column;gap:10px;min-height:190px}
+.df-sector .wd-actions{margin-top:auto}
+.df-icon{font-size:30px}
+.df-status{font-size:12px;letter-spacing:.08em}
+.df-contract{font-family:monospace;font-size:12px;line-height:1.55;white-space:pre-wrap}
+</style>
+</head>
+<body class="wd-body">
+<div class="wd-shell">
+<aside class="wd-sidebar">
+<div class="wd-brand"><div class="wd-mark">◈</div><div><strong>WORDDARK</strong><small>Céu · Dark Factory</small></div></div>
+<nav class="wd-nav" aria-label="Navegação">
+<a href="../../../../">◈ WordDark</a><a href="../../">☁ Céu</a><a href="../">⚙ Dark Factory</a>
+<a class="active" href="./">🎬 Criação</a><a href="../../../earth/">◉ Terra</a>
+<a href="../../../core/">◎ Operações</a>
+</nav>
+<div class="wd-footer">DF-CONTENT-0.1 · camada de setores<br>Core operacional preservado</div>
+</aside>
+
+<main class="wd-main">
+<div class="wd-top">
+<div>
+<div class="wd-eyebrow">Dark Factory · setor especializado</div>
+<h1 class="wd-title">🎬 Fábrica de Criação</h1>
+<p class="wd-sub">Primeira camada de gestão de conteúdo e imagem de marca. Os setores podem usar ferramentas externas, ferramentas próprias ou uma composição híbrida.</p>
+</div>
+<div class="wd-actions"><button class="wd-btn" data-wd-theme type="button">Modo claro</button></div>
+</div>
+
+<section class="wd-card full">
+<div class="wd-eyebrow">Circuito inicial</div>
+<div class="wd-flow">
+<span>BRIEFING</span><i class="wd-arrow">→</i><span>INTELIGÊNCIA</span><i class="wd-arrow">→</i><span>CRIAÇÃO</span><i class="wd-arrow">→</i><span>PRODUÇÃO</span><i class="wd-arrow">→</i><span>VALIDAÇÃO</span><i class="wd-arrow">→</i><span>ENTREGA</span>
+</div>
+<p class="wd-muted">A distribuição continua pertencendo ao Estado/cliente. A fábrica produz e devolve o resultado.</p>
+</section>
+
+<section class="wd-card full">
+<div class="wd-eyebrow">Setores v0.1</div>
+<h2>Máquinas disponíveis para integração</h2>
+<div class="df-sector-grid">
+
+<article class="wd-card df-sector">
+<div class="df-icon">🧠</div><div class="df-status wd-badge">PLANEJADO</div>
+<h2>01 · Inteligência</h2><p class="wd-muted">Pesquisa, tendências, referências, público e geração de briefing.</p>
+<div class="wd-actions"><button class="wd-btn" data-sector="intelligence">Abrir setor</button></div>
+</article>
+
+<article class="wd-card df-sector">
+<div class="df-icon">✍️</div><div class="df-status wd-badge">PLANEJADO</div>
+<h2>02 · Roteiro</h2><p class="wd-muted">Ideias, hooks, roteiros, títulos, descrições e adaptações.</p>
+<div class="wd-actions"><button class="wd-btn" data-sector="script">Abrir setor</button></div>
+</article>
+
+<article class="wd-card df-sector">
+<div class="df-icon">🎨</div><div class="df-status wd-badge">BASE</div>
+<h2>03 · Identidade</h2><p class="wd-muted">Biblioteca de marca, identidade visual, regras e ativos reutilizáveis.</p>
+<div class="wd-actions"><button class="wd-btn" data-sector="brand">Abrir setor</button></div>
+</article>
+
+<article class="wd-card df-sector">
+<div class="df-icon">🖼️</div><div class="df-status wd-badge">PLANEJADO</div>
+<h2>04 · Imagem</h2><p class="wd-muted">Posts, thumbnails, banners, conceitos e variações visuais.</p>
+<div class="wd-actions"><button class="wd-btn" data-sector="image">Abrir setor</button></div>
+</article>
+
+<article class="wd-card df-sector">
+<div class="df-icon">🎬</div><div class="df-status wd-badge">PLANEJADO</div>
+<h2>05 · Vídeo</h2><p class="wd-muted">Shorts, Reels, TikTok, YouTube e composição de vídeo.</p>
+<div class="wd-actions"><button class="wd-btn" data-sector="video">Abrir setor</button></div>
+</article>
+
+<article class="wd-card df-sector">
+<div class="df-icon">🎙️</div><div class="df-status wd-badge">PLANEJADO</div>
+<h2>06 · Áudio</h2><p class="wd-muted">Narração, vozes, música, efeitos e preparação de trilhas.</p>
+<div class="wd-actions"><button class="wd-btn" data-sector="audio">Abrir setor</button></div>
+</article>
+
+<article class="wd-card df-sector">
+<div class="df-icon">🧪</div><div class="df-status wd-badge">PLANEJADO</div>
+<h2>07 · Testes</h2><p class="wd-muted">Variações, A/B, hooks, thumbnails e validação experimental.</p>
+<div class="wd-actions"><button class="wd-btn" data-sector="testing">Abrir setor</button></div>
+</article>
+
+<article class="wd-card df-sector">
+<div class="df-icon">🛡️</div><div class="df-status wd-badge ok">CORE</div>
+<h2>08 · Controle</h2><p class="wd-muted">Copyright, licenças, políticas, permissões e aprovação.</p>
+<div class="wd-actions"><button class="wd-btn" data-sector="control">Abrir setor</button></div>
+</article>
+
+<article class="wd-card df-sector">
+<div class="df-icon">📊</div><div class="df-status wd-badge">PLANEJADO</div>
+<h2>09 · Aprendizado</h2><p class="wd-muted">Métricas, histórico, processos e melhoria contínua.</p>
+<div class="wd-actions"><button class="wd-btn" data-sector="learning">Abrir setor</button></div>
+</article>
+
+</div>
+</section>
+
+<section class="wd-grid">
+<article class="wd-card wide">
+<div class="wd-eyebrow">Contrato de integração</div>
+<h2>Uma entrada, várias máquinas</h2>
+<pre class="df-contract" id="contract">REQUEST
+  requesterId
+  originId
+  destinationId = world/sky/darkfactory/content
+  operationType
+  environment
+  payload
+      brief
+      brand
+      content
+      toolPolicy
+
+TOOL ADAPTER
+  input → external/internal tool → normalized output
+
+RESULT
+  resultId
+  operationId
+  status
+  report
+  artifacts
+  metadata
+  audit</pre>
+</article>
+
+<article class="wd-card">
+<div class="wd-eyebrow">Política de ferramenta</div>
+<h2 id="policyTitle">Híbrida</h2>
+<div class="wd-list">
+<div class="wd-item"><span>Externa</span><span class="wd-badge ok">PERMITIDA</span></div>
+<div class="wd-item"><span>Própria</span><span class="wd-badge ok">PERMITIDA</span></div>
+<div class="wd-item"><span>Aprendizado</span><span class="wd-badge ok">REGISTRAR</span></div>
+<div class="wd-item"><span>Publicação</span><span class="wd-badge">FORA DA FÁBRICA</span></div>
+</div>
+</article>
+</section>
+
+<section class="wd-card full">
+<div class="wd-eyebrow">Painel de integração</div>
+<h2 id="selectedTitle">Nenhum setor selecionado</h2>
+<p id="selectedText" class="wd-muted">Selecione um setor para visualizar sua primeira função. Nesta versão, os botões apenas selecionam o módulo; nenhum serviço externo é acionado ainda.</p>
+<pre id="selectedContract">Aguardando seleção.</pre>
+</section>
+</main>
+</div>
+<script src="../../../ui/worddark-ui.js"></script>
+<script>
+const sectors={
+intelligence:["Inteligência","research → trend scan → brief","Recebe necessidade e transforma pesquisa em briefing estruturado."],
+script:["Roteiro","brief → hooks → script","Transforma briefing em ideias, roteiro, títulos e descrições."],
+brand:["Identidade","brand → rules → assets","Mantém regras visuais e biblioteca de ativos da marca."],
+image:["Imagem","brief → image prompt → asset","Produz ou solicita artes e variações visuais normalizadas."],
+video:["Vídeo","script+assets → edit → video","Orquestra edição, composição e renderização de vídeo."],
+audio:["Áudio","script → voice/music → audio","Orquestra narração, música e efeitos com controle de licença."],
+testing:["Testes","variants → test → report","Cria variações e registra resultados experimentais."],
+control:["Controle","asset → policy → approval","Verifica permissões, copyright, políticas e aprovação antes da entrega."],
+learning:["Aprendizado","results → metrics → knowledge","Transforma resultados e métricas em conhecimento operacional."]
+};
+document.querySelectorAll("[data-sector]").forEach(btn=>btn.addEventListener("click",()=>{
+const s=sectors[btn.dataset.sector]; if(!s)return;
+document.getElementById("selectedTitle").textContent=s[0];
+document.getElementById("selectedText").textContent=s[2];
+document.getElementById("selectedContract").textContent=s[1]+"\n\nstatus: interface pronta\nexecução: aguardando adapter";
+}));
+</script>
+</body>
+</html>

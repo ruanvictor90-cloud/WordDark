@@ -235,7 +235,7 @@ test("V1 -> consolidated Core composition", () => {
 
   const bridge = new Bridge({ runtime, gate, permissionSet });
   const out = bridge.process(labOperation, { profile: "CLIENT_OPERATOR" });
-  assert(out.success);
+  assert(out.success, JSON.stringify(out));
   assert.strictEqual(out.status, "DELEGATED");
   assert.strictEqual(out.legacyOperation.status, "COMPLETED");
 

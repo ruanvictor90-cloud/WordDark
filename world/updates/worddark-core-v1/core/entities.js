@@ -1,4 +1,4 @@
-/* WordDark Core — Client / Channel / Project / User / Service / Connector / Result */
+/* WordDark Lab — Client / Channel / Project / User / Service / Connector / Result */
 class LabEntity {
   constructor(source={}){Object.assign(this,source);this.status=this.status||"ACTIVE";this.createdAt=this.createdAt||new Date().toISOString();}
   validate(){const e=[];if(!this.id)e.push("id é obrigatório.");if(!this.name)e.push("name é obrigatório.");return {valid:e.length===0,errors:e};}

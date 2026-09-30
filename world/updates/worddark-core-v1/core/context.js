@@ -1,8 +1,8 @@
-/* WordDark Core — Execution Context
+/* WordDark Lab — Execution Context
  * Protótipo isolado. Não altera o contrato operacional existente.
  */
 
-class WordDarkCoreContext {
+class WordDarkLabContext {
   constructor(source = {}) {
     this.clientId = source.clientId || null;
     this.projectId = source.projectId || null;
@@ -39,5 +39,5 @@ class WordDarkCoreContext {
   }
 }
 
-if (typeof module !== "undefined") module.exports = WordDarkCoreContext;
-if (typeof window !== "undefined") window.WordDarkCoreContext = WordDarkCoreContext;
+if (typeof module !== "undefined") module.exports = WordDarkLabContext;
+if (typeof window !== "undefined") window.WordDarkLabContext = WordDarkLabContext;

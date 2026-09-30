@@ -1,8 +1,8 @@
-/* WordDark Core — Gate Contract
+/* WordDark Lab — Gate Contract
  * O portão recebe e encaminha. Não executa.
  */
 
-class WordDarkCoreGate {
+class WordDarkLabGate {
   constructor(source = {}) {
     this.gateId = source.gateId || null;
     this.type = source.type || "SERVICE";
@@ -70,5 +70,5 @@ class WordDarkCoreGate {
   }
 }
 
-if (typeof module !== "undefined") module.exports = WordDarkCoreGate;
-if (typeof window !== "undefined") window.WordDarkCoreGate = WordDarkCoreGate;
+if (typeof module !== "undefined") module.exports = WordDarkLabGate;
+if (typeof window !== "undefined") window.WordDarkLabGate = WordDarkLabGate;

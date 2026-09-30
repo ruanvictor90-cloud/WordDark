@@ -1,9 +1,9 @@
 const assert=require("assert");
 const Id=require("./id");
 const {Client,Channel,Project,User,Service}=require("./entities");
-const {WordDarkCorePermission}=require("./permissions");
+const {WordDarkLabPermission}=require("./permissions");
 const Operation=require("./operation");
-const {WordDarkCoreRoute}=require("./route");
+const {WordDarkLabRoute}=require("./route");
 const Gate=require("./gate");
 const Connector=require("./connector");
 const Runtime=require("./runtime");
@@ -21,7 +21,7 @@ ok("Entity hierarchy",()=>{
 });
 
 ok("Permissions with context",()=>{
- const rule=new WordDarkCorePermission({profile:"CLIENT_OPERATOR",capability:"content.produce",action:"request",resourceId:"WD-CH-0001",clientId:"WD-CLI-0001",environment:"TEST"});
+ const rule=new WordDarkLabPermission({profile:"CLIENT_OPERATOR",capability:"content.produce",action:"request",resourceId:"WD-CH-0001",clientId:"WD-CLI-0001",environment:"TEST"});
  assert(rule.validate().valid);
  assert(rule.matches({profile:"CLIENT_OPERATOR",capability:"content.produce",action:"request",resourceId:"WD-CH-0001",clientId:"WD-CLI-0001",environment:"TEST"}));
  assert(!rule.matches({profile:"CLIENT_OPERATOR",capability:"content.produce",action:"request",resourceId:"WD-CH-9999",clientId:"WD-CLI-0001",environment:"TEST"}));
@@ -39,7 +39,7 @@ ok("Gate separation",()=>{
 });
 
 ok("Transport route",()=>{
- const r=new WordDarkCoreRoute({routeId:"WD-ROUTE-0001",origin:"sucogeek",destination:"darkfactory",serviceId:"WD-SVC-0001"});
+ const r=new WordDarkLabRoute({routeId:"WD-ROUTE-0001",origin:"sucogeek",destination:"darkfactory",serviceId:"WD-SVC-0001"});
  const o={origin:"sucogeek",destination:"darkfactory",serviceId:"WD-SVC-0001"};
  assert(r.allows(o)); assert(!r.allows({...o,destination:"other"}));
 });
@@ -57,8 +57,8 @@ ok("End-to-end SucoGeek -> Dark Factory -> Result",()=>{
  const user=rt.register(new User({id:"WD-USR-0001",name:"Operador",profile:"CLIENT_OPERATOR",clientId:client.id}));
  const service=new Service({id:"WD-SVC-0001",name:"Dark Factory Content",executor:o=>({success:true,status:"DONE",operationId:o.operationId,output:"TEST_CONTENT"})});
  rt.register(channel);rt.register(user);rt.register(service);
- rt.permissions.grant(new WordDarkCorePermission({profile:"CLIENT_OPERATOR",capability:"content.produce",action:"request",resourceId:channel.id,clientId:client.id,environment:"TEST"}));
- rt.router.add(new WordDarkCoreRoute({routeId:"WD-ROUTE-0001",origin:"sucogeek",destination:"darkfactory",serviceId:service.id}));
+ rt.permissions.grant(new WordDarkLabPermission({profile:"CLIENT_OPERATOR",capability:"content.produce",action:"request",resourceId:channel.id,clientId:client.id,environment:"TEST"}));
+ rt.router.add(new WordDarkLabRoute({routeId:"WD-ROUTE-0001",origin:"sucogeek",destination:"darkfactory",serviceId:service.id}));
  rt.addGate(new Gate({gateId:"WD-GATE-DF-001",destinationId:"darkfactory",allowedProfiles:["CLIENT_OPERATOR"]}));
  const op=new Operation({operationId:"WD-OP-0001",requesterId:user.id,clientId:client.id,resourceId:channel.id,origin:"sucogeek",destination:"darkfactory",serviceId:service.id,environment:"TEST",request:{title:"Short de teste"}});
  const out=rt.process(op,"WD-GATE-DF-001");
@@ -72,4 +72,4 @@ ok("Error recovery and actionable inbox",()=>{
  const out=rt.process(op,"WD-GATE-DF-001");assert(!out.success);assert.strictEqual(rt.inbox.getOpen().length,1);assert.strictEqual(rt.recovery.list().length,1);
 });
 
-\nok("Unknown requester is rejected without crashing permission lookup",()=>{\n const rt=new Runtime();\n rt.addGate(new Gate({gateId:"WD-GATE-DF-001",destinationId:"darkfactory",allowedProfiles:["CLIENT_OPERATOR"]}));\n const op=new Operation({operationId:"WD-OP-0003",requesterId:"WD-USR-4040",clientId:"WD-CLI-0001",resourceId:"WD-CH-0001",origin:"sucogeek",destination:"darkfactory",serviceId:"WD-SVC-0001"});\n const out=rt.process(op,"WD-GATE-DF-001");assert(!out.success);assert.strictEqual(out.error.reason,"REQUESTER_NOT_FOUND");\n});\n\nconsole.log("WordDark Core integration suite: COMPLETE");
+\nok("Unknown requester is rejected without crashing permission lookup",()=>{\n const rt=new Runtime();\n rt.addGate(new Gate({gateId:"WD-GATE-DF-001",destinationId:"darkfactory",allowedProfiles:["CLIENT_OPERATOR"]}));\n const op=new Operation({operationId:"WD-OP-0003",requesterId:"WD-USR-4040",clientId:"WD-CLI-0001",resourceId:"WD-CH-0001",origin:"sucogeek",destination:"darkfactory",serviceId:"WD-SVC-0001"});\n const out=rt.process(op,"WD-GATE-DF-001");assert(!out.success);assert.strictEqual(out.error.reason,"REQUESTER_NOT_FOUND");\n});\n\nconsole.log("WordDark Lab integration suite: COMPLETE");

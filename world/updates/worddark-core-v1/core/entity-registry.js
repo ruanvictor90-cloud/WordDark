@@ -1,5 +1,5 @@
-/* WordDark Core — Entity Registry */
-class WordDarkCoreEntityRegistry {
+/* WordDark Lab — Entity Registry */
+class WordDarkLabEntityRegistry {
   constructor(){this.entities=new Map();}
   register(entity){
     if(!entity||!entity.id) throw new Error("Entidade inválida.");
@@ -11,5 +11,5 @@ class WordDarkCoreEntityRegistry {
   list(type=null){return [...this.entities.values()].filter(e=>!type||e.type===type);}
   update(id,patch){const current=this.get(id);if(!current) return null;const next={...current,...patch,id};this.entities.set(id,next);return this.get(id);}
 }
-if(typeof module!=="undefined") module.exports=WordDarkCoreEntityRegistry;
-if(typeof window!=="undefined") window.WordDarkCoreEntityRegistry=WordDarkCoreEntityRegistry;
+if(typeof module!=="undefined") module.exports=WordDarkLabEntityRegistry;
+if(typeof window!=="undefined") window.WordDarkLabEntityRegistry=WordDarkLabEntityRegistry;

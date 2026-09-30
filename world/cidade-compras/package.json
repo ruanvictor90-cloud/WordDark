@@ -1,3 +1,8 @@
 {
-  "name":"worddark-cidade-compras","private":true,"type":"module","scripts":{"test":"node core/contracts.test.js"}
+  "name": "worddark-cidade-compras",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node core/contracts.test.js && node sectors/contracts.test.js"
+  }
 }

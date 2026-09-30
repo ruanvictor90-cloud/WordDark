@@ -1,0 +1,22 @@
+name: WordDark Core V1 — integration lab
+
+on:
+  push:
+    branches: ["staging-core-v1-integration"]
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Core V1 contracts
+        run: node world/updates/worddark-core-v1/core/core-contracts.test.js
+      - name: Core V1 integration
+        run: node world/updates/worddark-core-v1/core/integration.test.js
+      - name: Core V1 full integration
+        run: node world/updates/worddark-core-v1/core/full-integration.test.js

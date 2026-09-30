@@ -1,33 +1,21 @@
 # Modelo Operacional V1 — Cidade de Compras
 
-## Objetivo
-Transformar qualquer contato comercial em uma operação rastreável, independentemente do canal de entrada.
-
-## Portas de entrada
-SITE, SOCIAL, MESSAGING, MARKETPLACE e futuros conectores.
-
-## Regra central
-Canal é porta; pedido é entidade central; fornecedor é executor de abastecimento; logística é executor de entrega; Marketing e Dark Factory são serviços conectados por requerimentos.
-
-## Ciclo comercial
-1. Atendimento identifica intenção.
-2. Cliente escolhe produto/condições.
-3. Carrinho é montado.
-4. Cliente confirma.
-5. Pagamento é processado por serviço autorizado.
-6. Pedido é criado.
-7. Pedido é validado.
-8. Fornecedor é selecionado/acionado.
-9. Pedido ao fornecedor é acompanhado.
-10. Envio e rastreio são acompanhados.
-11. Cliente recebe atualizações.
-12. Pós-venda encerra ou abre ocorrência.
+## Regra de serviços
+A Cidade de Compras solicita serviços externos. Ela não contém a Dark Factory nem transforma Marketing em parte interna da cidade.
 
 ## Ciclo de conteúdo
-Necessidade comercial → Marketing → requerimento → Dark Factory → revisão/resultado → Marketing → distribuição.
+Necessidade comercial → Marketing → requerimento → Dark Factory → resultado → Marketing → distribuição.
+
+### Estados do requerimento
+REQUESTED → PLANNED → SENT_TO_FACTORY → RESULT_RETURNED → READY_FOR_DISTRIBUTION
+
+## Responsabilidades
+- Comércio: identifica a necessidade e solicita conteúdo.
+- Marketing: recebe, planeja, envia à Dark Factory, recebe o resultado e prepara distribuição.
+- Dark Factory: produz e devolve resultado.
+- Canal: recebe o material aprovado para distribuição.
 
 ## Não fazer
-- Não prender a cidade a uma única rede social.
-- Não prender a cidade a um único fornecedor.
-- Não colocar produção de conteúdo dentro da cidade.
-- Não colocar lógica financeira espalhada pelos canais.
+- Não ligar Comércio diretamente à Dark Factory.
+- Não colocar produção de conteúdo dentro da Cidade de Compras.
+- Não misturar lógica de Marketing com canais.

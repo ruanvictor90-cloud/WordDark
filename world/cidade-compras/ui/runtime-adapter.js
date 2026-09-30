@@ -20,9 +20,10 @@ export function runRealCommerceTest({
 }
 
 export function runIncidentStep(action, state) {
-  if (!state?.operation || !state?.incident) throw new Error("INCIDENT_RUNTIME_STATE_REQUIRED");
+  if (!state?.operation) throw new Error("INCIDENT_RUNTIME_STATE_REQUIRED");
+  if (action === "OPEN") return openCommerceIncident({ operation: state.operation, order: state.order || null, incidentId: uid("WD-ERR"), source: "UI_RUNTIME", type: "DELIVERY_EXCEPTION", description: "Ocorrência aberta pelo console operacional." });
+  if (!state.incident) throw new Error("INCIDENT_RUNTIME_STATE_REQUIRED");
   const common = { operation: state.operation, incident: state.incident };
-  if (action === "OPEN") return openCommerceIncident({ ...common, order: state.order || null, incidentId: uid("WD-ERR"), source: "UI_RUNTIME", type: "DELIVERY_EXCEPTION", description: "Ocorrência aberta pelo console operacional." });
   if (action === "ANALYZE") return analyzeCommerceIncident(common);
   if (action === "REQUEUE") return requeueCommerceIncident(common);
   if (action === "REANALYZE") return reanalyzeCommerceIncident(common);

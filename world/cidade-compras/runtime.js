@@ -10,10 +10,12 @@ import { recordCommerceKnowledge } from "./sectors/library.js";
 import { createCommerceOperation, transitionOperation } from "./core/commerce-operation.js";
 import { createOrder } from "./core/order.js";
 import { transitionOrder } from "./core/order-lifecycle.js";
+import { createAfterSalesCase } from "./sectors/after-sales.js";
 
 export function runCommerceRuntime({
   operationId, gateId, messageId, attendanceId, sessionId, accountId,
   supplierOrderId, shipmentId, customerId, cityId = "WD-CITY-COMMERCE",
+  afterSalesCaseId = null, afterSalesType = null, afterSalesDescription = null,
   channel = "SOCIAL", actorRole = "CUSTOMER", message, orderId,
   supplierId, productId, amount
 }) {
@@ -84,6 +86,23 @@ export function runCommerceRuntime({
   order = transitionOrder(order, "SHIPPED");
   operation = transitionOperation(operation, "SHIPMENT_IN_TRANSIT");
 
+  let afterSales = null;
+  if (afterSalesCaseId || afterSalesType || afterSalesDescription) {
+    if (!afterSalesCaseId || !afterSalesType || !afterSalesDescription) {
+      throw new Error("INCOMPLETE_AFTER_SALES_CASE");
+    }
+
+    afterSales = createAfterSalesCase({
+      id: afterSalesCaseId,
+      orderId: order.id,
+      customerId,
+      type: afterSalesType,
+      description: afterSalesDescription
+    });
+
+    operation = transitionOperation(operation, "AFTER_SALES_OPENED");
+  }
+
   const closedSession = closeCommerceSession(session, "ORDER_CREATED");
   operation = transitionOperation(operation, "COMMERCE_CLOSED");
 
@@ -97,6 +116,7 @@ export function runCommerceRuntime({
     account,
     order,
     supplierOrder,
+    afterSales,
     shipment,
     operation
   };

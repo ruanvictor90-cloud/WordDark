@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cidade de Compras — Word Dark</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div><span class="eclipse">◐</span><strong>Cidade de Compras</strong><small>WORD DARK · TERRA</small></div>
+    <button id="themeToggle" class="icon-btn" type="button" aria-label="Alternar tema">☀</button>
+  </header>
+
+  <main>
+    <section id="home" class="view active">
+      <div class="gate">
+        <span>🚪</span>
+        <div><strong>Portão da Cidade</strong><small>Entrada autorizada · COMMERCE_CITY</small></div>
+      </div>
+      <section class="panel">
+        <div class="panel-head"><div><span class="eyebrow">CENTRAL</span><h1>Painel</h1></div><span class="status"><i></i> Operacional</span></div>
+        <div class="summary">
+          <div><b id="pendingOrders">0</b><span>Pedidos pendentes</span></div>
+          <div><b id="pendingComms">0</b><span>Comunicações</span></div>
+          <div><b id="openIncidents">0</b><span>Ocorrências</span></div>
+        </div>
+        <div class="sectors" id="sectorGrid"></div>
+      </section>
+    </section>
+
+    <section id="sector" class="view">
+      <button class="back" id="backBtn">← Voltar ao painel</button>
+      <div class="sector-title"><span id="sectorIcon">◈</span><div><span class="eyebrow">SETOR</span><h1 id="sectorName">Setor</h1><p id="sectorDescription"></p></div></div>
+      <div class="sector-body" id="sectorBody"></div>
+    </section>
+  </main>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

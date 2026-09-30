@@ -26,7 +26,7 @@
    operation.transition("AUTHORIZED",{authorization:auth.reference||null});this.recordStage(operation);
    const routing=this.route(operation);if(!routing?.success)return this.block(operation,"ROUTING",routing?.reason||"Rota indisponível.");
    operation.transition("ROUTED",{routeId:routing.routeId||null});this.recordStage(operation);operation.transition("EXECUTING");this.recordStage(operation);
-   const execution=this.execute(operation,{emergencyStop:this.emergencyStop});if(!execution?.success)return this.fail(operation,"EXECUTION",execution?.reason||"Execução falhou.");
+   const execution=this.execute(operation,{emergencyStop:this.emergencyStop});if(!execution?.success)return this.fail(operation,"EXECUTION",execution?.reason||"Execução falhou.");const postStop=stop();if(!postStop.allowed)return this.cancel(operation,"POST_EXECUTION",postStop);
    operation.transition("VALIDATING",{execution:execution.result||execution});this.recordStage(operation);
    if(execution.validated===false)return this.fail(operation,"VALIDATION",execution.validationReason||"Resultado não validado.");
    operation.transition("COMPLETED",{routeId:routing.routeId||null,execution:execution.result||execution});this.completedOperations.add(operation.operationId);this.recordStage(operation);return operation;

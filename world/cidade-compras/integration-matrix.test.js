@@ -6,7 +6,7 @@ import {
   createSupplierOrder, sendSupplierOrder, createShipment, updateShipment,
   createAfterSalesCase, closeAfterSalesCase, createIncident, transitionIncident,
   recordCommerceKnowledge
-} from "./index.js";
+} from "./sectors/index.js";
 
 // 1. Multichannel equivalence: every supported channel enters the same communication contract.
 for (const [index, channel] of ["SITE","SOCIAL","MESSAGING","MARKETPLACE"].entries()) {

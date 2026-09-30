@@ -1,7 +1,7 @@
 name: WordDark Core V1 Integration
 on:
   push:
-    branches: [staging-core-v1-integration]
+    branches: [staging]
 jobs:
   test:
     runs-on: ubuntu-latest

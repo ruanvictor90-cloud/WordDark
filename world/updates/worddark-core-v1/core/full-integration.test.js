@@ -1,7 +1,8 @@
 const assert = require("assert");
 
 const Id = require("./id");
-const { Client, Channel, Project, User, Service, Connector } = require("./entities");
+const { Client, Channel, Project, User, Service } = require("./entities");
+const CoreConnector = require("../../../../world/core/connector");
 const { WordDarkLabPermission, WordDarkLabPermissionSet } = require("./permissions");
 const Context = require("./context");
 const OperationPackage = require("./operation-package");
@@ -22,7 +23,7 @@ const SecurityManager = require("../../../../world/security/security-manager");
 const EnvironmentGuard = require("../../../../world/core/environment-guard");
 const Road = require("../../../../world/core/road");
 const GlobalRoute = require("../../../../world/contracts/route");
-const Registry = require("../../../../world/core/operation-registry");
+const { WordDarkOperationRegistry: Registry } = require("../../../../world/core/operation-registry");
 const Engine = require("../../../../world/core/operation-engine");
 const WorldRuntime = require("../../../../world/core/world-runtime");
 
@@ -142,10 +143,11 @@ test("V1 result, recovery, inbox, versioning and connector", () => {
   const versions = new Versioning();
   versions.create(op.operationId, op.toJSON());
   assert(versions.latest(op.operationId));
-  const connector = new Connector({ id: "WD-CON-0001", platform: "TEST" });
+  const connector = new CoreConnector({ id: "WD-CON-0001", platform: "TEST" });
   assert.strictEqual(connector.publish({ x: 1 }).reason, "CONNECTOR_DISCONNECTED");
   connector.connect();
-  assert(connector.publish({ x: 1 }).success);
+  assert.strictEqual(connector.publish({ x: 1 }).reason, "CONNECTOR_NOT_AUTHORIZED");
+  assert(connector.publish({ x: 1 }, { authorized: true, operationId: op.operationId }).success);
 });
 
 test("V1 -> consolidated Core composition", () => {

@@ -34,7 +34,7 @@ assert.equal(result.afterSales.type,"TRACKING");
 assert.equal(result.supplierOrder.status,"SENT");
 assert.equal(result.shipment.status,"IN_TRANSIT");
 assert.equal(result.operation.status,"COMMERCE_CLOSED");
-assert.equal(result.operation.history.length,8);
+assert.equal(result.operation.history.length,9);
 
 const incident = recoverCommerceRuntime({
   operationId:"WD-OP-CC-RUNTIME-ERR-001",

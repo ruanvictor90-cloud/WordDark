@@ -1,4 +1,4 @@
-import { runRealCommerceTest, createRuntimeTimeline } from "./runtime-adapter.js";
+import { runRealCommerceTest, runIncidentStep, createRuntimeTimeline } from "./runtime-adapter.js";
 
 const sectors=[
 {id:"communication",icon:"💬",name:"Comunicação",desc:"Site, redes sociais, mensageria, marketplaces e futuros canais."},
@@ -76,6 +76,54 @@ function renderOrders(){return state.orders.length?state.orders.slice(0,5).map(o
 function renderIncidents(){return state.incidents.length?state.incidents.slice(0,5).map(i=>`<div class="event"><span>${i.id} · ${i.status}</span><small>${i.type} · pedido ${i.orderId}</small></div>`).join(""):"<div class='empty'>Nenhuma ocorrência nesta sessão.</div>"}
 function renderServices(){return state.services.length?state.services.slice(0,5).map(s=>`<div class="event"><span>${s.id} · ${s.status}</span><small>${s.service} · ${s.purpose}</small></div>`).join(""):"<div class='empty'>Nenhuma solicitação nesta sessão.</div>"}
 
+function renderRealIncident(){
+  const list=document.querySelector("#realIncidentList");
+  if(!list||!runtimeState.incident)return;
+  const i=runtimeState.incident.incident;
+  const order=runtimeState.incident.order;
+  const actions={OPEN:"Abrir ocorrência",ANALYZE:"Analisar",REQUEUE:"Reencaminhar",REANALYZE:"Voltar à análise",RESUME:"Liberar pedido",REFUND:"Reembolsar",CANCEL:"Cancelar pedido"};
+  const available=[];
+  if(i.status==="OPEN") available.push("ANALYZE","CANCEL");
+  if(i.status==="ANALYZING") available.push("REQUEUE","RESUME","REFUND","CANCEL");
+  if(i.status==="REQUEUED") available.push("REANALYZE","CANCEL");
+  list.innerHTML=`<div class="event"><span>${i.id} · ${i.status}</span><small>Pedido: ${order?.id||"—"}</small></div><div class="incident-actions">${available.map(a=>`<button class="secondary" data-incident-action="${a}" type="button">${actions[a]}</button>`).join("")}</div>`;
+  list.querySelectorAll("[data-incident-action]").forEach(b=>b.onclick=()=>runRealIncidentAction(b.dataset.incidentAction));
+}
+function runRealIncidentAction(action){
+  try{
+    runtimeState.incident=runIncidentStep(action,runtimeState.incident);
+    log("INCIDENT_"+action,runtimeState.incident.incident?.id||"—");
+    renderRealIncident();
+    if(runtimeState.incident.order){
+      const found=state.orders.find(o=>o.id===runtimeState.incident.order.id);
+      if(found) found.status=runtimeState.incident.order.status;
+    }
+    renderSummary();
+  }catch(error){
+    log("INCIDENT_ERROR",error?.message||"UNKNOWN_ERROR");
+    const list=document.querySelector("#realIncidentList");
+    if(list) list.innerHTML=`<div class="empty">Falha na ocorrência: ${error?.message||"erro desconhecido"}</div>`;
+  }
+}
+
+function injectIncidentControls(){
+  const body=document.querySelector("#sectorBody"); if(!body||document.querySelector("#realIncidentPanel"))return;
+  const panel=document.createElement("div"); panel.id="realIncidentPanel"; panel.className="runtime-panel";
+  panel.innerHTML=`<div><span class="eyebrow">OCORRÊNCIA · RUNTIME REAL</span><strong>Ciclo de recuperação do pedido</strong><small>Abre e encaminha uma ocorrência usando o runtime da cidade, com decisão final sobre o pedido.</small></div><button class="danger" id="realIncidentOpen" type="button">Abrir ocorrência real</button><div id="realIncidentList" class="runtime-results"></div>`;
+  body.appendChild(panel);
+  document.querySelector("#realIncidentOpen").onclick=()=>{
+    try{
+      const latest=runtimeState.results[0]; if(!latest)throw new Error("RUN_REAL_COMMERCE_FIRST");
+      runtimeState.incident=runIncidentStep("OPEN",{operation:latest.operation,order:latest.order,incident:null});
+      log("INCIDENT_RUNTIME_OPEN",runtimeState.incident.incident.id);
+      renderRealIncident();
+    }catch(error){
+      log("INCIDENT_ERROR",error?.message||"UNKNOWN_ERROR");
+      const list=document.querySelector("#realIncidentList"); if(list) list.innerHTML=`<div class="empty">Execute primeiro um fluxo real de comércio.</div>`;
+    }
+  };
+}
+
 function bindSectorActions(){
  const orderBtn=document.querySelector("#demoOrder"); if(orderBtn) orderBtn.onclick=createDemoOrder;
  const incidentBtn=document.querySelector("#demoIncident"); if(incidentBtn) incidentBtn.onclick=createDemoIncident;
@@ -106,7 +154,7 @@ document.querySelector("#backBtn").onclick=()=>{
 document.querySelector("#themeToggle").onclick=()=>document.body.classList.toggle("light");
 renderSummary();
 
-const runtimeState={results:[]};
+const runtimeState={results:[], incident:null};
 
 function renderRuntimeResult(result){
   runtimeState.results.unshift(result);
@@ -157,4 +205,5 @@ const originalOpenSector=openSector;
 openSector=function(s,refresh=false){
   originalOpenSector(s,refresh);
   if(s.id==="commerce") injectRuntimeControls();
+  if(s.id==="incidents") injectIncidentControls();
 };

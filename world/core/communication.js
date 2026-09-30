@@ -1,6 +1,12 @@
-const WordDarkRequest = require("../contracts/request");
-const WordDarkMessage = require("../contracts/message");
-const WordDarkReceipt = require("../contracts/receipt");
+const WordDarkRequest = typeof require === "function"
+  ? require("../contracts/request")
+  : (typeof window !== "undefined" ? window.WordDarkRequest : null);
+const WordDarkMessage = typeof require === "function"
+  ? require("../contracts/message")
+  : (typeof window !== "undefined" ? window.WordDarkMessage : null);
+const WordDarkReceipt = typeof require === "function"
+  ? require("../contracts/receipt")
+  : (typeof window !== "undefined" ? window.WordDarkReceipt : null);
 
 /* WordDark — Communication Bus
  * Transporte bidirecional pela Rodovia Global.

@@ -13,3 +13,4 @@ jobs:
       - run: node world/updates/worddark-core-v1/core/core-contracts.test.js
       - run: node world/updates/worddark-core-v1/core/integration.test.js
       - run: node world/updates/worddark-core-v1/core/full-integration.test.js
+      - run: node world/core/single-core-fire.test.js

@@ -10,7 +10,7 @@ import { transitionOrder } from "./order-lifecycle.js";
 import { createAccountOperation, settleAccountOperation } from "./account.js";
 import { createAttendant, classifyIntent } from "./attendant.js";
 import { createCommunication, appendMessage, closeCommunication } from "./communication.js";
-import { startCommerceFlow, attachFlowResource } from "./commerce-flow.js";
+import { startCommerceFlow, attachFlowResource, runCommerceCheckout } from "./commerce-flow.js";
 import { createServiceResult, deliverServiceResult } from "./service-result.js";
 
 const city = registerChannel(createCommerceCity({ id: "WD-CITY-COMMERCE" }), "WD-CH-SOCIAL");
@@ -84,6 +84,34 @@ let operation = startCommerceFlow({
 });
 operation = attachFlowResource(operation, "ORDER", order.id);
 assert.deepEqual(operation.resources.ORDER, [order.id]);
+
+const checkout = runCommerceCheckout({
+  operationId: "WD-OP-CHECKOUT",
+  customerId: "WD-USR-TEST",
+  orderId: "WD-ORD-CHECKOUT",
+  source: channel.id,
+  channelId: channel.id,
+  cartId: "WD-CART-CHECKOUT",
+  items: [{ productId: "WD-PROD-1", quantity: 2, unitPrice: 50 }],
+  shipping: 10,
+  discount: 5,
+  accountId: "WD-ACC-CHECKOUT",
+  serviceResultId: "WD-RES-CHECKOUT",
+  serviceRequestId: "WD-SVC-CHECKOUT",
+  service: "DARK_FACTORY",
+  servicePayload: { asset: "checkout-test" }
+});
+
+assert.equal(checkout.cart.status, "CHECKOUT");
+assert.equal(checkout.cart.totals.total, 105);
+assert.equal(checkout.order.status, "VALIDATING");
+assert.equal(checkout.order.total, 105);
+assert.equal(checkout.account.status, "SETTLED");
+assert.equal(checkout.serviceResult.status, "DELIVERED");
+assert.deepEqual(checkout.operation.resources.CART, ["WD-CART-CHECKOUT"]);
+assert.deepEqual(checkout.operation.resources.ORDER, ["WD-ORD-CHECKOUT"]);
+assert.deepEqual(checkout.operation.resources.ACCOUNT, ["WD-ACC-CHECKOUT"]);
+assert.deepEqual(checkout.operation.resources.SERVICE_RESULT, ["WD-RES-CHECKOUT"]);
 
 const result = createServiceResult({
   id: "WD-RES-TEST",

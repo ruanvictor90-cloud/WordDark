@@ -3,13 +3,11 @@
  */
 const Id = require("./id");
 const {Client,Channel,Project,User,Service}=require("./entities");
-const {WordDarkLabPermission,WordDarkLabPermissionSet}=require("./permissions");
+const {WordDarkLabPermissionSet}=require("./permissions");
 const Operation=require("./operation");
 const Result=require("./result");
-const {WordDarkLabRoute,WordDarkLabRouter}=require("./route");
-const Gate=require("./gate");
+const {WordDarkLabRouter}=require("./route");
 const ServiceRegistry=require("./service");
-const Connector=require("./connector");
 const Recovery=require("./error-recovery");
 const Inbox=require("./inbox");
 const Versioning=require("./versioning");
@@ -21,7 +19,11 @@ class WordDarkLabRuntime {
     this.recovery=new Recovery(); this.inbox=new Inbox(); this.versioning=new Versioning();
     this.gates=new Map(); this.events=[]; this.resultSequence=0;
   }
-  register(entity){this.registry.set(entity.id,entity);return entity;}
+  register(entity){
+    this.registry.set(entity.id,entity);
+    if(entity instanceof Service) this.services.register(entity);
+    return entity;
+  }
   addGate(g){this.gates.set(g.gateId,g);return g;}
   log(event,data={}){this.events.push({event,timestamp:new Date().toISOString(),data});}
   process(operation,gateId,returnGateId=null){
@@ -29,7 +31,8 @@ class WordDarkLabRuntime {
       if(!operation.validate().valid)throw new Error(operation.validate().errors.join(" "));
       const gate=this.gates.get(gateId); if(!gate)throw new Error("GATE_NOT_FOUND");
       const user=this.registry.get(operation.requesterId);
-      const gateResult=gate.receive({profile:user&&user.profile,context:{clientId:operation.clientId,resourceId:operation.resourceId}});
+      if(!user)throw new Error("REQUESTER_NOT_FOUND");
+      const gateResult=gate.receive({profile:user.profile,context:{clientId:operation.clientId,resourceId:operation.resourceId}});
       if(!gateResult.success)throw new Error(gateResult.reason);
       if(!this.permissions.authorize({profile:user.profile,capability:"content.produce",action:"request",resourceId:operation.resourceId,clientId:operation.clientId,environment:operation.environment}))throw new Error("ACCESS_DENIED");
       const route=this.router.resolve(operation);if(!route)throw new Error("ROUTE_NOT_FOUND");

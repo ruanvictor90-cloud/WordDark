@@ -1,4 +1,5 @@
 import { runCommerceRuntime, deliverCommerceRuntime, openCommerceIncident, analyzeCommerceIncident, requeueCommerceIncident, reanalyzeCommerceIncident, resolveCommerceIncident, openIncidentAfterSales, advanceIncidentAfterSales } from "../runtime.js";
+import { createCommerceMarketingFlow, returnCommerceMarketingResult } from "../core/marketing-service-flow.js";
 
 let sequence = 0;
 const uid = (prefix) => `${prefix}-${Date.now().toString(36).slice(-6)}-${(++sequence).toString(36)}`;
@@ -114,4 +115,30 @@ export function advanceRealAfterSales(state) {
     ...advanceIncidentAfterSales(state.afterSales),
     operation: state.operation
   };
+}
+
+export function runRealMarketingTest({
+  brief = "Criar conteúdo de teste para um produto da Cidade de Compras.",
+  channelIds = ["SOCIAL"],
+  requestedBy = "WD-USR-TEST",
+  destination = "SOCIAL"
+} = {}) {
+  return createCommerceMarketingFlow({
+    serviceRequestId: uid("WD-SVC"),
+    marketingRequestId: uid("WD-MKT"),
+    cityId: "WD-CITY-COMMERCE",
+    requestedBy,
+    brief,
+    channelIds,
+    destination,
+    payload: { source: "COMMERCE_UI" }
+  });
+}
+
+export function returnRealMarketingTest(state) {
+  if (!state?.serviceRequest || !state?.marketingRequest) throw new Error("MARKETING_RUNTIME_STATE_REQUIRED");
+  return returnCommerceMarketingResult(state, {
+    resultId: uid("WD-RES"),
+    result: { status: "READY", asset: "conteudo-de-teste", source: "DARK_FACTORY" }
+  });
 }

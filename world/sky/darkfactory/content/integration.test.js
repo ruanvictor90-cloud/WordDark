@@ -28,9 +28,9 @@ assert.equal(flow.success,true);
 assert.equal(flow.status,"READY");
 assert.equal(flow.operationId,"OP-CONTENT-FLOW-001");
 assert.deepEqual(flow.pipeline,[
-  "content.intelligence","content.script","content.identity"
+  "content.intelligence","content.script","content.identity","content.image"
 ]);
-assert.equal(flow.history.length,3);
+assert.equal(flow.history.length,4);
 assert.ok(flow.history.every(step=>step.status==="READY"));
 assert.equal(flow.packages.intelligence.operationId,flow.operationId);
 assert.equal(flow.packages.script.operationId,flow.operationId);

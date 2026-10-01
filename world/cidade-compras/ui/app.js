@@ -1,4 +1,4 @@
-import { runRealCommerceTest, deliverRealCommerceTest, runIncidentStep, openRealAfterSales, advanceRealAfterSales, createRuntimeTimeline } from "./runtime-adapter.js";
+import { runRealCommerceTest, deliverRealCommerceTest, runIncidentStep, openRealAfterSales, advanceRealAfterSales, createRuntimeTimeline, runRealMarketingTest, returnRealMarketingTest } from "./runtime-adapter.js";
 
 const sectors=[
 {id:"communication",icon:"💬",name:"Comunicação",desc:"Site, redes sociais, mensageria, marketplaces e futuros canais."},
@@ -181,7 +181,7 @@ document.querySelector("#backBtn").onclick=()=>{
 document.querySelector("#themeToggle").onclick=()=>document.body.classList.toggle("light");
 renderSummary();
 
-const runtimeState={results:[], incident:null, afterSales:null};
+const runtimeState={results:[], incident:null, afterSales:null, marketing:null};
 
 function renderRuntimeResult(result,add=true){
   if(add) runtimeState.results.unshift(result);
@@ -249,4 +249,33 @@ openSector=function(s,refresh=false){
   if(s.id==="commerce") injectRuntimeControls();
   if(s.id==="after-sales") injectAfterSalesControls();
   if(s.id==="incidents") injectIncidentControls();
+};
+
+
+function injectMarketingControls(){
+  const body=document.querySelector("#sectorBody");
+  if(!body||document.querySelector("#realMarketingPanel"))return;
+  const panel=document.createElement("div"); panel.id="realMarketingPanel"; panel.className="runtime-panel";
+  panel.innerHTML=`<div><span class="eyebrow">RODOVIA → CÉU · RUNTIME REAL</span><strong>Conectar Marketing à Dark Factory</strong><small>A cidade cria a necessidade, envia pela Rodovia ao Céu e recebe o resultado de volta. A fábrica continua externa à cidade.</small></div><div class="runtime-actions"><button class="primary" id="realMarketingRequest" type="button">Solicitar conteúdo</button><button class="secondary" id="realMarketingReturn" type="button">Simular retorno da fábrica</button></div><div id="realMarketingList" class="runtime-results"></div>`;
+  body.appendChild(panel);
+  const render=()=>{
+    const list=document.querySelector("#realMarketingList"); if(!list)return;
+    const m=runtimeState.marketing?.marketingRequest, s=runtimeState.marketing?.serviceRequest;
+    if(!m){list.innerHTML=`<div class="empty">Nenhuma solicitação de Marketing nesta sessão.</div>`;return;}
+    list.innerHTML=`<div class="event"><span>${m.id} · ${m.status}</span><small>Serviço: ${s?.service||"MARKETING"} · Rota: ${runtimeState.marketing.route?.join(" → ")||"—"}</small></div>`;
+  };
+  document.querySelector("#realMarketingRequest").onclick=()=>{
+    try{ runtimeState.marketing=runRealMarketingTest(); log("MARKETING_SENT_TO_FACTORY",runtimeState.marketing.marketingRequest.id); render(); }
+    catch(error){ log("MARKETING_ERROR",error?.message||"UNKNOWN_ERROR"); render(); }
+  };
+  document.querySelector("#realMarketingReturn").onclick=()=>{
+    try{ runtimeState.marketing=returnRealMarketingTest(runtimeState.marketing); log("MARKETING_RESULT_RETURNED",runtimeState.marketing.marketingRequest.resultId); render(); }
+    catch(error){ log("MARKETING_ERROR",error?.message||"UNKNOWN_ERROR"); render(); }
+  };
+  render();
+}
+const previousOpenSectorForMarketing=openSector;
+openSector=function(s,refresh=false){
+  previousOpenSectorForMarketing(s,refresh);
+  if(s.id==="marketing") injectMarketingControls();
 };
